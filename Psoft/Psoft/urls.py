@@ -21,5 +21,6 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('testDB/', views.test_db_functions, name='test_db_functions'),
-
+    path('testPlayList/', views.test_crear_playlist, name='test_crear_playlist'),
+    path('testQueue/', views.test_queue_view, name='test_queue_view'),
 ]

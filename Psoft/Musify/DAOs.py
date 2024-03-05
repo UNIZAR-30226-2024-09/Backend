@@ -22,7 +22,7 @@ def update_user(user_email, user_vo): #Se actualiza el usuario, requiere el ID
     user.contrasegna = user_vo.contrasegna
     user.save()
 
-def delete_user(user_email): #Se elimina el usuario y todas sus relaciones
+def remove_user(user_email): #Se elimina el usuario y todas sus relaciones
     user = Usuario.objects.get(pk=user_email)
     user.delete()
 
@@ -67,14 +67,17 @@ def update_playlist_details(playlist_id, nombre,publica): # Solo se puede cambia
     playlist.publica = publica
     playlist.save()
 
-def delete_playlist(playlist_id): # Hay que hacer que los colaboradores dejen de colaborar
+def remove_playlist(playlist_id): # He intentado hacer que los colaboradores dejen de colaborar, pero NO SE SI ESTÁ BIEN
     playlist = Playlist.objects.get(pk=playlist_id)
+    ids = Colabora.objects.filter(miUsuario=user)
+    Colabora.objects.get(pk=id).delete() for id in ids
     playlist.delete()
 
 def get_playlist_songs(playlist_id): # Asume que la playlist es de canciones solo, devuelve VO de Cancion
     playlist = Playlist.objects.get(pk=playlist_id)
     ids = Contiene.objects.filter(miPlaylist=playlist)
     return [Cancion.objects.get(pk=id).to_VO() for id in ids]
+
 def get_playlists_from_user(user_email): #Devuelve todas las playlists del usuario devueltas como VO
     return Playlist.objects.filter(colaboradores__miUsuario__correo=user_email)
 
@@ -82,6 +85,7 @@ def create_song(nombre): #Se crea la cancion sin generos
     return Cancion.objects.create(
         nombre=nombre,
     )
+
 def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
     song = Cancion.objects.get(pk=song_id)
@@ -107,6 +111,11 @@ def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
         miUsuario=user,
         miAudio=song
     )
+
+def remove_song_from_history(user_email, song_id): #Se elimina la cancion del historial
+    user = Usuario.objects.get(pk=user_email)
+    song = Cancion.objects.get(pk=song_id)
+    Historial.objects.get(miUsuario=user, miAudio=song).delete()
 
 def get_user_favorites(user_email): #Devuelve las canciones favoritas del usuario devueltas como VO
     user = Usuario.objects.get(pk=user_email)
@@ -156,6 +165,13 @@ def get_album_songs(album_id): #Devuelve todas las canciones de un album dado su
     album = Album.objects.get(pk=album_id)
     return Cancion.objects.filter(miAlbum=album)
 
+#MIRAR SI ESTÁ BIEN
+def create_episode(nombre, descripcion): #Se crea el capitulo
+    return Capitulo.objects.create(
+        nombre=nombre,
+        descripcion=descripcion
+    )
+
 def get_podcast_episodes(podcast_id): #Devuelve todos los capitulos de un podcast dado su id
     podcast = Podcast.objects.get(pk=podcast_id)
     return Capitulo.objects.filter(miPodcast=podcast)
@@ -163,8 +179,16 @@ def get_podcast_episodes(podcast_id): #Devuelve todos los capitulos de un podcas
 def get_song_by_id(song_id): #Devuelve la cancion dado su id
     return Cancion.objects.get(pk=song_id)
 
+# NO SE SI ESTÁ BIEN
+def get_song_by_name(song_name): #Devuelve la cancion dado su nombre
+    return Cancion.objects.get(nombre=song_name)
+
 def get_podcast_by_id(podcast_id): #Devuelve el podcast dado su id
     return Podcast.objects.get(pk=podcast_id)
+
+# NO SE SI ESTÁ BIEN
+def get_podcast_by_name(podcast_name): #Devuelve el podcast dado su nombre
+    return Podcast.objects.get(nombre=podcast_name)
 
 def get_episode_by_id(episode_id): #Devuelve el capitulo dado su id
     return Capitulo.objects.get(pk=episode_id)
@@ -172,18 +196,35 @@ def get_episode_by_id(episode_id): #Devuelve el capitulo dado su id
 def get_album_by_id(album_id): #Devuelve el album dado su id
     return Album.objects.get(pk=album_id)
 
+def get_album_by_name(album_name): #Devuelve el album dado su nombre
+    return Album.objects.get(nombre=album_name)
+
 def get_song_genres(song_id): #Devuelve los generos de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     ids = Pertenecen.objects.filter(miAudio=song)
+    return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
+
+def get_podcast_genres(podcast_id):
+    podcast = Podcast.object.get(pk=podcast_id)
+    ids = Pertenecen.objects.filter(miAudio=podcast)
     return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
 
 def get_song_album(song_id): #Devuelve el album de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     return song.miAlbum
 
+def get_episode_podcast(episode_id): #Devuelve el podcast de un episodio dado su id
+    episode = Capitulo.objects.get(pk=episode_id)
+    return episode.miPodcast
+
 def get_song_artists(song_id): #Devuelve los artistas de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     return song.cantantes
+
+# MIRAR SI ESTÁ BIEN
+def get_podcast_hosts(podcast_id): #Devuelve los presentadores de un podcast dado su id
+    podcast = Podcast.objects.get(pk=podcast_id)
+    return podcast.presentadores
 
 def get_song_audio(song_id): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
     return Cancion.objects.get(pk=song_id).audio
@@ -213,6 +254,10 @@ def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de r
         miUsuario=user,
         miAudio=song
     )
+
+# lo hacemos? no se si dijimos si se podía o no añadir un episodio a la cola
+# def add_episode_to_queue(user_email, episode_id)
+
 def get_queue_from_user(user_email): #Devuelve la cola de reproduccion del usuario devuelta como VO
     user = Usuario.objects.get(pk=user_email)
     cola = Cola.objects.filter(miUsuario=user)

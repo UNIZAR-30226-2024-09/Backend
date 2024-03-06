@@ -12,8 +12,8 @@ def get_user_by_id(user_email): #Se busca el usuario por su ID
 def get_user_by_correo(email): #Se busca el usuario por su correo
     return Usuario.objects.get(correo=email)
 
-def check_user_password(user_email, password): #se comprueba la contraseña del usuario (iniciar sesión)
-    user = Usuario.objects.get(pk=user_email)
+def check_user_password(user_vo, password): #se comprueba la contraseña del usuario (iniciar sesión)
+    user = Usuario.objects.get(pk=user_vo.correo)
     return user.contrasegna == password
 
 def create_user(user_vo): #Se crea el usuario sin amigos
@@ -116,6 +116,11 @@ def get_songs_from_playlist(playlist_id): #Devuelve las canciones de una playlis
     
     return songs
 
+'''def get_playlist_songs(playlist_id): # Asume que la playlist es de canciones solo, devuelve VO de Cancion
+    playlist = Playlist.objects.get(pk=playlist_id)
+    ids = Contiene.objects.filter(miPlaylist=playlist)
+    return [Cancion.objects.get(pk=id).to_VO() for id in ids]'''
+
 def get_playlist_by_name(playlist_name): #devuelve una playlist dado su nombre
     return Playlist.objects.get(nombre=playlist_name)
 
@@ -126,14 +131,14 @@ def set_playlist_public(playlist_id, publica): #hace pública o privada una play
 
 #DAOs DE CANCION
 
-def get_playlist_songs(playlist_id): # Asume que la playlist es de canciones solo, devuelve VO de Cancion
-    playlist = Playlist.objects.get(pk=playlist_id)
-    ids = Contiene.objects.filter(miPlaylist=playlist)
-    return [Cancion.objects.get(pk=id).to_VO() for id in ids]
 
-def create_song(nombre): #Se crea la cancion sin generos
+def create_song(song_vo): #Se crea la cancion sin generos
     return Cancion.objects.create(
-        nombre=nombre,
+        nombre=song_vo.nombre,
+        letra=song_vo.letra,
+        cantantes=song_vo.cantantes,
+        miAlbum=song_vo.miAlbum,
+        puntuacion=song_vo.puntuacion
     )
 
 def get_user_favorites(user_email): #Devuelve las canciones favoritas del usuario devueltas como VO
@@ -182,6 +187,10 @@ def add_song_rating(song_id, rating): #añade puntuación a una canción
     song = Cancion.objects.get(pk=song_id)
     song.puntuacion = rating
     song.save()
+
+def get_song_rating(song_id): #Devuelve la puntuación de una canción
+    song = Cancion.objects.get(pk=song_id)
+    return song.puntuacion
 
 #DAOs DE HISTORIAL
 

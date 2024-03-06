@@ -20,7 +20,15 @@ from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('testDB/', views.test_db_functions, name='test_db_functions'),
+    path('testFriends/', views.test_are_friends, name='test_are_friends'),
     path('testPlayList/', views.test_crear_playlist, name='test_crear_playlist'),
     path('testQueue/', views.test_queue_view, name='test_queue_view'),
+    path('testPassword/', views.test_password_view, name='test_password_view'),
+    path('testHistory1/', views.test_add_song_to_history, name='test_add_song_to_history'),
+    path('testRemoveUser/', views.test_remove_user, name='test_remove_user'),
+    path('testAddFriend/', views.test_add_friend, name='test_add_friend'),
+    path('testRemoveFriend/', views.test_remove_friend, name='test_remove_friend'),
+    path('testSong/', views.test_song, name='test_song'),
+    path('testGenreSongs/', views.test_get_genre_songs, name='test_get_genre_songs'),
+    path('', views.home, name='home')
 ]

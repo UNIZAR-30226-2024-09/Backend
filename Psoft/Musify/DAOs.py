@@ -80,11 +80,14 @@ def update_playlist_details(playlist_id, nombre,publica): # Solo se puede cambia
     playlist.publica = publica
     playlist.save()
 
-def remove_playlist(playlist_id): # He intentado hacer que los colaboradores dejen de colaborar, pero NO SE SI ESTÁ BIEN
+'''def remove_playlist(playlist_id): # He intentado hacer que los colaboradores dejen de colaborar, pero NO SE SI ESTÁ BIEN
     playlist = Playlist.objects.get(pk=playlist_id)
     ids = Colabora.objects.filter(miUsuario=user)
-    Colabora.objects.get(pk=id).delete() for id in ids
-    playlist.delete()
+    #Colabora.objects.get(pk=id).delete() for id in ids
+    playlist.delete()'''
+
+
+
 
 def get_playlists_from_user(user_email): #Devuelve todas las playlists del usuario devueltas como VO
     return Playlist.objects.filter(colaboradores__miUsuario__correo=user_email)

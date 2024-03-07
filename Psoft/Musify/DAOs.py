@@ -9,13 +9,16 @@ def get_user_by_id(user_email): #Se busca el usuario por su ID
     return Usuario.objects.get(pk=user_email)
 """
 
+# COMPROBADO
 def get_user_by_correo(email): #Se busca el usuario por su correo
     return Usuario.objects.get(correo=email)
 
+# COMPROBAD0
 def check_user_password(user_vo, password): #se comprueba la contraseña del usuario (iniciar sesión)
     user = Usuario.objects.get(pk=user_vo.correo)
     return user.contrasegna == password
 
+# COMPROBADO
 def create_user(user_vo): #Se crea el usuario sin amigos
     return Usuario.objects.create(
         correo=(user_vo.correo).lower(), #Se guarda en minusculas ya que en el correo electronico no importa la capitalizacion
@@ -23,11 +26,15 @@ def create_user(user_vo): #Se crea el usuario sin amigos
         contrasegna=user_vo.contrasegna
     )
 
+# COMPROBADO
 def update_user(user_email, user_vo): #Se actualiza el usuario, requiere el ID
     user = Usuario.objects.get(pk=user_email)
-    user.correo = user_vo.correo
+    #user.correo = user_vo.correo #no se debería cambiar no?
     user.nombre = user_vo.nombre
+    user.sexo = user_vo.sexo
+    user.nacimiento = user_vo.nacimiento
     user.contrasegna = user_vo.contrasegna
+    user.pais = user_vo.pais
     user.save()
 
 def remove_user(user_email): #Se elimina el usuario y todas sus relaciones
@@ -74,7 +81,7 @@ def create_playlist(user_email, nombre, publica): #Se crea sin colaboradores
         miPlaylist=playlist
     )
 
-def update_playlist_details(playlist_id, nombre,publica): # Solo se puede cambiar el nombre(TODO: se puede poner foto)
+def update_playlist_details(playlist_id, nombre, publica): # Solo se puede cambiar el nombre(TODO: se puede poner foto)
     playlist = Playlist.objects.get(pk=playlist_id)
     playlist.nombre = nombre
     playlist.publica = publica
@@ -85,9 +92,6 @@ def update_playlist_details(playlist_id, nombre,publica): # Solo se puede cambia
     ids = Colabora.objects.filter(miUsuario=user)
     #Colabora.objects.get(pk=id).delete() for id in ids
     playlist.delete()'''
-
-
-
 
 def get_playlists_from_user(user_email): #Devuelve todas las playlists del usuario devueltas como VO
     return Playlist.objects.filter(colaboradores__miUsuario__correo=user_email)
@@ -123,11 +127,6 @@ def get_songs_from_playlist(playlist_id): #Devuelve las canciones de una playlis
 
 def get_playlist_by_name(playlist_name): #devuelve una playlist dado su nombre
     return Playlist.objects.get(nombre=playlist_name)
-
-def set_playlist_public(playlist_id, publica): #hace pública o privada una playlist
-    playlist = Playlist.objects.get(pk=playlist_id)
-    playlist.publica = publica
-    playlist.save()
 
 #DAOs DE CANCION
 

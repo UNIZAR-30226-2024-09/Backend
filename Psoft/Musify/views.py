@@ -113,6 +113,7 @@ def test_add_friend(request):
         print(friend.correo + "\n")
     return HttpResponse(status=200)
 
+# EN PROCESO
 def test_song(request):
     nueva_cancion = Cancion(
         letra='letra',
@@ -121,19 +122,33 @@ def test_song(request):
         puntuacion=None,
         nombre="Cancion de ejemplo"
     )
-    DAOs.create_song(nueva_cancion)
-    DAOs.add_song_to_playlist(1, DAOs.get_song_by_name("Cancion de ejemplo").id)
+    #DAOs.create_song(nueva_cancion)
+    #DAOs.add_song_to_playlist(1, DAOs.get_song_by_name("cancion2").id)
     Canciones = DAOs.get_songs_from_playlist(1)
     if Canciones != None:
         for cancion in Canciones:
             print(cancion.nombre + "\n")
-            DAOs.add_song_rating(DAOs.get_song_by_name("Cancion de ejemplo").id, 5)
-            print(DAOs.get_song_rating(DAOs.get_song_by_name("Cancion de ejemplo").id))
+            DAOs.add_song_rating(DAOs.get_song_by_name("cancion2").id, 5)
+            print(DAOs.get_song_rating(DAOs.get_song_by_name("cancion2").id))
             #print(DAOs.get_song_album(DAOs.get_song_by_name("Cancion de ejemplo").id))
-            print(DAOs.get_song_artists(DAOs.get_song_by_name("Cancion de ejemplo").id))
+            print(DAOs.get_song_artists(DAOs.get_song_by_name("cancion2").id))
     return HttpResponse(status=200)     
 
-
+def test_update_user(request):
+    user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
+    print("datos anteriores de " + "\n" + user_vo.correo + "\n"  + user_vo.nombre + "\n" + user_vo.sexo + "\n" + str(user_vo.nacimiento) + "\n" + user_vo.contrasegna + "\n" + user_vo.pais + "\n")
+    usuario_actualizado = Usuario(
+        correo = "Paco@gmail.com",
+        nombre='paco',
+        sexo='M',
+        nacimiento=timezone.now(),
+        contrasegna='Paquito',
+        pais='Espana'
+    )
+    DAOs.update_user(user_vo.correo, usuario_actualizado)
+    user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
+    print("datos actuales de " + "\n" + user_vo.correo + "\n"  + user_vo.nombre + "\n" + user_vo.sexo + "\n" + str(user_vo.nacimiento) + "\n" + user_vo.contrasegna + "\n" + user_vo.pais + "\n")
+    return HttpResponse(status=200)
 
 def test_remove_friend(request):
     user_vo = DAOs.get_user_by_correo("Paco@gmail.com")

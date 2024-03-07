@@ -37,15 +37,18 @@ def update_user(user_email, user_vo): #Se actualiza el usuario, requiere el ID
     user.pais = user_vo.pais
     user.save()
 
+# EN PROCESO
 def remove_user(user_email): #Se elimina el usuario y todas sus relaciones
     user = Usuario.objects.get(pk=user_email)
     user.delete()
 
+# COMPROBADO ?
 def get_friends(user_email): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
     user = Usuario.objects.get(correo=user_email)
     amigos = Amigo.objects.filter(micorreo1=user).all() | Amigo.objects.filter(micorreo2=user).all()
     return [amigo.micorreo1 if amigo.micorreo1 != user else amigo.micorreo2 for amigo in amigos]
 
+# COMPROBADO
 def add_friend(user_email, friend_id): #Se crean las relaciones de amistad
     user = Usuario.objects.get(pk=user_email)
     friend = Usuario.objects.get(pk=friend_id)
@@ -54,22 +57,26 @@ def add_friend(user_email, friend_id): #Se crean las relaciones de amistad
         micorreo2=friend
     )
 
+# COMPROBADO ?
 def remove_friend(user_email, friend_id): #Se eliminan las relaciones de amistad
     user = Usuario.objects.get(pk=user_email)
     friend = Usuario.objects.get(pk=friend_id)
     Amigo.objects.filter(micorreo1=user, micorreo2=friend).delete()
     Amigo.objects.filter(micorreo1=friend, micorreo2=user).delete()
 
+# COMPROBADO
 def are_friends(user_email, friend_email): #Devuelve si dos usuarios son amigos
     return Amigo.objects.filter(micorreo1=user_email, micorreo2=friend_email).exists() or Amigo.objects.filter(micorreo1=friend_email, micorreo2=user_email).exists()
 
 #DAOs DE PLAYLIST
 
+# SIN COMPROBAR
 def get_playlists(user_email): #Devuelve todas las playlists en las que el usuario colabora devueltas como VO
     user = Usuario.objects.get(pk=user_email)
     ids = Colabora.objects.filter(miUsuario=user)
     return [Colabora.objects.get(pk=id).miPlaylist for id in ids]
 
+# COMPROBADO
 def create_playlist(user_email, nombre, publica): #Se crea sin colaboradores
     user = Usuario.objects.get(pk=user_email)
     playlist = Playlist.objects.create(
@@ -81,6 +88,7 @@ def create_playlist(user_email, nombre, publica): #Se crea sin colaboradores
         miPlaylist=playlist
     )
 
+# COMPROBADO
 def update_playlist_details(playlist_id, nombre, publica): # Solo se puede cambiar el nombre(TODO: se puede poner foto)
     playlist = Playlist.objects.get(pk=playlist_id)
     playlist.nombre = nombre
@@ -93,9 +101,11 @@ def update_playlist_details(playlist_id, nombre, publica): # Solo se puede cambi
     #Colabora.objects.get(pk=id).delete() for id in ids
     playlist.delete()'''
 
+# COMPROBADO
 def get_playlists_from_user(user_email): #Devuelve todas las playlists del usuario devueltas como VO
     return Playlist.objects.filter(colaboradores__miUsuario__correo=user_email)
 
+# COMPROBADO
 def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
     song = Cancion.objects.get(pk=song_id)
@@ -104,11 +114,13 @@ def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playl
         miPlaylist=playlist
     )
 
+# SIN COMPROBAR
 def remove_song_from_playlist(playlist_id, song_id): #Se elimina la cancion de la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
     song = Cancion.objects.get(pk=song_id)
     Contiene.objects.filter(miAudio=song, miPlaylist=playlist).delete()
 
+# COMPROBADO
 def get_songs_from_playlist(playlist_id): #Devuelve las canciones de una playlist dado su id
     playlist = Playlist.objects.get(pk=playlist_id)
     
@@ -125,12 +137,13 @@ def get_songs_from_playlist(playlist_id): #Devuelve las canciones de una playlis
     ids = Contiene.objects.filter(miPlaylist=playlist)
     return [Cancion.objects.get(pk=id).to_VO() for id in ids]'''
 
+# COMPROBADO
 def get_playlist_by_name(playlist_name): #devuelve una playlist dado su nombre
     return Playlist.objects.get(nombre=playlist_name)
 
 #DAOs DE CANCION
 
-
+# EN PROCESO
 def create_song(song_vo): #Se crea la cancion sin generos
     return Cancion.objects.create(
         nombre=song_vo.nombre,
@@ -140,11 +153,13 @@ def create_song(song_vo): #Se crea la cancion sin generos
         puntuacion=song_vo.puntuacion
     )
 
+# SIN COMPROBAR (QUITAR QUIZÁS)
 def get_user_favorites(user_email): #Devuelve las canciones favoritas del usuario devueltas como VO
     user = Usuario.objects.get(pk=user_email)
     ids = Favorito.objects.filter(miUsuario=user)
     return [Favorito.objects.get(pk=id).miAudio for id in ids]
 
+# SIN COMPROBAR (QUITAR QUIZÁS)
 def add_song_to_favorites(user_email, song_id): #Se añade la cancion a favoritos dado id
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -153,51 +168,61 @@ def add_song_to_favorites(user_email, song_id): #Se añade la cancion a favorito
         miAudio=song
     )
 
+# SIN COMPROBAR (QUITAR QUIZÁS)
 def remove_song_from_favorites(user_email, song_id): #Se elimina la cancion de favoritos dado id
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
     Favorito.objects.filter(miUsuario=user, miAudio=song).delete()
 
+# COMPROBADO ?
 def get_song_genres(song_id): #Devuelve los generos de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     ids = Pertenecen.objects.filter(miAudio=song)
     return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
 
 # NO SE SI ESTÁ BIEN
+# EN PROCESO
 def get_song_by_name(song_name): #Devuelve la cancion dado su nombre
     return Cancion.objects.get(nombre=song_name)
 
+# COMPROBADO ?
 def get_song_by_id(song_id): #Devuelve la cancion dado su id
     return Cancion.objects.get(pk=song_id)
 
+# EN PROCESO
 def get_song_album(song_id): #Devuelve el album de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     return song.miAlbum
 
-
+# EN PROCESO
 def get_song_artists(song_id): #Devuelve los artistas de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     return song.cantantes
 
+# SIN COMPROBAR
 def get_song_audio(song_id): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
     return Cancion.objects.get(pk=song_id).audio
 
+# EN PROCESO
 def add_song_rating(song_id, rating): #añade puntuación a una canción
     song = Cancion.objects.get(pk=song_id)
     song.puntuacion = rating
     song.save()
 
+# EN PROCESO
 def get_song_rating(song_id): #Devuelve la puntuación de una canción
     song = Cancion.objects.get(pk=song_id)
     return song.puntuacion
 
 #DAOs DE HISTORIAL
 
+# EN PROCESO
 def get_user_history(user_email): #Devuelve el historial de escucha del usuario devuelto como VO
     user = Usuario.objects.get(pk=user_email)
     ids = Historial.objects.filter(miUsuario=user)
     return [Historial.objects.get(pk=id).miAudio for id in ids]
 
+# EN PROCESO
 def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -206,6 +231,7 @@ def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
         miAudio=song
     )
 
+# SIN COMPROBAR
 def remove_song_from_history(user_email, song_id): #Se elimina la cancion del historial
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -213,11 +239,12 @@ def remove_song_from_history(user_email, song_id): #Se elimina la cancion del hi
 
 #DAOs DE COLA
 
-def get_user_queue(user_email): #Devuelve la cola de reproduccion del usuario devuelta como VO
+'''def get_user_queue(user_email): #Devuelve la cola de reproduccion del usuario devuelta como VO
     user = Usuario.objects.get(pk=user_email)
     ids = Cola.objects.filter(miUsuario=user)
-    return [Cola.objects.get(pk=id).miAudio for id in ids]
+    return [Cola.objects.get(pk=id).miAudio for id in ids]'''
 
+# COMPROBADO
 def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de reproduccion
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -226,11 +253,13 @@ def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de r
         miAudio=song
     )
 
+# SIN COMPROBAR
 def remove_song_from_queue(user_email, song_id): #Se elimina la cancion de la cola de reproduccion
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
     Cola.objects.filter(miUsuario=user, miAudio=song).delete()
 
+# COMPROBADO
 def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de reproduccion
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -242,6 +271,7 @@ def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de r
 # lo hacemos? no se si dijimos si se podía o no añadir un episodio a la cola
 # def add_episode_to_queue(user_email, episode_id)
 
+# COMPROBADO
 def get_queue_from_user(user_email): #Devuelve la cola de reproduccion del usuario devuelta como VO
     user = Usuario.objects.get(pk=user_email)
     cola = Cola.objects.filter(miUsuario=user)
@@ -250,9 +280,11 @@ def get_queue_from_user(user_email): #Devuelve la cola de reproduccion del usuar
 
 #DAOs DE GENERO
     
+# SIN COMPROBAR
 def get_genres(): #Devuelve todos los generos
     return Genero.objects.all()
 
+# COMPORBADO ?
 def get_genre_songs(genre_name): #Devuelve todas las canciones de un genero dado su nombre
     genre = Genero.objects.get(nombre=genre_name)
     ids = Pertenecen.objects.filter(miGenero=genre)
@@ -260,50 +292,60 @@ def get_genre_songs(genre_name): #Devuelve todas las canciones de un genero dado
 
 #DAOs DE ALBUM
 
+# SIN COMPROBAR
 def get_album_songs(album_id): #Devuelve todas las canciones de un album dado su id
     album = Album.objects.get(pk=album_id)
     return Cancion.objects.filter(miAlbum=album)
 
+# SIN COMPROBAR
 def get_album_by_id(album_id): #Devuelve el album dado su id
     return Album.objects.get(pk=album_id)
 
+# SIN COMPROBAR
 def get_album_by_name(album_name): #Devuelve el album dado su nombre
     return Album.objects.get(nombre=album_name)
 
 #DAOs DE CAPITULO
 
 #MIRAR SI ESTÁ BIEN
+# SIN COMPROBAR
 def create_episode(nombre, descripcion): #Se crea el capitulo
     return Capitulo.objects.create(
         nombre=nombre,
         descripcion=descripcion
     )
 
+# SIN COMPROBAR
 def get_episode_by_id(episode_id): #Devuelve el capitulo dado su id
     return Capitulo.objects.get(pk=episode_id)
 
+# SIN COMPROBAR
 def get_episode_podcast(episode_id): #Devuelve el podcast de un episodio dado su id
     episode = Capitulo.objects.get(pk=episode_id)
     return episode.miPodcast
 
 #DAOs DE PODCAST
-
+# SIN COMPROBAR
 def get_podcast_episodes(podcast_id): #Devuelve todos los capitulos de un podcast dado su id
     podcast = Podcast.objects.get(pk=podcast_id)
     return Capitulo.objects.filter(miPodcast=podcast)
 
+# SIN COMPROBAR
 def get_podcast_by_id(podcast_id): #Devuelve el podcast dado su id
     return Podcast.objects.get(pk=podcast_id)
 
+# SIN COMPROBAR
 # NO SE SI ESTÁ BIEN
 def get_podcast_by_name(podcast_name): #Devuelve el podcast dado su nombre
     return Podcast.objects.get(nombre=podcast_name)
 
+# SIN COMPROBAR
 def get_podcast_genres(podcast_id): #Devuelve los generos de un podcast dado su id
     podcast = Podcast.object.get(pk=podcast_id)
     ids = Pertenecen.objects.filter(miAudio=podcast)
     return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
 
+# SIN COMPROBAR
 # MIRAR SI ESTÁ BIEN
 def get_podcast_hosts(podcast_id): #Devuelve los presentadores de un podcast dado su id
     podcast = Podcast.objects.get(pk=podcast_id)

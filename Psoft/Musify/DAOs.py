@@ -70,11 +70,10 @@ def are_friends(user_email, friend_email): #Devuelve si dos usuarios son amigos
 
 #DAOs DE PLAYLIST
 
-# SIN COMPROBAR
-def get_playlists(user_email): #Devuelve todas las playlists en las que el usuario colabora devueltas como VO
+'''def get_playlists(user_email): #Devuelve todas las playlists en las que el usuario colabora devueltas como VO
     user = Usuario.objects.get(pk=user_email)
     ids = Colabora.objects.filter(miUsuario=user)
-    return [Colabora.objects.get(pk=id).miPlaylist for id in ids]
+    return [Colabora.objects.get(pk=id).miPlaylist for id in ids]'''
 
 # COMPROBADO
 def create_playlist(user_email, nombre, publica): #Se crea sin colaboradores
@@ -114,7 +113,7 @@ def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playl
         miPlaylist=playlist
     )
 
-# SIN COMPROBAR
+# COMPROBADO
 def remove_song_from_playlist(playlist_id, song_id): #Se elimina la cancion de la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
     song = Cancion.objects.get(pk=song_id)
@@ -231,7 +230,7 @@ def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
         miAudio=song
     )
 
-# SIN COMPROBAR
+# EN PROCESO
 def remove_song_from_history(user_email, song_id): #Se elimina la cancion del historial
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -253,7 +252,7 @@ def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de r
         miAudio=song
     )
 
-# SIN COMPROBAR
+# EN PROCESO
 def remove_song_from_queue(user_email, song_id): #Se elimina la cancion de la cola de reproduccion
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -268,6 +267,9 @@ def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de r
         miAudio=song
     )
 
+# EN PROCESO
+#def get_songs_from_queue():
+
 # lo hacemos? no se si dijimos si se podía o no añadir un episodio a la cola
 # def add_episode_to_queue(user_email, episode_id)
 
@@ -279,23 +281,39 @@ def get_queue_from_user(user_email): #Devuelve la cola de reproduccion del usuar
     return songs
 
 #DAOs DE GENERO
-    
+
+# EN PROCESO
+def create_genre(nombre): #Crea y devuelve el genero como vo
+    return Genero.objects.create(
+        nombre=nombre
+    )
+
+# EN PROCESO
+def get_genre_by_name(nombre):
+    return Genero.objects.get(pk=nombre)
+
 # SIN COMPROBAR
 def get_genres(): #Devuelve todos los generos
     return Genero.objects.all()
 
-# COMPORBADO ?
+# SIN COMPROBAR, no se si esta bien el hecho de q haya puesto print aqui ?
 def get_genre_songs(genre_name): #Devuelve todas las canciones de un genero dado su nombre
     genre = Genero.objects.get(nombre=genre_name)
     ids = Pertenecen.objects.filter(miGenero=genre)
-    return [Pertenecen.objects.get(pk=id).miAudio for id in ids]
+    for id in ids:
+        print(Pertenecen.objects.get(pk=id.id).miAudio.nombre + "\n")
 
 #DAOs DE ALBUM
 
+def create_album(album_vo): #Se crea el album sin canciones
+    return Album.objects.create(
+        nombre=album_vo.nombre
+    )
+
 # SIN COMPROBAR
-def get_album_songs(album_id): #Devuelve todas las canciones de un album dado su id
-    album = Album.objects.get(pk=album_id)
-    return Cancion.objects.filter(miAlbum=album)
+def get_album_songs(album_vo): #Devuelve todas las canciones de un album
+    album = Album.objects.get(pk=album_vo.id)
+    return Cancion.objects.filter(miAlbum=album) #Devuelve todas las canciones??
 
 # SIN COMPROBAR
 def get_album_by_id(album_id): #Devuelve el album dado su id
@@ -304,6 +322,12 @@ def get_album_by_id(album_id): #Devuelve el album dado su id
 # SIN COMPROBAR
 def get_album_by_name(album_name): #Devuelve el album dado su nombre
     return Album.objects.get(nombre=album_name)
+
+def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
+    album = Album.objects.get(pk=album_vo.id)
+    song = Cancion.objects.get(pk=song_vo.id)
+    song.miAlbum = album
+    song.save()
 
 #DAOs DE CAPITULO
 
@@ -351,6 +375,14 @@ def get_podcast_hosts(podcast_id): #Devuelve los presentadores de un podcast dad
     podcast = Podcast.objects.get(pk=podcast_id)
     return podcast.presentadores
 
+# DAOs de pertenecer
+
+# SIN COMPROBAR
+def create_pertenecen(miGenero_vo, miAudio_vo):
+    return Pertenecen.objects.create(
+        miGenero=miGenero_vo,
+        miAudio=miAudio_vo
+    )
 
 
 '''def get_episode_audio(episode_id): #Devuelve el audio de un capitulo dado su id

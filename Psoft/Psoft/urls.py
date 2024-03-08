@@ -31,5 +31,6 @@ urlpatterns = [
     path('testSong/', views.test_song, name='test_song'),
     path('testGenreSongs/', views.test_get_genre_songs, name='test_get_genre_songs'),
     path('testUpdateUser/', views.test_update_user, name='test_update_user'),
+    path('testRemoveSongPlaylist/', views.test_remove_song_from_playlist, name="test_remove_song_from_playlist"),
     path('', views.home, name='home')
 ]

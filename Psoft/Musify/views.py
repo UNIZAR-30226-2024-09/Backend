@@ -3,6 +3,10 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Favorito, Cola, Genero, Pertenecen, Album
 from . import DAOs
+from Psoft.serializers import UserSerializer
+from rest_framework import viewsets
+
+
 def home(request):
     text = "Home page"
     return HttpResponse(text, content_type='text/plain')
@@ -240,3 +244,10 @@ def test_album(request):
             print(cancion.nombre + "\n")
     return HttpResponse(status=200)
 
+
+
+
+#TEST API
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all()
+    serializer_class = UserSerializer

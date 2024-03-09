@@ -23,7 +23,10 @@ def create_user(user_vo): #Se crea el usuario sin amigos
     return Usuario.objects.create(
         correo=(user_vo.correo).lower(), #Se guarda en minusculas ya que en el correo electronico no importa la capitalizacion
         nombre=user_vo.nombre,
-        contrasegna=user_vo.contrasegna
+        contrasegna=user_vo.contrasegna,
+        nacimiento=user_vo.nacimiento,
+        sexo=user_vo.sexo,
+        pais=user_vo.pais
     )
 
 # COMPROBADO

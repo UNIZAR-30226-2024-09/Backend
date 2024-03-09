@@ -5,6 +5,13 @@ from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabo
 from . import DAOs
 from Psoft.serializers import UserSerializer
 from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny
+
+
 
 
 def home(request):
@@ -251,3 +258,42 @@ def test_album(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer
+
+'''{
+    "username": "nerea@ejemplo.com",
+    "password": "nerea"
+}'''
+
+class LoginAPIView(APIView): #Utiliza formato json estandar(el de arriba)
+    permission_classes = [AllowAny]
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        # Authenticate user
+        user = authenticate(correo='user@example.com', password='password')
+
+        if user is not None:
+            # User is authenticated, return success response
+            return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
+        else:
+            # Invalid credentials, return error response
+            return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class UserRegistrationAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        nombre = request.data.get('nombre')
+        sexo = request.data.get('sexo')
+        nacimiento = request.data.get('nacimiento')
+        contrasegna = request.data.get('contrasegna')
+        pais = request.data.get('pais')
+        user = Usuario.objects.create(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
+        # Check if the username is already taken
+        if Usuario.objects.filter(correo=correo).exists():
+            return Response({'error': 'Username already taken'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create the user
+        DAOs.create_user(user)
+        return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)

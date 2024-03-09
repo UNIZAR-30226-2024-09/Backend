@@ -21,7 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-5igl^@3e9fslzw!4po1&i85s4w7dw*#lqz)%zuu9ow5ao65iz('
-
+AUTHENTICATION_BACKENDS = [
+    'Musify.backends.CorreoBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

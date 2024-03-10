@@ -25,9 +25,18 @@ from .serializers import UserSerializer
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet,basename='userstest') #Esto son las "urls" de la api asi que habrá que traducir las vistas a datos en
                                             #formato serializado para poder atender las callas de la api, como en el del ejemplo
-router.register(r'login', views.LoginAPIView,basename='login' )  # Register LoginAPIView with specified basename
+router.register(r'login', views.LoginAPIView,basename='login' )
 
-router.register(r'register', views.UserRegistrationAPIView,basename='register' )  # Register UserRegistrationAPIView with specified basename
+router.register(r'register', views.UserRegistrationAPIView,basename='register' )
+router.register(r'updateUser', views.UserUpdateAPIView,basename='updateUser' ) 
+router.register(r'createArtist', views.CreateArtistAPIView,basename='createArtist' ) 
+
+
+
+
+
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('testFriends/', views.test_are_friends, name='test_are_friends'),
@@ -48,4 +57,6 @@ urlpatterns = [
     #path('', include(router.urls)),
     path('login/', views.LoginAPIView.as_view(), name='login'),
     path('register/', views.UserRegistrationAPIView.as_view(), name='register'),
+    path('updateUser/', views.UserUpdateAPIView.as_view(), name='updateUser'),
+    path('createArtist/', views.CreateArtistAPIView.as_view(), name='createArtist'),
     ]

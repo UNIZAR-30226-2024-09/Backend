@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.http import HttpResponse
-from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Favorito, Cola, Genero, Pertenecen, Album
+from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Favorito, Cola, Genero, Pertenecen, Album, Artista
 from . import DAOs
 from Psoft.serializers import UserSerializer
 from rest_framework import viewsets
@@ -156,7 +156,7 @@ def test_update_user(request):
         contrasegna='Paquito',
         pais='Espana'
     )
-    DAOs.update_user(user_vo.correo, usuario_actualizado)
+    DAOs.update_user(usuario_actualizado)
     user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
     print("datos actuales de " + "\n" + user_vo.correo + "\n"  + user_vo.nombre + "\n" + user_vo.sexo + "\n" + str(user_vo.nacimiento) + "\n" + user_vo.contrasegna + "\n" + user_vo.pais + "\n")
     return HttpResponse(status=200)
@@ -255,14 +255,16 @@ def test_album(request):
 
 
 #TEST API
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet): #Works as expected
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer
 
-'''{
+'''EJEMPLO DE FORMATO JSON PARA LOGIN
+{
     "username": "nerea@ejemplo.com",
     "password": "nerea"
-}'''
+}
+'''
 
 class LoginAPIView(APIView): #Utiliza formato json estandar(el de arriba)
     permission_classes = [AllowAny]
@@ -271,7 +273,7 @@ class LoginAPIView(APIView): #Utiliza formato json estandar(el de arriba)
         password = request.data.get('password')
 
         # Authenticate user
-        user = authenticate(correo='user@example.com', password='password')
+        user = authenticate(correo=username, password=password)
 
         if user is not None:
             # User is authenticated, return success response
@@ -280,7 +282,17 @@ class LoginAPIView(APIView): #Utiliza formato json estandar(el de arriba)
             # Invalid credentials, return error response
             return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
-class UserRegistrationAPIView(APIView):
+'''EJEMPLO DE FORMATO JSON PARA REGISTRO
+{
+    "correo": "john.doe@example.com",
+    "nombre": "John Doe",
+    "sexo": "Male",
+    "nacimiento": "1985-03-10",
+    "contrasegna": "5U3rP@55w0rd",
+    "pais": "United States"
+}
+'''
+class UserRegistrationAPIView(APIView): #Works as expected
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo')
@@ -297,3 +309,33 @@ class UserRegistrationAPIView(APIView):
         # Create the user
         DAOs.create_user(user)
         return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+'''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO (igual que el de register)'''
+
+class UserUpdateAPIView(APIView): #Work as expected
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        nombre = request.data.get('nombre')
+        sexo = request.data.get('sexo')
+        nacimiento = request.data.get('nacimiento')
+        contrasegna = request.data.get('contrasegna')
+        pais = request.data.get('pais')
+        user = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
+        DAOs.update_user(user)
+        return Response({'message': 'User updated successfully'}, status=status.HTTP_201_CREATED)
+    
+
+'''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
+{
+    "nombre": "Kanye West",
+    "descripcion": "Kanye West descrption here..."
+}
+'''
+class CreateArtistAPIView(APIView): #Work as expected
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        descripcion = request.data.get('descripcion')
+        artista = Artista(nombre=nombre, descripcion=descripcion)
+        DAOs.create_artist(artista)
+        return Response({'message': 'Artist created successfully'}, status=status.HTTP_201_CREATED)

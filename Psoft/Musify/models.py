@@ -27,10 +27,16 @@ class Album(models.Model):
     nombre = models.CharField(max_length=255, null=False)
 
 
+class Artista(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=255, null=False)
+    #Foto sale de la api, si no la metemos aqui en binarios
+    descripcion = models.CharField(max_length=500, null=True) #Hasta donde tengo entendido tambien se puede sacar de la api pero por si acaso
+                                                                #que si sacamos muchas cosas nos caparan el limite de peticiones
 class Cancion(models.Model):
     id = models.AutoField(primary_key=True)
-    letra = models.CharField(max_length=255, null=False)
-    cantantes = models.CharField(max_length=255, null = False)
+    #letra = models.CharField(max_length=255, null=False)
+    cantantes = models.ManyToManyField(Artista)
     miAlbum = models.ForeignKey(Album, on_delete=models.CASCADE,null = True)
     puntuacion = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)

@@ -1,23 +1,22 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Favorito ,Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album
+from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Favorito ,Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista
+
+
+#DAOs DE ARTISTA
+def create_artist(artist_vo): #Se crea el artista
+    Artista.objects.create(nombre=artist_vo.nombre, descripcion=artist_vo.descripcion)
 
 #DAOs DE USUARIO
-
-"""
-def get_user_by_id(user_email): #Se busca el usuario por su ID
-    return Usuario.objects.get(pk=user_email)
-"""
 
 # COMPROBADO
 def get_user_by_correo(email): #Se busca el usuario por su correo
     return Usuario.objects.get(correo=email)
 
 # COMPROBAD0
-def check_user_password(user_vo, password): #se comprueba la contraseña del usuario (iniciar sesión)
-    user = Usuario.objects.get(pk=user_vo.correo)
+def check_user_password(correo, password): #se comprueba la contraseña del usuario (iniciar sesión)
+    user = Usuario.objects.get(correo=correo)
     return user.contrasegna == password
-
 # COMPROBADO
 def create_user(user_vo): #Se crea el usuario sin amigos
     return Usuario.objects.create(
@@ -30,9 +29,8 @@ def create_user(user_vo): #Se crea el usuario sin amigos
     )
 
 # COMPROBADO
-def update_user(user_email, user_vo): #Se actualiza el usuario, requiere el ID
-    user = Usuario.objects.get(pk=user_email)
-    #user.correo = user_vo.correo #no se debería cambiar no?
+def update_user(user_vo): #Se actualiza el usuario, cambiado para simplificado proceso API
+    user = Usuario.objects.get(pk=user_vo.correo)
     user.nombre = user_vo.nombre
     user.sexo = user_vo.sexo
     user.nacimiento = user_vo.nacimiento

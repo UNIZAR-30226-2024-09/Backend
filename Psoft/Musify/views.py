@@ -167,14 +167,52 @@ def test_remove_friend(request):
     DAOs.remove_friend(user_vo.correo, nuevo_amigo.correo)
     return HttpResponse(status=200)
 
+# DUDA con el dao get_genre_songs
 def test_get_genre_songs(request):
-    DAOs.create_genre('pop')
-    song_vo=DAOs.get_song_by_id(7)
-    pertenecen_vo = Pertenecen(
-        miGenero='pop',
-        miAudio=song_vo.id
-    )
-    songs=DAOs.get_genre_songs('pop')
+        #genre_vo = DAOs.create_genre('pop')
+    genre_vo = DAOs.get_genre_by_name('pop')
+    song_vo=DAOs.get_song_by_id(6)
+    '''pertenecen_vo = Pertenecen(
+        miGenero=genre_vo,
+        miAudio=song_vo
+    )'''
+    DAOs.create_pertenecen(genre_vo, song_vo)
+    songs=DAOs.get_genre_songs(genre_vo.nombre)
+    #for song in songs:
+    #    print(song.nombre + "\n")
+    return HttpResponse(status=200)
+
+def test_remove_song_from_playlist(request):
+    playlist_vo = DAOs.get_playlist_by_name("Playlist Privada de Paco")
+    song_vo = DAOs.get_song_by_name("cancion2")
+    DAOs.remove_song_from_playlist(playlist_vo.id, song_vo.id)
+    songs = DAOs.get_songs_from_playlist(playlist_vo.id)
+    for song in songs:
+        print(song.nombre + "\n")
+    return HttpResponse(status=200)
+
+# HAY QUE PROBARLO
+def test_remove_song_from_history(request):
+    user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
+    song_vo = DAOs.get_song_by_name("cancion2")
+    historial_vo = DAOs.get_user_history(user_vo.correo)
+    print("Historial de Paco antes de eliminar cancion2: ")
+    if historial_vo != None:
+        for song in historial_vo:
+            print(song.nombre + "\n")
+    DAOs.remove_song_from_history(user_vo.correo, song_vo.id)
+    print("Historial de Paco despues de eliminar cancion2: ")
+    historial_vo = DAOs.get_user_history(user_vo.correo)
+    if historial_vo != None:
+        for song in historial_vo:
+            print(song.nombre + "\n")
+    return HttpResponse(status=200)
+
+def test_remove_song_from_queue(request):
+    user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
+    song_vo = DAOs.get_song_by_id(2)
+    DAOs.remove_song_from_queue(user_vo.correo, song_vo.id)
+    songs = DAOs.get_songs_from_queue(playlist_vo.id)
     for song in songs:
         print(song.nombre + "\n")
     return HttpResponse(status=200)
@@ -235,21 +273,17 @@ def test_album(request):
         nombre='album de Paco'
     )
     DAOs.create_album(album_vo)
-    album_vo = DAOs.get_album_by_name("album de Paco")
-    print("Canciones del album antes de añadir: ")
+    print(DAOs.get_album_by_name("album de Paco").nombre)
     canciones = DAOs.get_album_songs(album_vo)
-    if canciones != None:
-        for cancion in canciones:
-            print(cancion.nombre + "\n")
-    album_vo = DAOs.get_album_by_id(1)
-    cancion = DAOs.get_song_by_id(2)
-    DAOs.add_song_to_album(album_vo, cancion)
-    print("Canciones del album despues de añadir: ")
+    print("Canciones del album de Paco antes de añadir cancion2: ")
+    for cancion in canciones:
+        print(cancion.nombre + "\n")
+    print("Canciones del album de Paco despues de añadir cancion2: ")
+    cancion_vo = DAOs.get_song_by_name("cancion2")
+    DAOs.add_song_to_album(album_vo, cancion_vo)
     canciones = DAOs.get_album_songs(album_vo)
-    if canciones != None:
-        for cancion in canciones:
-            print(cancion.nombre + "\n")
-    return HttpResponse(status=200)
+    for cancion in canciones:
+        print(cancion.nombre + "\n")
 
 
 

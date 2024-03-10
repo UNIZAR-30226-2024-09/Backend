@@ -29,6 +29,14 @@ def create_user(user_vo): #Se crea el usuario sin amigos
     )
 
 # COMPROBADO
+def exists_user(email): #Devuelve true si el usuario existe, false en caso contrario (?)
+    try:
+        usuario = Usuario.objects.get(correo=email)
+        return True
+    except Usuario.DoesNotExist:
+        return False    
+
+# COMPROBADO
 def update_user(user_vo): #Se actualiza el usuario, cambiado para simplificado proceso API
     user = Usuario.objects.get(pk=user_vo.correo)
     user.nombre = user_vo.nombre
@@ -148,8 +156,8 @@ def get_playlist_by_name(playlist_name): #devuelve una playlist dado su nombre
 def create_song(song_vo): #Se crea la cancion sin generos
     return Cancion.objects.create(
         nombre=song_vo.nombre,
-        letra=song_vo.letra,
-        cantantes=song_vo.cantantes,
+        #letra=song_vo.letra,
+        #cantantes=song_vo.cantantes,
         miAlbum=song_vo.miAlbum,
         puntuacion=song_vo.puntuacion
     )
@@ -220,8 +228,9 @@ def get_song_rating(song_id): #Devuelve la puntuación de una canción
 # EN PROCESO
 def get_user_history(user_email): #Devuelve el historial de escucha del usuario devuelto como VO
     user = Usuario.objects.get(pk=user_email)
-    ids = Historial.objects.filter(miUsuario=user)
-    return [Historial.objects.get(pk=id).miAudio for id in ids]
+    historial = Historial.objects.filter(miUsuario=user)
+    songs = [Historial.objects.get(pk=historial_object.id).miAudio for historial_object in historial]
+    return songs
 
 # EN PROCESO
 def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
@@ -260,14 +269,6 @@ def remove_song_from_queue(user_email, song_id): #Se elimina la cancion de la co
     song = Cancion.objects.get(pk=song_id)
     Cola.objects.filter(miUsuario=user, miAudio=song).delete()
 
-# COMPROBADO
-def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de reproduccion
-    user = Usuario.objects.get(pk=user_email)
-    song = Cancion.objects.get(pk=song_id)
-    Cola.objects.create(
-        miUsuario=user,
-        miAudio=song
-    )
 
 # lo hacemos? no se si dijimos si se podía o no añadir un episodio a la cola
 # def add_episode_to_queue(user_email, episode_id)

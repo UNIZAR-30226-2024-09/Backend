@@ -73,10 +73,21 @@ def test_password_view(request):
         print("Contraseña incorrecta")
     return HttpResponse(status=200)
 
-# MAL
+# COMPROBADO pero quitando campos de Cancion de models.py
 def test_add_song_to_history(request):
+    cantantes='a, b, c'
+    album_vo = DAOs.get_album_by_id(1)
+    song_vo = Cancion(
+        nombre='cancion3',
+        #letra=' ',
+        #cantantes.set('a', 'b'), no se qué hay que poner aquí
+        miAlbum=album_vo,
+        puntuacion='5'
+    )
+    DAOs.create_song(song_vo)
+
     user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
-    song_vo = DAOs.get_song_by_id(2)
+    song_vo = DAOs.get_song_by_id(16)
     DAOs.add_song_to_history(user_vo.correo, song_vo.id)
     history = DAOs.get_user_history("Paco@gmail.com")
     if history != None:
@@ -86,19 +97,20 @@ def test_add_song_to_history(request):
         print("No hay canciones en el historial")
     return HttpResponse(status=200)
 
-# MAL
+# COMPROBADO
 def test_remove_user(request):
     nuevo_usuario = Usuario(
         correo='ejemplo@gmail.com',
         nombre='ej',
         sexo='',
-        nacimiento=timezone.now(),
+        nacimiento='2000-5-25',
         contrasegna='ej',
         pais=''
     )
     DAOs.create_user(nuevo_usuario)
-    DAOs.remove_user(nuevo_usuario.correo)
-    if DAOs.get_user_by_correo("ejemplo@gmail.com") == None:
+    DAOs.remove_user('ejemplo@gmail.com')
+    existe = DAOs.exists_user('ejemplo@gmail.com')
+    if existe == False:
         print("Usuario eliminado")
     else:
         print("Usuario no eliminado")
@@ -167,7 +179,7 @@ def test_remove_friend(request):
     DAOs.remove_friend(user_vo.correo, nuevo_amigo.correo)
     return HttpResponse(status=200)
 
-# DUDA con el dao get_genre_songs
+# COMPROBADO
 def test_get_genre_songs(request):
         #genre_vo = DAOs.create_genre('pop')
     genre_vo = DAOs.get_genre_by_name('pop')
@@ -191,28 +203,36 @@ def test_remove_song_from_playlist(request):
         print(song.nombre + "\n")
     return HttpResponse(status=200)
 
-# HAY QUE PROBARLO
+# COMPROBADO
 def test_remove_song_from_history(request):
     user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
-    song_vo = DAOs.get_song_by_name("cancion2")
+    song_vo = DAOs.get_song_by_name("cancion1")
     historial_vo = DAOs.get_user_history(user_vo.correo)
-    print("Historial de Paco antes de eliminar cancion2: ")
+    print("Historial de Paco antes de eliminar cancion1: ")
     if historial_vo != None:
         for song in historial_vo:
             print(song.nombre + "\n")
     DAOs.remove_song_from_history(user_vo.correo, song_vo.id)
-    print("Historial de Paco despues de eliminar cancion2: ")
+    print("Historial de Paco despues de eliminar cancion1: ")
     historial_vo = DAOs.get_user_history(user_vo.correo)
     if historial_vo != None:
         for song in historial_vo:
             print(song.nombre + "\n")
     return HttpResponse(status=200)
 
+
+#COMPROBADO
 def test_remove_song_from_queue(request):
-    user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
-    song_vo = DAOs.get_song_by_id(2)
+    user_vo = DAOs.get_user_by_correo("john.doe@example.com")
+    song_vo = DAOs.get_song_by_id(15)
+    DAOs.add_song_to_queue(user_vo.correo, song_vo.id)
+    print("Cola después de añadir una cancion: ")
+    songs = DAOs.get_queue_from_user(user_vo.correo)
+    for song in songs:
+        print(song.nombre + "\n")
     DAOs.remove_song_from_queue(user_vo.correo, song_vo.id)
-    songs = DAOs.get_songs_from_queue(playlist_vo.id)
+    print("Cola después de eliminar la cancion: ")
+    songs = DAOs.get_queue_from_user(user_vo.correo)
     for song in songs:
         print(song.nombre + "\n")
     return HttpResponse(status=200)
@@ -234,57 +254,24 @@ def test_remove_song_from_playlist(request):
             print(cancion.nombre + "\n")
     return HttpResponse(status=200)
 
-# MAL, INTENTAR CUANDO SE CONSIGA EL ADD SONG TO HISTORY
-def test_remove_song_from_history(request):
-    user_vo = DAOs.get_user_by_correo("Paco@gmail.com")
-    historial = DAOs.get_user_history(user_vo.correo)
-    print("Canciones del historial antes de eliminar una cancion: ")
-    if historial != None:
-        for cancion in historial:
-            print(cancion.nombre + "\n")
-    DAOs.remove_song_from_history(user_vo.correo, 7)
-    historial = DAOs.get_user_history(user_vo.correo)
-    print("Canciones del historial despues de eliminar una cancion: ")
-    if historial != None:
-        for cancion in historial:
-            print(cancion.nombre + "\n")
-    return HttpResponse(status=200)
-
-# HAY QUE PROBARLO
-def test_remove_song_from_queue(request):
-    user_vo = DAOs.get_user_by_correo("PacoPaco@gmail.com")
-    song_vo = DAOs.get_song_by_id(2)
-    print("Canciones de la cola antes de eliminar una cancion: ")
-    queue = DAOs.get_queue_from_user(user_vo.correo)
-    if queue != None:
-        for cancion in queue:
-            print(cancion.nombre + "\n")
-    DAOs.remove_song_from_queue(user_vo.correo, song_vo.id)
-    print("Canciones de la cola despues de eliminar una cancion: ")
-    queue = DAOs.get_queue_from_user(user_vo.correo)
-    if queue != None:
-        for cancion in queue:
-            print(cancion.nombre + "\n")
-    return HttpResponse(status=200)
-
-# HAY QUE PROBARLO
+# COMPROBADO
 def test_album(request):
     album_vo = Album(
-        nombre='album de Paco'
+        nombre='album de Paco5'
     )
-    DAOs.create_album(album_vo)
-    print(DAOs.get_album_by_name("album de Paco").nombre)
+    album_vo = DAOs.create_album(album_vo)
+    print(DAOs.get_album_by_name("album de Paco5").nombre)
     canciones = DAOs.get_album_songs(album_vo)
-    print("Canciones del album de Paco antes de añadir cancion2: ")
+    print("Canciones del album de Paco5 antes de añadir cancion2: ")
     for cancion in canciones:
         print(cancion.nombre + "\n")
-    print("Canciones del album de Paco despues de añadir cancion2: ")
+    print("Canciones del album de Paco5 despues de añadir cancion2: ")
     cancion_vo = DAOs.get_song_by_name("cancion2")
     DAOs.add_song_to_album(album_vo, cancion_vo)
     canciones = DAOs.get_album_songs(album_vo)
     for cancion in canciones:
         print(cancion.nombre + "\n")
-
+    return HttpResponse(status=200)
 
 
 

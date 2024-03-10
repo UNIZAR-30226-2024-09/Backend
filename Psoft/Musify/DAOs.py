@@ -46,12 +46,12 @@ def update_user(user_vo): #Se actualiza el usuario, cambiado para simplificado p
     user.pais = user_vo.pais
     user.save()
 
-# EN PROCESO
+# COMPROBADO
 def remove_user(user_email): #Se elimina el usuario y todas sus relaciones
     user = Usuario.objects.get(pk=user_email)
     user.delete()
 
-# COMPROBADO ?
+# COMPROBADO
 def get_friends(user_email): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
     user = Usuario.objects.get(correo=user_email)
     amigos = Amigo.objects.filter(micorreo1=user).all() | Amigo.objects.filter(micorreo2=user).all()
@@ -66,7 +66,7 @@ def add_friend(user_email, friend_id): #Se crean las relaciones de amistad
         micorreo2=friend
     )
 
-# COMPROBADO ?
+# COMPROBADO
 def remove_friend(user_email, friend_id): #Se eliminan las relaciones de amistad
     user = Usuario.objects.get(pk=user_email)
     friend = Usuario.objects.get(pk=friend_id)
@@ -152,7 +152,7 @@ def get_playlist_by_name(playlist_name): #devuelve una playlist dado su nombre
 
 #DAOs DE CANCION
 
-# EN PROCESO
+# COMPROBADO
 def create_song(song_vo): #Se crea la cancion sin generos
     return Cancion.objects.create(
         nombre=song_vo.nombre,
@@ -183,32 +183,32 @@ def remove_song_from_favorites(user_email, song_id): #Se elimina la cancion de f
     song = Cancion.objects.get(pk=song_id)
     Favorito.objects.filter(miUsuario=user, miAudio=song).delete()
 
-# COMPROBADO ?
+# SIN COMPROBAR
 def get_song_genres(song_id): #Devuelve los generos de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     ids = Pertenecen.objects.filter(miAudio=song)
     return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
 
 # NO SE SI ESTÁ BIEN
-# EN PROCESO
+# COMPROBADO
 def get_song_by_name(song_name): #Devuelve la cancion dado su nombre
     return Cancion.objects.get(nombre=song_name)
 
-# COMPROBADO ?
+# COMPROBADO
 def get_song_by_id(song_id): #Devuelve la cancion dado su id
     return Cancion.objects.get(pk=song_id)
 
-# EN PROCESO
+# EN PROCESO, está en la view q no saca nada por la terminal
 def get_song_album(song_id): #Devuelve el album de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     return song.miAlbum
 
-# EN PROCESO
+# EN PROCESO, está en la view q no saca nada por la terminal
 def get_song_artists(song_id): #Devuelve los artistas de una cancion dado su id
     song = Cancion.objects.get(pk=song_id)
     return song.cantantes
 
-# SIN COMPROBAR
+# SIN COMPROBAR (QUITAR QUIZÁS)
 def get_song_audio(song_id): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
     return Cancion.objects.get(pk=song_id).audio
 
@@ -225,14 +225,14 @@ def get_song_rating(song_id): #Devuelve la puntuación de una canción
 
 #DAOs DE HISTORIAL
 
-# EN PROCESO
+# COMPROBADO
 def get_user_history(user_email): #Devuelve el historial de escucha del usuario devuelto como VO
     user = Usuario.objects.get(pk=user_email)
     historial = Historial.objects.filter(miUsuario=user)
     songs = [Historial.objects.get(pk=historial_object.id).miAudio for historial_object in historial]
     return songs
 
-# EN PROCESO
+# COMPROBADO
 def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -241,7 +241,7 @@ def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
         miAudio=song
     )
 
-# EN PROCESO
+# COMPROBADO
 def remove_song_from_history(user_email, song_id): #Se elimina la cancion del historial
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -263,7 +263,7 @@ def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de r
         miAudio=song
     )
 
-# EN PROCESO
+# COMPROBADO
 def remove_song_from_queue(user_email, song_id): #Se elimina la cancion de la cola de reproduccion
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -305,32 +305,33 @@ def get_genre_songs(genre_name): #Devuelve todas las canciones de un genero dado
 
 #DAOs DE ALBUM
 
-# EN PROCESO
+# COMPROBADO
 def create_album(album_vo): #Se crea el album sin canciones
     return Album.objects.create(
         nombre=album_vo.nombre
     )
 
-# EN PROCESO
+# COMPROBADO
 def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
     album = Album.objects.get(pk=album_vo.id)
     song = Cancion.objects.get(pk=song_vo.id)
     song.miAlbum = album
     song.save()
 
-# EN PROCESO
+# COMPROBADO
 def get_album_songs(album_vo): #Devuelve todas las canciones de un album
     album = Album.objects.get(pk=album_vo.id)
     return Cancion.objects.filter(miAlbum=album) #Devuelve todas las canciones??
 
-# EN PROCESO
+# COMPROBADO
 def get_album_by_id(album_id): #Devuelve el album dado su id
     return Album.objects.get(pk=album_id)
 
-# EN PROCESO
+# COMPROBADO
 def get_album_by_name(album_name): #Devuelve el album dado su nombre
     return Album.objects.get(nombre=album_name)
 
+# COMPROBADO
 def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
     album = Album.objects.get(pk=album_vo.id)
     song = Cancion.objects.get(pk=song_vo.id)

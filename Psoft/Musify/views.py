@@ -341,7 +341,51 @@ class UserUpdateAPIView(APIView): #Work as expected
         user = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
         DAOs.update_user(user)
         return Response({'message': 'User updated successfully'}, status=status.HTTP_201_CREATED)
+
+class UserDeleteAPIView(APIView): #Work as expected
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        DAOs.remove_user(correo)
+        return Response({'message': 'User deleted successfully'}, status=status.HTTP_201_CREATED)
+
+class FriendAdditionAPIView(APIView): #Work as expected
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        amigo = request.data.get('amigo')
+        DAOs.add_friend(correo, amigo)
+        return Response({'message': 'Friend added successfully'}, status=status.HTTP_201_CREATED) 
     
+class GetFriendsAPIView(APIView): #Work as expected
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        friends = DAOs.get_friends(correo)
+        if friends != None:
+            return Response({'message': 'Sí que tiene amigos'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No tiene amigos'}, status=status.HTTP_200_OK)
+        
+class RemoveFriendAPIView(APIView): #Work as expected
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        amigo = request.data.get('amigo')
+        DAOs.remove_friend(correo, amigo)
+        return Response({'message': 'Friend removed successfully'}, status=status.HTTP_201_CREATED)
+    
+class AreFriendsAPIView(APIView): #Work as expected
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        amigo = request.data.get('amigo')
+        if DAOs.are_friends(correo, amigo) == True:
+            return Response({'message': 'Son amigos'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
+
+
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
 {
@@ -357,3 +401,4 @@ class CreateArtistAPIView(APIView): #Work as expected
         artista = Artista(nombre=nombre, descripcion=descripcion)
         DAOs.create_artist(artista)
         return Response({'message': 'Artist created successfully'}, status=status.HTTP_201_CREATED)
+    

@@ -18,6 +18,7 @@ def check_user_password(correo, password): #se comprueba la contraseña del usua
     user = Usuario.objects.get(correo=correo)
     return user.contrasegna == password
 # COMPROBADO
+# EN LA API
 def create_user(user_vo): #Se crea el usuario sin amigos
     return Usuario.objects.create(
         correo=(user_vo.correo).lower(), #Se guarda en minusculas ya que en el correo electronico no importa la capitalizacion
@@ -37,6 +38,7 @@ def exists_user(email): #Devuelve true si el usuario existe, false en caso contr
         return False    
 
 # COMPROBADO
+# EN LA API
 def update_user(user_vo): #Se actualiza el usuario, cambiado para simplificado proceso API
     user = Usuario.objects.get(pk=user_vo.correo)
     user.nombre = user_vo.nombre
@@ -47,17 +49,20 @@ def update_user(user_vo): #Se actualiza el usuario, cambiado para simplificado p
     user.save()
 
 # COMPROBADO
+# EN LA API
 def remove_user(user_email): #Se elimina el usuario y todas sus relaciones
     user = Usuario.objects.get(pk=user_email)
     user.delete()
 
 # COMPROBADO
+# EN LA API
 def get_friends(user_email): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
     user = Usuario.objects.get(correo=user_email)
     amigos = Amigo.objects.filter(micorreo1=user).all() | Amigo.objects.filter(micorreo2=user).all()
     return [amigo.micorreo1 if amigo.micorreo1 != user else amigo.micorreo2 for amigo in amigos]
 
 # COMPROBADO
+# EN LA API
 def add_friend(user_email, friend_id): #Se crean las relaciones de amistad
     user = Usuario.objects.get(pk=user_email)
     friend = Usuario.objects.get(pk=friend_id)
@@ -67,6 +72,7 @@ def add_friend(user_email, friend_id): #Se crean las relaciones de amistad
     )
 
 # COMPROBADO
+# EN LA API
 def remove_friend(user_email, friend_id): #Se eliminan las relaciones de amistad
     user = Usuario.objects.get(pk=user_email)
     friend = Usuario.objects.get(pk=friend_id)
@@ -74,6 +80,7 @@ def remove_friend(user_email, friend_id): #Se eliminan las relaciones de amistad
     Amigo.objects.filter(micorreo1=friend, micorreo2=user).delete()
 
 # COMPROBADO
+# EN LA API
 def are_friends(user_email, friend_email): #Devuelve si dos usuarios son amigos
     return Amigo.objects.filter(micorreo1=user_email, micorreo2=friend_email).exists() or Amigo.objects.filter(micorreo1=friend_email, micorreo2=user_email).exists()
 
@@ -189,7 +196,7 @@ def get_song_genres(song_id): #Devuelve los generos de una cancion dado su id
     ids = Pertenecen.objects.filter(miAudio=song)
     return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
 
-# NO SE SI ESTÁ BIEN
+
 # COMPROBADO
 def get_song_by_name(song_name): #Devuelve la cancion dado su nombre
     return Cancion.objects.get(nombre=song_name)

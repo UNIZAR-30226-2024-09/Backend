@@ -58,5 +58,9 @@ urlpatterns = [
     path('login/', views.LoginAPIView.as_view(), name='login'),
     path('register/', views.UserRegistrationAPIView.as_view(), name='register'),
     path('updateUser/', views.UserUpdateAPIView.as_view(), name='updateUser'),
+    path('deleteUser/', views.UserDeleteAPIView.as_view(), name='deleteUser'),
+    path('addFriend/', views.FriendAdditionAPIView.as_view(), name='addFriend'),
+    path('getFriends/', views.GetFriendsAPIView.as_view(), name='getFriends'),
+    path('removeFriend/', views.RemoveFriendAPIView.as_view(), name='removeFriend'),
     path('createArtist/', views.CreateArtistAPIView.as_view(), name='createArtist'),
     ]

@@ -384,6 +384,7 @@ class AreFriendsAPIView(APIView): #Work as expected
             return Response({'message': 'Son amigos'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
+            
 
 
 

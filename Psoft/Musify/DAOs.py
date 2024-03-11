@@ -93,6 +93,7 @@ def get_playlists(user_email): #Devuelve todas las playlists en las que el usuar
     return [Colabora.objects.get(pk=id).miPlaylist for id in ids]'''
 
 # COMPROBADO
+#EN LA API
 def create_playlist(user_email, nombre, publica): #Se crea sin colaboradores
     user = Usuario.objects.get(pk=user_email)
     playlist = Playlist.objects.create(
@@ -122,6 +123,7 @@ def get_playlists_from_user(user_email): #Devuelve todas las playlists del usuar
     return Playlist.objects.filter(colaboradores__miUsuario__correo=user_email)
 
 # COMPROBADO
+#EN LA API
 def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
     song = Cancion.objects.get(pk=song_id)
@@ -131,6 +133,7 @@ def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playl
     )
 
 # COMPROBADO
+#EN LA API
 def remove_song_from_playlist(playlist_id, song_id): #Se elimina la cancion de la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
     song = Cancion.objects.get(pk=song_id)
@@ -262,6 +265,7 @@ def remove_song_from_history(user_email, song_id): #Se elimina la cancion del hi
     return [Cola.objects.get(pk=id).miAudio for id in ids]'''
 
 # COMPROBADO
+#EN LA API
 def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de reproduccion
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -271,6 +275,7 @@ def add_song_to_queue(user_email, song_id): #Se añade la cancion a la cola de r
     )
 
 # COMPROBADO
+#EN LA API
 def remove_song_from_queue(user_email, song_id): #Se elimina la cancion de la cola de reproduccion
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)

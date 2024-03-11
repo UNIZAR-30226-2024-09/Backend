@@ -30,7 +30,11 @@ router.register(r'login', views.LoginAPIView,basename='login' )
 router.register(r'register', views.UserRegistrationAPIView,basename='register' )
 router.register(r'updateUser', views.UserUpdateAPIView,basename='updateUser' ) 
 router.register(r'createArtist', views.CreateArtistAPIView,basename='createArtist' ) 
-
+router.register(r'createPlaylist', views.CreatePlaylistAPIView,basename='createPlaylist' )
+router.register(r'addSongToPlaylist', views.AddSongToPlaylistAPIView,basename='addSongToPlaylist' )
+router.register(r'removeSongFromPlaylist', views.RemoveSongFromPlaylistAPIView,basename='removeSongFromPlaylist' )
+router.register(r'addSongToQueue', views.AddSongToQueueAPIView,basename='addSongToQueue' )
+router.register(r'removeSongFromQueue', views.RemoveSongFromQueueAPIView,basename='removeSongFromQueue' )
 
 
 

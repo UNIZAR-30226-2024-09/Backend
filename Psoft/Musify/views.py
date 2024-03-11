@@ -385,8 +385,55 @@ class AreFriendsAPIView(APIView): #Work as expected
         else:
             return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
             
+class CreatePlaylistAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        nombre = request.data.get('nombre')
+        privada = request.data.get('privada')
+        if Colabora.objects.filter(miUsuario=correo, miPlaylist=nombre).exists():
+            return Response({'error': 'Playlist already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        DAOs.create_playlist(correo, nombre, privada)
+        return Response({'message': 'Playlist created successfully'}, status=status.HTTP_201_CREATED)
 
+class AddSongToPlaylistAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        id_playlist = request.data.get('id_playlist')
+        id_cancion = request.data.get('id_cancion')
+        if Contiene.objects.filter(miAudio=id_cancion, miPlaylist=id_playlist).exists():
+            return Response({'error': 'Song already exists in playlist'}, status=status.HTTP_400_BAD_REQUEST)
+        DAOs.add_song_to_playlist(id_playlist, id_cancion)
+        return Response({'message': 'Song added to playlist successfully'}, status=status.HTTP_200_OK)
 
+class RemoveSongFromPlaylistAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        id_playlist = request.data.get('id_playlist')
+        id_cancion = request.data.get('id_cancion')
+        if not Contiene.objects.filter(miAudio=id_cancion, miPlaylist=id_playlist).exists():
+            return Response({'error': 'Song does not exist in playlist'}, status=status.HTTP_400_BAD_REQUEST)
+        DAOs.remove_song_from_playlist(id_playlist, id_cancion)
+        return Response({'message': 'Song removed from playlist successfully'}, status=status.HTTP_200_OK)
+
+class AddSongToQueueAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        id_cancion = request.data.get('id_cancion')
+        DAOs.add_song_to_queue(correo, id_cancion)
+        return Response({'message': 'Song added to queue successfully'}, status=status.HTTP_200_OK)
+
+class RemoveSongFromQueueAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        id_cancion = request.data.get('id_cancion')
+        if not Cola.objects.filter(miUsuario=correo, miAudio=id_cancion).exists():
+            return Response({'error': 'Song does not exist in queue'}, status=status.HTTP_400_BAD_REQUEST)
+        DAOs.remove_song_from_queue(correo, id_cancion)
+        return Response({'message': 'Song removed from queue successfully'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
 {

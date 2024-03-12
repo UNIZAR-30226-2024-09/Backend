@@ -310,23 +310,33 @@ class LoginAPIView(APIView): #Utiliza formato json estandar(el de arriba)
     "pais": "United States"
 }
 '''
-class UserRegistrationAPIView(APIView): #Works as expected
+import logging
+
+logger = logging.getLogger(__name__)
+class UserRegistrationAPIView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
-        correo = request.data.get('correo')
-        nombre = request.data.get('nombre')
-        sexo = request.data.get('sexo')
-        nacimiento = request.data.get('nacimiento')
-        contrasegna = request.data.get('contrasegna')
-        pais = request.data.get('pais')
+        correo = request.data.get('email')
+        nombre = request.data.get('name')
+        sexo = request.data.get('gender')
+        nacimiento = request.data.get('dateOfBirth')
+        contrasegna = request.data.get('password')
+        pais = request.data.get('country')
+
+        if not nombre:
+            return Response({'error': 'Name is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        logger.debug(f'Nombre recibido: {nombre}')
+
         user = Usuario.objects.create(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
-        # Check if the username is already taken
+
         if Usuario.objects.filter(correo=correo).exists():
             return Response({'error': 'Username already taken'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create the user
         DAOs.create_user(user)
         return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO (igual que el de register)'''
 
 class UserUpdateAPIView(APIView): #Work as expected

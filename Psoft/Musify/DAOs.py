@@ -106,6 +106,7 @@ def create_playlist(user_email, nombre, publica): #Se crea sin colaboradores
     )
 
 # COMPROBADO
+#EN LA API
 def update_playlist_details(playlist_id, nombre, publica): # Solo se puede cambiar el nombre(TODO: se puede poner foto)
     playlist = Playlist.objects.get(pk=playlist_id)
     playlist.nombre = nombre
@@ -163,6 +164,7 @@ def get_playlist_by_name(playlist_name): #devuelve una playlist dado su nombre
 #DAOs DE CANCION
 
 # COMPROBADO
+#EN LA API
 def create_song(song_vo): #Se crea la cancion sin generos
     return Cancion.objects.create(
         nombre=song_vo.nombre,
@@ -223,6 +225,7 @@ def get_song_audio(song_id): #Devuelve el audio de una cancion dado su id(Con la
     return Cancion.objects.get(pk=song_id).audio
 
 # EN PROCESO
+#EN LA API
 def add_song_rating(song_id, rating): #añade puntuación a una canción
     song = Cancion.objects.get(pk=song_id)
     song.puntuacion = rating
@@ -243,6 +246,7 @@ def get_user_history(user_email): #Devuelve el historial de escucha del usuario 
     return songs
 
 # COMPROBADO
+#EN LA API
 def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
     user = Usuario.objects.get(pk=user_email)
     song = Cancion.objects.get(pk=song_id)
@@ -318,12 +322,14 @@ def get_genre_songs(genre_name): #Devuelve todas las canciones de un genero dado
 #DAOs DE ALBUM
 
 # COMPROBADO
+#EN LA API
 def create_album(album_vo): #Se crea el album sin canciones
     return Album.objects.create(
         nombre=album_vo.nombre
     )
 
 # COMPROBADO
+#EN LA API
 def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
     album = Album.objects.get(pk=album_vo.id)
     song = Cancion.objects.get(pk=song_vo.id)
@@ -344,6 +350,7 @@ def get_album_by_name(album_name): #Devuelve el album dado su nombre
     return Album.objects.get(nombre=album_name)
 
 # COMPROBADO
+#EN LA API
 def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
     album = Album.objects.get(pk=album_vo.id)
     song = Cancion.objects.get(pk=song_vo.id)
@@ -352,13 +359,15 @@ def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
 
 #DAOs DE CAPITULO
 
-#MIRAR SI ESTÁ BIEN
+
 # SIN COMPROBAR
+#EN LA API sin acabar
 def create_episode(nombre, descripcion): #Se crea el capitulo
     return Capitulo.objects.create(
         nombre=nombre,
         descripcion=descripcion
     )
+    #aquí falta decir el podcast al que pertenece
 
 # SIN COMPROBAR
 def get_episode_by_id(episode_id): #Devuelve el capitulo dado su id

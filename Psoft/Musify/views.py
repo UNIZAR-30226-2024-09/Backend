@@ -396,6 +396,15 @@ class CreatePlaylistAPIView(APIView):
         DAOs.create_playlist(correo, nombre, privada)
         return Response({'message': 'Playlist created successfully'}, status=status.HTTP_201_CREATED)
 
+class UpdatePlaylistDetailsAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        id_playlist = request.data.get('id_playlist')
+        nombre = request.data.get('nombre')
+        publica = request.data.get('publica')
+        DAOs.update_playlist_details(id_playlist, nombre, publica)
+        return Response({'message': 'Playlist updated successfully'}, status=status.HTTP_200_OK)
+
 class AddSongToPlaylistAPIView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -417,6 +426,36 @@ class RemoveSongFromPlaylistAPIView(APIView):
         DAOs.remove_song_from_playlist(id_playlist, id_cancion)
         return Response({'message': 'Song removed from playlist successfully'}, status=status.HTTP_200_OK)
 
+# aquí falta el atributo cantantes
+class CreateSongAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        miAlbum = request.data.get('miAlbum')
+        puntuacion = request.data.get('puntuacion')
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion)
+        DAOs.create_song(cancion)
+        return Response({'message': 'Song created successfully'}, status=status.HTTP_201_CREATED)
+
+class AddSongRatingAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        id_cancion = request.data.get('id_cancion')
+        puntuacion = request.data.get('puntuacion')
+        DAOs.add_song_rating(id_cancion, puntuacion)
+        return Response({'message': 'Song rating added successfully'}, status=status.HTTP_200_OK)
+
+class AddSongToHistoryAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        id_cancion = request.data.get('id_cancion')
+        DAOs.add_song_to_history(correo, id_cancion)
+        return Response({'message': 'Song added to history successfully'}, status=status.HTTP_200_OK)
+
+# lo hacemos???
+#class RemoveSongFromHistoryAPIView(APIView):
+
 class AddSongToQueueAPIView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -434,6 +473,36 @@ class RemoveSongFromQueueAPIView(APIView):
             return Response({'error': 'Song does not exist in queue'}, status=status.HTTP_400_BAD_REQUEST)
         DAOs.remove_song_from_queue(correo, id_cancion)
         return Response({'message': 'Song removed from queue successfully'}, status=status.HTTP_200_OK)
+
+# no se si está bien
+class CreateAlbumAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        album = Album(nombre=nombre)
+        DAOs.create_album(album)
+        return Response({'message': 'Album created successfully'}, status=status.HTTP_201_CREATED)
+
+# no se si está bien
+class AddSongToAlbumAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre_album = request.data.get('nombre_album')
+        album = DAOs.get_album_by_name(nombre_album)
+        nombre_cancion = request.data.get('nombre_cancion')
+        cancion = DAOs.get_song_by_name(nombre_cancion)
+        if Canciones.objects.filter(nombre=nombre_cancion, miAlbum=album).exists():
+            return Response({'message': 'Song is already in album'}, status=status.HTTP_400_BAD_REQUEST)
+        DAOs.add_song_to_album(album, cancion)
+        return Response({'message': 'Song added to album successfully'}, status=status.HTTP_200_OK)
+
+# sin acabar
+class CreateEpisodeAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        descripcion = request.data.get('descripcion')
+        miPodcast = request.data.get('miPodcast')
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
 {

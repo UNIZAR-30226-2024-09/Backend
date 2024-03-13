@@ -341,15 +341,15 @@ class UserRegistrationAPIView(APIView): # funciona
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO (igual que el de register)'''
 
-class UserUpdateAPIView(APIView):
+class UserUpdateAPIView(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('correo')
-        nombre = request.data.get('nombre')
-        sexo = request.data.get('sexo')
-        nacimiento = request.data.get('nacimiento')
-        contrasegna = request.data.get('contrasegna')
-        pais = request.data.get('pais')
+        correo = request.data.get('email')
+        nombre = request.data.get('name')
+        sexo = request.data.get('gender')
+        nacimiento = request.data.get('dateOfBirth')
+        contrasegna = request.data.get('password')
+        pais = request.data.get('country')
         user = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
         DAOs.update_user(user)
         return Response({'message': 'User updated successfully'}, status=status.HTTP_200_OK)
@@ -357,15 +357,15 @@ class UserUpdateAPIView(APIView):
 class UserDeleteAPIView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('correo')
+        correo = request.data.get('email')
         DAOs.remove_user(correo)
         return Response({'message': 'User deleted successfully'}, status=status.HTTP_200_OK)
 
-class FriendAdditionAPIView(APIView):
+class FriendAdditionAPIView(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('correo')
-        amigo = request.data.get('amigo')
+        correo = request.data.get('email') # coger el correo de la sesión
+        amigo = request.data.get('friend') # coger el correo del amigo
         DAOs.add_friend(correo, amigo)
         return Response({'message': 'Friend added successfully'}, status=status.HTTP_200_OK) 
     
@@ -380,36 +380,38 @@ class GetFriendsAPIView(APIView):
             return Response({'message': 'No tiene amigos'}, status=status.HTTP_200_OK)
 
 
-class RemoveFriendAPIView(APIView): 
+class RemoveFriendAPIView(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('correo')
-        amigo = request.data.get('amigo')
+        correo = request.data.get('email') # coger el correo de la sesión
+        amigo = request.data.get('friend')
         DAOs.remove_friend(correo, amigo)
         return Response({'message': 'Friend removed successfully'}, status=status.HTTP_200_OK)
     
-class AreFriendsAPIView(APIView): #Work as expected
+class AreFriendsAPIView(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('correo')
-        amigo = request.data.get('amigo')
+        correo = request.data.get('email') # coger el correo de la sesión
+        amigo = request.data.get('friend')
         if DAOs.are_friends(correo, amigo) == True:
             return Response({'message': 'Son amigos'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
             
-class CreatePlaylistAPIView(APIView):
+class CreatePlaylistAPIView(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('correo')
+        correo = request.data.get('email')
         nombre = request.data.get('nombre')
-        privada = request.data.get('privada')
-        if Colabora.objects.filter(miUsuario=correo, miPlaylist=nombre).exists():
-            return Response({'error': 'Playlist already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        DAOs.create_playlist(correo, nombre, privada)
-        return Response({'message': 'Playlist created successfully'}, status=status.HTTP_200_OK)
+        publica = request.data.get('publica')
+        if Playlist.objects.filter(nombre=nombre).exists():            
+            if Colabora.objects.filter(miUsuario=correo, miPlaylist=DAOs.get_playlist_by_name(nombre).id).exists():
+                    return Response({'error': 'Playlist already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.create_playlist(correo, nombre, publica)
+            return Response({'message': 'Playlist created successfully'}, status=status.HTTP_200_OK)
 
-class UpdatePlaylistDetailsAPIView(APIView):
+class UpdatePlaylistAPIView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         id_playlist = request.data.get('id_playlist')
@@ -525,6 +527,13 @@ class CreateEpisodeAPIView(APIView):
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
         miPodcast = request.data.get('miPodcast')
+        if not nombre:
+            return Response({'error': 'Name is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        logger.debug(f'Nombre recibido: {nombre}')
+
+        DAOs.create_episode(nombre, descripcion, miPodcast)
+        return Response({'message': 'Episodio almacenado correctamente'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
 {

@@ -365,13 +365,13 @@ def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
 
 
 # SIN COMPROBAR
-#EN LA API sin acabar
-def create_episode(nombre, descripcion): #Se crea el capitulo
+#EN LA API
+def create_episode(nombre, descripcion, miPodcast): #Se crea el capitulo
     return Capitulo.objects.create(
         nombre=nombre,
-        descripcion=descripcion
+        descripcion=descripcion,
+        miPodcast=miPodcast
     )
-    #aquí falta decir el podcast al que pertenece
 
 # SIN COMPROBAR
 def get_episode_by_id(episode_id): #Devuelve el capitulo dado su id

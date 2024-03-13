@@ -72,6 +72,9 @@ urlpatterns = [
     path('addFriend/', views.FriendAdditionAPIView.as_view(), name='addFriend'),
     path('getFriends/', views.GetFriendsAPIView.as_view(), name='getFriends'),
     path('removeFriend/', views.RemoveFriendAPIView.as_view(), name='removeFriend'),
+    path('areFriends/', views.AreFriendsAPIView.as_view(), name='areFriends'),
+    path('createPlaylist/', views.CreatePlaylistAPIView.as_view(), name='createPlaylist'),
+    path('updatePlaylist/', views.UpdatePlaylistAPIView.as_view(), name='updatePlaylist'),
     path('createArtist/', views.CreateArtistAPIView.as_view(), name='createArtist'),
     path('getHistory/', views.GetUserHistoryAPIView.as_view(), name='getHistory'),
     ]

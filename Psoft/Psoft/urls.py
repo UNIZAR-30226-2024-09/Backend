@@ -41,6 +41,7 @@ router.register(r'addSongToQueue', views.AddSongToQueueAPIView,basename='addSong
 router.register(r'removeSongFromQueue', views.RemoveSongFromQueueAPIView,basename='removeSongFromQueue' )
 router.register(r'createAlbum', views.CreateAlbumAPIView,basename='createAlbum' )
 router.register(r'addSongToAlbum', views.AddSongToAlbumAPIView,basename='addSongToAlbum' )
+router.register(r'getHistory', views.GetUserHistoryAPIView,basename='getHistory' )
 
 
 
@@ -72,4 +73,5 @@ urlpatterns = [
     path('getFriends/', views.GetFriendsAPIView.as_view(), name='getFriends'),
     path('removeFriend/', views.RemoveFriendAPIView.as_view(), name='removeFriend'),
     path('createArtist/', views.CreateArtistAPIView.as_view(), name='createArtist'),
+    path('getHistory/', views.GetUserHistoryAPIView.as_view(), name='getHistory'),
     ]

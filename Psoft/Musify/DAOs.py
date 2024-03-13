@@ -120,6 +120,7 @@ def update_playlist_details(playlist_id, nombre, publica): # Solo se puede cambi
     playlist.delete()'''
 
 # COMPROBADO
+#EN LA API
 def get_playlists_from_user(user_email): #Devuelve todas las playlists del usuario devueltas como VO
     return Playlist.objects.filter(colaboradores__miUsuario__correo=user_email)
 
@@ -239,6 +240,7 @@ def get_song_rating(song_id): #Devuelve la puntuación de una canción
 #DAOs DE HISTORIAL
 
 # COMPROBADO
+#EN LA API
 def get_user_history(user_email): #Devuelve el historial de escucha del usuario devuelto como VO
     user = Usuario.objects.get(pk=user_email)
     historial = Historial.objects.filter(miUsuario=user)
@@ -247,9 +249,9 @@ def get_user_history(user_email): #Devuelve el historial de escucha del usuario 
 
 # COMPROBADO
 #EN LA API
-def add_song_to_history(user_email, song_id): #Se añade la cancion al historial
+def add_song_to_history(user_email, song): #Se añade la cancion al historial
     user = Usuario.objects.get(pk=user_email)
-    song = Cancion.objects.get(pk=song_id)
+    song = Cancion.objects.get(pk=song.id)
     Historial.objects.create(
         miUsuario=user,
         miAudio=song
@@ -290,6 +292,7 @@ def remove_song_from_queue(user_email, song_id): #Se elimina la cancion de la co
 # def add_episode_to_queue(user_email, episode_id)
 
 # COMPROBADO
+#EN LA API
 def get_queue_from_user(user_email): #Devuelve la cola de reproduccion del usuario devuelta como VO
     user = Usuario.objects.get(pk=user_email)
     cola = Cola.objects.filter(miUsuario=user)
@@ -337,6 +340,7 @@ def add_song_to_album(album_vo, song_vo): #Se añade la cancion al album
     song.save()
 
 # COMPROBADO
+#EN LA API
 def get_album_songs(album_vo): #Devuelve todas las canciones de un album
     album = Album.objects.get(pk=album_vo.id)
     return Cancion.objects.filter(miAlbum=album) #Devuelve todas las canciones??

@@ -98,6 +98,7 @@ DATABASES = {
         'PASSWORD': '8h6AHKYhHPaIGHQelqTMFARJWBsWAd',
         'HOST': 'br6tsjqxtewbdtcbulo6-postgresql.services.clever-cloud.com',
         'PORT': '50013',
+        'CONN_MAX_AGE': 0,
     }
 }
 

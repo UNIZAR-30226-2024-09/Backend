@@ -36,7 +36,7 @@ class Artista(models.Model):
 class Cancion(models.Model):
     id = models.AutoField(primary_key=True)
     #letra = models.CharField(max_length=255, null=False)
-    #cantantes = models.ManyToManyField(Artista)
+    cantantes = models.ManyToManyField(Artista)
     miAlbum = models.ForeignKey(Album, on_delete=models.CASCADE,null = True)
     puntuacion = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)

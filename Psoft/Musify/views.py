@@ -423,7 +423,15 @@ class UpdatePlaylistAPIView(APIView):
 class GetSongsFromPlaylistAPIView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email')
+        correo = request.data.get('email') # coger el correo de la sesión
+        playlist = request.data.get('playlist') # de dónde se coge la playlist?
+        # habría que mirar la tabla Colabora tmb?
+        songs = DAOs.get_songs_from_playlist(playlist.id)
+        if songs != None:
+            return Response({'songs': songs}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'La playlist no tiene canciones'}, status=status.HTTP_200_OK)
+        
         # ACABAR
 
 class AddSongToPlaylistAPIView(APIView):

@@ -14,4 +14,15 @@ class FriendsSerializer(serializers.ModelSerializer):
 class SongsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cancion
-    fields = ['nombre', 'cantantes', 'miAlbum']
+        fields = ['nombre', 'cantantes', 'miAlbum']
+
+class HistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Historial
+        fields = ['miUsuario', 'miAudio']
+
+class QueueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Cola
+        fields = ['miUsuario', 'miAudio']
+

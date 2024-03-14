@@ -4,6 +4,7 @@ from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Fav
 
 
 #DAOs DE ARTISTA
+
 def create_artist(artist_vo): #Se crea el artista
     Artista.objects.create(nombre=artist_vo.nombre, descripcion=artist_vo.descripcion)
 
@@ -17,6 +18,7 @@ def get_user_by_correo(email): #Se busca el usuario por su correo
 def check_user_password(correo, password): #se comprueba la contraseña del usuario (iniciar sesión)
     user = Usuario.objects.get(correo=correo)
     return user.contrasegna == password
+
 # COMPROBADO
 # EN LA API
 def create_user(user_vo): #Se crea el usuario sin amigos
@@ -142,6 +144,7 @@ def remove_song_from_playlist(playlist_id, song_id): #Se elimina la cancion de l
     Contiene.objects.filter(miAudio=song, miPlaylist=playlist).delete()
 
 # COMPROBADO
+#EN LA API
 def get_songs_from_playlist(playlist_id): #Devuelve las canciones de una playlist dado su id
     playlist = Playlist.objects.get(pk=playlist_id)
     

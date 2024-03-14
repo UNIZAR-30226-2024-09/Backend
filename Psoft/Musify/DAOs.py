@@ -5,14 +5,14 @@ from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Fav
 
 #DAOs DE ARTISTA
 
-def create_artist(artist_vo): #Se crea el artista
-    Artista.objects.create(nombre=artist_vo.nombre, descripcion=artist_vo.descripcion)
+def crearArtista(artistaVO): #Se crea el artista
+    Artista.objects.create(nombre=artistaVO.nombre, descripcion=artistaVO.descripcion)
 
 #DAOs DE USUARIO
 
 # COMPROBADO
-def get_user_by_correo(email): #Se busca el usuario por su correo
-    return Usuario.objects.get(correo=email)
+def get_user_by_correo(correo): #Se busca el usuario por su correo
+    return Usuario.objects.get(correo=correo)
 
 # COMPROBAD0
 def check_user_password(correo, password): #se comprueba la contraseña del usuario (iniciar sesión)
@@ -21,70 +21,70 @@ def check_user_password(correo, password): #se comprueba la contraseña del usua
 
 # COMPROBADO
 # EN LA API
-def create_user(user_vo): #Se crea el usuario sin amigos
+def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
     return Usuario.objects.create(
-        correo=(user_vo.correo).lower(), #Se guarda en minusculas ya que en el correo electronico no importa la capitalizacion
-        nombre=user_vo.nombre,
-        contrasegna=user_vo.contrasegna,
-        nacimiento=user_vo.nacimiento,
-        sexo=user_vo.sexo,
-        pais=user_vo.pais
+        correo=(usuarioVO.correo).lower(), #Se guarda en minusculas ya que en el correo electronico no importa la capitalizacion
+        nombre=usuarioVO.nombre,
+        contrasegna=usuarioVO.contrasegna,
+        nacimiento=usuarioVO.nacimiento,
+        sexo=usuarioVO.sexo,
+        pais=usuarioVO.pais
     )
 
 # COMPROBADO
-def exists_user(email): #Devuelve true si el usuario existe, false en caso contrario (?)
+def existeUsuario(correo): #Devuelve true si el usuario existe, false en caso contrario (?)
     try:
-        usuario = Usuario.objects.get(correo=email)
+        usuario = Usuario.objects.get(correo=correo)
         return True
     except Usuario.DoesNotExist:
         return False    
 
 # COMPROBADO
 # EN LA API
-def update_user(user_vo): #Se actualiza el usuario, cambiado para simplificado proceso API
-    user = Usuario.objects.get(pk=user_vo.correo)
-    user.nombre = user_vo.nombre
-    user.sexo = user_vo.sexo
-    user.nacimiento = user_vo.nacimiento
-    user.contrasegna = user_vo.contrasegna
-    user.pais = user_vo.pais
-    user.save()
+def actualizarUsuario(usuarioVO): #Se actualiza el usuario, cambiado para simplificado proceso API
+    usuario = Usuario.objects.get(pk=usuarioVO.correo)
+    usuario.nombre = usuarioVO.nombre
+    usuario.sexo = usuarioVO.sexo
+    usuario.nacimiento = usuarioVO.nacimiento
+    usuario.contrasegna = usuarioVO.contrasegna
+    usuario.pais = usuarioVO.pais
+    usuario.save()
 
 # COMPROBADO
 # EN LA API
-def remove_user(user_email): #Se elimina el usuario y todas sus relaciones
-    user = Usuario.objects.get(pk=user_email)
-    user.delete()
+def eliminarUsuario(correo): #Se elimina el usuario y todas sus relaciones
+    usuario = Usuario.objects.get(pk=correo)
+    usuario.delete()
 
 # COMPROBADO
 # EN LA API
-def get_friends(user_email): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
-    user = Usuario.objects.get(correo=user_email)
-    amigos = Amigo.objects.filter(micorreo1=user).all() | Amigo.objects.filter(micorreo2=user).all()
-    return [amigo.micorreo1 if amigo.micorreo1 != user else amigo.micorreo2 for amigo in amigos]
+def listarAmigos(correo): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
+    usuario = Usuario.objects.get(correo=correo)
+    amigos = Amigo.objects.filter(micorreo1=usuario).all() | Amigo.objects.filter(micorreo2=usuario).all()
+    return [amigo.micorreo1 if amigo.micorreo1 != usuario else amigo.micorreo2 for amigo in amigos]
 
 # COMPROBADO
 # EN LA API
-def add_friend(user_email, friend_id): #Se crean las relaciones de amistad
-    user = Usuario.objects.get(pk=user_email)
-    friend = Usuario.objects.get(pk=friend_id)
+def agnadirAmigo(usuario_correo, amigo_id): #Se crean las relaciones de amistad
+    usuario = Usuario.objects.get(pk=usuario_correo)
+    amigo = Usuario.objects.get(pk=amigo_id)
     Amigo.objects.create(
-        micorreo1=user,
-        micorreo2=friend
+        micorreo1=usuario,
+        micorreo2=amigo
     )
 
 # COMPROBADO
 # EN LA API
-def remove_friend(user_email, friend_id): #Se eliminan las relaciones de amistad
-    user = Usuario.objects.get(pk=user_email)
-    friend = Usuario.objects.get(pk=friend_id)
-    Amigo.objects.filter(micorreo1=user, micorreo2=friend).delete()
-    Amigo.objects.filter(micorreo1=friend, micorreo2=user).delete()
+def eliminarAmigo(usuario_correo, amigo_id): #Se eliminan las relaciones de amistad
+    usuario = Usuario.objects.get(pk=usuario_correo)
+    amigo = Usuario.objects.get(pk=amigo_id)
+    Amigo.objects.filter(micorreo1=usuario, micorreo2=amigo).delete()
+    Amigo.objects.filter(micorreo1=amigo, micorreo2=usuario).delete()
 
 # COMPROBADO
 # EN LA API
-def are_friends(user_email, friend_email): #Devuelve si dos usuarios son amigos
-    return Amigo.objects.filter(micorreo1=user_email, micorreo2=friend_email).exists() or Amigo.objects.filter(micorreo1=friend_email, micorreo2=user_email).exists()
+def sonAmigos(usuario_correo, amigo_correo): #Devuelve si dos usuarios son amigos
+    return Amigo.objects.filter(micorreo1=usuario_correo, micorreo2=amigo_correo).exists() or Amigo.objects.filter(micorreo1=amigo_correo, micorreo2=usuario_correo).exists()
 
 #DAOs DE PLAYLIST
 
@@ -96,20 +96,20 @@ def get_playlists(user_email): #Devuelve todas las playlists en las que el usuar
 
 # COMPROBADO
 #EN LA API
-def create_playlist(user_email, nombre, publica): #Se crea sin colaboradores
-    user = Usuario.objects.get(pk=user_email)
+def crearPlaylist(user_email, nombre, publica): #Se crea sin colaboradores
+    usuario = Usuario.objects.get(pk=user_email)
     playlist = Playlist.objects.create(
         nombre=nombre,
         publica=publica
     )
     Colabora.objects.create(
-        miUsuario=user,
+        miUsuario=usuario,
         miPlaylist=playlist
     )
 
 # COMPROBADO
 #EN LA API
-def update_playlist_details(playlist_id, nombre, publica): # Solo se puede cambiar el nombre(TODO: se puede poner foto)
+def actualizarPlaylist(playlist_id, nombre, publica): # Solo se puede cambiar el nombre(TODO: se puede poner foto)
     playlist = Playlist.objects.get(pk=playlist_id)
     playlist.nombre = nombre
     playlist.publica = publica
@@ -123,14 +123,14 @@ def update_playlist_details(playlist_id, nombre, publica): # Solo se puede cambi
 
 # COMPROBADO
 #EN LA API
-def get_playlists_from_user(user_email): #Devuelve todas las playlists del usuario devueltas como VO
-    return Playlist.objects.filter(colaboradores__miUsuario__correo=user_email)
+def listarPlaylistsUsuario(correo): #Devuelve todas las playlists del usuario devueltas como VO
+    return Playlist.objects.filter(colaboradores__miUsuario__correo=correo)
 
 # COMPROBADO
 #EN LA API
-def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playlist
+def agnadirCancionPlaylist(playlist_id, cancion_id): #Se añade la cancion a la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
-    song = Cancion.objects.get(pk=song_id)
+    song = Cancion.objects.get(pk=cancion_id)
     Contiene.objects.create(
         miAudio=song,
         miPlaylist=playlist
@@ -138,23 +138,23 @@ def add_song_to_playlist(playlist_id, song_id): #Se añade la cancion a la playl
 
 # COMPROBADO
 #EN LA API
-def remove_song_from_playlist(playlist_id, song_id): #Se elimina la cancion de la playlist
+def eliminarCancionPlaylist(playlist_id, cancion_id): #Se elimina la cancion de la playlist
     playlist = Playlist.objects.get(pk=playlist_id)
-    song = Cancion.objects.get(pk=song_id)
+    song = Cancion.objects.get(pk=cancion_id)
     Contiene.objects.filter(miAudio=song, miPlaylist=playlist).delete()
 
 # COMPROBADO
 #EN LA API
-def get_songs_from_playlist(playlist_id): #Devuelve las canciones de una playlist dado su id
-    playlist = Playlist.objects.get(pk=playlist_id)
+def listarCancionesPlaylist(playlistId): #Devuelve las canciones de una playlist dado su id
+    playlist = Playlist.objects.get(pk=playlistId)
     
     # Retrieve the Contiene objects related to the playlist
     contiene_objects = Contiene.objects.filter(miPlaylist=playlist)
     
     # Retrieve the miAudio attribute from each Contiene object
-    songs = [contiene.miAudio for contiene in contiene_objects]
+    canciones = [contiene.miAudio for contiene in contiene_objects]
     
-    return songs
+    return canciones
 
 '''def get_playlist_songs(playlist_id): # Asume que la playlist es de canciones solo, devuelve VO de Cancion
     playlist = Playlist.objects.get(pk=playlist_id)
@@ -169,13 +169,13 @@ def get_playlist_by_name(playlist_name): #devuelve una playlist dado su nombre
 
 # COMPROBADO
 #EN LA API
-def create_song(song_vo): #Se crea la cancion sin generos
+def crearCancion(cancionVO): #Se crea la cancion sin generos
     return Cancion.objects.create(
-        nombre=song_vo.nombre,
+        nombre=cancionVO.nombre,
         #letra=song_vo.letra,
         #cantantes=song_vo.cantantes,
-        miAlbum=song_vo.miAlbum,
-        puntuacion=song_vo.puntuacion
+        miAlbum=cancionVO.miAlbum,
+        puntuacion=cancionVO.puntuacion
     )
 
 # SIN COMPROBAR (QUITAR QUIZÁS)
@@ -200,8 +200,8 @@ def remove_song_from_favorites(user_email, song_id): #Se elimina la cancion de f
     Favorito.objects.filter(miUsuario=user, miAudio=song).delete()
 
 # SIN COMPROBAR
-def get_song_genres(song_id): #Devuelve los generos de una cancion dado su id
-    song = Cancion.objects.get(pk=song_id)
+def listarGenerosCancion(cancionId): #Devuelve los generos de una cancion dado su id
+    song = Cancion.objects.get(pk=cancion_id)
     ids = Pertenecen.objects.filter(miAudio=song)
     return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
 
@@ -220,24 +220,24 @@ def get_song_album(song_id): #Devuelve el album de una cancion dado su id
     return song.miAlbum
 
 # EN PROCESO, está en la view q no saca nada por la terminal
-def get_song_artists(song_id): #Devuelve los artistas de una cancion dado su id
-    song = Cancion.objects.get(pk=song_id)
+def get_song_artists(songId): #Devuelve los artistas de una cancion dado su id
+    song = Cancion.objects.get(pk=songId)
     return song.cantantes
 
 # SIN COMPROBAR (QUITAR QUIZÁS)
-def get_song_audio(song_id): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
-    return Cancion.objects.get(pk=song_id).audio
+def get_song_audio(songId): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
+    return Cancion.objects.get(pk=songId).audio
 
 # EN PROCESO
 #EN LA API
-def add_song_rating(song_id, rating): #añade puntuación a una canción
-    song = Cancion.objects.get(pk=song_id)
-    song.puntuacion = rating
+def puntuarCancion(cancionId, puntuacion): #añade puntuación a una canción
+    song = Cancion.objects.get(pk=cancionId)
+    song.puntuacion = puntuacion
     song.save()
 
 # EN PROCESO
-def get_song_rating(song_id): #Devuelve la puntuación de una canción
-    song = Cancion.objects.get(pk=song_id)
+def puntuacionCancion(cancionId): #Devuelve la puntuación de una canción
+    song = Cancion.objects.get(pk=cancionId)
     return song.puntuacion
 
 #DAOs DE HISTORIAL

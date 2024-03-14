@@ -21,27 +21,28 @@ from django.contrib.auth.models import User
 from rest_framework import routers, viewsets
 from .serializers import UserSerializer
 
+#ESTO SI HAY QUE DEJARLO, HABRÁ QUE CAMBIARLO A ESPAÑOL TAMBIÉN
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet,basename='userstest') #Esto son las "urls" de la api asi que habrá que traducir las vistas a datos en
                                             #formato serializado para poder atender las callas de la api, como en el del ejemplo
-router.register(r'login', views.LoginAPIView,basename='login' )
+router.register(r'login', views.IniciarSesionAPI,basename='login' )
 
-router.register(r'register', views.UserRegistrationAPIView,basename='register' )
-router.register(r'updateUser', views.UserUpdateAPIView,basename='updateUser' ) 
-router.register(r'createArtist', views.CreateArtistAPIView,basename='createArtist' ) 
-router.register(r'createPlaylist', views.CreatePlaylistAPIView,basename='createPlaylist' )
-router.register(r'updatePlaylistDetails', views.UpdatePlaylistAPIView, basename='updatePlaylistDetails')
-router.register(r'addSongToPlaylist', views.AddSongToPlaylistAPIView,basename='addSongToPlaylist' )
-router.register(r'removeSongFromPlaylist', views.RemoveSongFromPlaylistAPIView,basename='removeSongFromPlaylist' )
-router.register(r'createSong', views.CreateSongAPIView,basename='createSong' )
-router.register(r'addSongRating', views.AddSongRatingAPIView,basename='addSongRating' )
-router.register(r'addSongToHistory', views.AddSongToHistoryAPIView,basename='addSongToHistory')
-router.register(r'addSongToQueue', views.AddSongToQueueAPIView,basename='addSongToQueue' )
-router.register(r'removeSongFromQueue', views.RemoveSongFromQueueAPIView,basename='removeSongFromQueue' )
-router.register(r'createAlbum', views.CreateAlbumAPIView,basename='createAlbum' )
-router.register(r'addSongToAlbum', views.AddSongToAlbumAPIView,basename='addSongToAlbum' )
-router.register(r'getHistory', views.GetUserHistoryAPIView,basename='getHistory' )
+router.register(r'register', views.RegistroAPI,basename='register' )
+router.register(r'updateUser', views.ActualizarUsuarioAPI,basename='updateUser' ) 
+router.register(r'createArtist', views.CrearArtistaAPI,basename='createArtist' ) 
+router.register(r'createPlaylist', views.CrearPlaylistAPI,basename='createPlaylist' )
+router.register(r'updatePlaylistDetails', views.ActualizarPlaylistAPI, basename='updatePlaylistDetails')
+router.register(r'addSongToPlaylist', views.AgnadirCancionPlaylistAPI,basename='addSongToPlaylist' )
+router.register(r'removeSongFromPlaylist', views.EliminarCancionPlaylistAPI,basename='removeSongFromPlaylist' )
+router.register(r'createSong', views.CrearCancionAPI,basename='createSong' )
+router.register(r'addSongRating', views.PuntuarCancionAPI,basename='addSongRating' )
+router.register(r'addSongToHistory', views.AgnadirCancionHistorialAPI,basename='addSongToHistory')
+router.register(r'addSongToQueue', views.AgnadirCancionColaAPI,basename='addSongToQueue' )
+router.register(r'removeSongFromQueue', views.EliminarCancionColaAPI,basename='removeSongFromQueue' )
+router.register(r'createAlbum', views.CrearAlbumAPI,basename='createAlbum' )
+router.register(r'addSongToAlbum', views.AgnadirCancionAlbumAPI,basename='addSongToAlbum' )
+router.register(r'getHistory', views.ListarHistorialAPI,basename='getHistory' )
 
 
 
@@ -65,25 +66,25 @@ urlpatterns = [
     #path('removeSongFromQueue/', views.test_remove_song_from_queue, name='test_remove_song_from_queue'),
     path('testAlbum/', views.test_album, name='test_album'),
     #path('', include(router.urls)),
-    path('login/', views.LoginAPIView.as_view(), name='login'),
-    path('register/', views.UserRegistrationAPIView.as_view(), name='register'),
-    path('updateUser/', views.UserUpdateAPIView.as_view(), name='updateUser'),
-    path('deleteUser/', views.UserDeleteAPIView.as_view(), name='deleteUser'),
-    path('addFriend/', views.FriendAdditionAPIView.as_view(), name='addFriend'),
-    path('getFriends/', views.GetFriendsAPIView.as_view(), name='getFriends'),
-    path('removeFriend/', views.RemoveFriendAPIView.as_view(), name='removeFriend'),
-    path('areFriends/', views.AreFriendsAPIView.as_view(), name='areFriends'),
-    path('createPlaylist/', views.CreatePlaylistAPIView.as_view(), name='createPlaylist'),
-    path('updatePlaylist/', views.UpdatePlaylistAPIView.as_view(), name='updatePlaylist'),
-    path('createArtist/', views.CreateArtistAPIView.as_view(), name='createArtist'),
-    path('getHistory/', views.GetUserHistoryAPIView.as_view(), name='getHistory'),
-    path('addSongToPlaylist/', views.AddSongToPlaylistAPIView.as_view(), name='addSongToPlaylist'),
-    path('removeSongFromPlaylist/', views.RemoveSongFromPlaylistAPIView.as_view(), name='removeSongFromPlaylist'),
-    path('createSong/', views.CreateSongAPIView.as_view(), name='createSong'),
-    path('addSongRating/', views.AddSongRatingAPIView.as_view(), name='addSongRating'),
-    path('addSongToQueue/', views.AddSongToQueueAPIView.as_view(), name='addSongToQueue'),
-    path('removeSongFromQueue/', views.RemoveSongFromQueueAPIView.as_view(), name='removeSongFromQueue'),
-    path('createAlbum/', views.CreateAlbumAPIView.as_view(), name='createAlbum'),
-    path('addSongToAlbum/', views.AddSongToAlbumAPIView.as_view(), name='addSongToAlbum'),
-    path('addSongToHistory/', views.AddSongToHistoryAPIView.as_view(), name='addSongToHistory'),
+    path('iniciarSesion/', views.IniciarSesionAPI.as_view(), name='iniciarSesion'),
+    path('registro/', views.RegistroAPI.as_view(), name='registro'),
+    path('actualizarUsuario/', views.ActualizarUsuarioAPI.as_view(), name='actualizarUsuario'),
+    path('eliminarUsuario/', views.EliminarUsuarioAPI.as_view(), name='eliminarUsuario'),
+    path('seguirAmigo/', views.SeguirAmigoAPI.as_view(), name='seguirAmigo'),
+    path('listarAmigos/', views.ListarAmigosAPI.as_view(), name='listarAmigos'),
+    path('dejarDeSeguirAmigo/', views.DejarDeSeguirAmigoAPI.as_view(), name='dejarDeSeguirAmigo'),
+    path('sonAmigos/', views.SonAmigosAPI.as_view(), name='sonAmigos'),
+    path('crearPlaylist/', views.CrearPlaylistAPI.as_view(), name='crearPlaylist'),
+    path('actualizarPlaylist/', views.ActualizarPlaylistAPI.as_view(), name='actualizarPlaylist'),
+    path('crearArtista/', views.CrearArtistaAPI.as_view(), name='crearArtista'),
+    path('listarHistorial/', views.ListarHistorialAPI.as_view(), name='listarHistorial'),
+    path('agnadirCancionPlaylist/', views.AgnadirCancionPlaylistAPI.as_view(), name='agnadirCancionPlaylist'),
+    path('eliminarCancionPlaylist/', views.EliminarCancionPlaylistAPI.as_view(), name='eliminarCancionPlaylist'),
+    path('crearCancion/', views.CrearCancionAPI.as_view(), name='crearCancion'),
+    path('puntuarCancion/', views.PuntuarCancionAPI.as_view(), name='puntuarCancion'),
+    path('agnadirCancionCola/', views.AgnadirCancionColaAPI.as_view(), name='agnadirCancionCola'),
+    path('eliminarCancionCola/', views.EliminarCancionColaAPI.as_view(), name='eliminarCancionCola'),
+    path('crearAlbum/', views.CrearAlbumAPI.as_view(), name='crearAlbum'),
+    path('agnadirCancionAlbum/', views.AgnadirCancionAlbumAPI.as_view(), name='agnadirCancionAlbum'),
+    path('agnadirCancionHistorial/', views.AgnadirCancionHistorialAPI.as_view(), name='agnadirCancionHistorial'),
     ]

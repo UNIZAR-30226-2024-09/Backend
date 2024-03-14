@@ -11,8 +11,8 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 
-
-
+# VISTAS DE PRUEBA
+''''
 
 def home(request):
     text = "Home page"
@@ -188,10 +188,10 @@ def test_get_genre_songs(request):
         #genre_vo = DAOs.create_genre('pop')
     genre_vo = DAOs.get_genre_by_name('pop')
     song_vo=DAOs.get_song_by_id(6)
-    '''pertenecen_vo = Pertenecen(
+    pertenecen_vo = Pertenecen(
         miGenero=genre_vo,
         miAudio=song_vo
-    )'''
+    )
     DAOs.create_pertenecen(genre_vo, song_vo)
     songs=DAOs.get_genre_songs(genre_vo.nombre)
     #for song in songs:
@@ -270,220 +270,271 @@ def test_album(request):
         print(cancion.nombre + "\n")
     return HttpResponse(status=200)
 
+'''
 
-
-#TEST API
+#API
 class UserViewSet(viewsets.ModelViewSet): #funciona
     queryset = Usuario.objects.all()
     serializer_class = UserSerializer
 
 
         
-'''EJEMPLO DE FORMATO JSON PARA LOGIN
+'''EJEMPLO DE FORMATO JSON PARA INICIAR SESION
 {
-    "username": "nerea@ejemplo.com",
-    "password": "nerea"
+    "correo": "nerea@ejemplo.com",
+    "contrasegna": "nerea"
 }
 '''
 
-class LoginAPIView(APIView): #Utiliza formato json estandar(el de arriba) funciona
+class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
+        correo = request.data.get('correo')
+        contrasegna = request.data.get('contrasegna')
 
-        # Authenticate user
-        user = authenticate(correo=username, password=password)
+        # Autenticar al usuario
+        usuario = authenticate(correo=correo, contrasegna=contrasegna)
 
-        if user is not None:
-            # User is authenticated, return success response
-            return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
+        if usuario is not None:
+            # El usuario ha sido autenticado, devolver respuesta de éxito
+            return Response({'message': 'Inicio de sesión correcto'}, status=status.HTTP_200_OK)
         else:
-            # Invalid credentials, return error response
-            return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+            # El usuario no ha sido autenticado, devolver respuesta de error
+            return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
 
 '''EJEMPLO DE FORMATO JSON PARA REGISTRO
 {
-    "email": "john.doe@example.com",
-    "name": "John Doe",
-    "gender": "Male",
-    "dateOfBirth": "1985-03-10",
-    "password": "5U3rP@55w0rd",
-    "country": "United States"
+    "correo": "john.doe@example.com",
+    "nombre": "John Doe",
+    "sexo": "Male",
+    "nacimiento": "1985-03-10",
+    "contrasegna": "5U3rP@55w0rd",
+    "pais": "United States"
 }
 '''
 import logging
 
 logger = logging.getLogger(__name__)
-class UserRegistrationAPIView(APIView): # funciona
+class RegistroAPI(APIView): # funciona
     permission_classes = [AllowAny]
 
     def post(self, request):
-        correo = request.data.get('email')
-        nombre = request.data.get('name')
-        sexo = request.data.get('gender')
-        nacimiento = request.data.get('dateOfBirth')
-        contrasegna = request.data.get('password')
-        pais = request.data.get('country')
+        correo = request.data.get('correo')
+        nombre = request.data.get('nombre')
+        sexo = request.data.get('sexo')
+        nacimiento = request.data.get('nacimiento')
+        contrasegna = request.data.get('contrasegna')
+        pais = request.data.get('pais')
 
         if not nombre:
-            return Response({'error': 'Name is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
 
         logger.debug(f'Nombre recibido: {nombre}')
 
         user = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
 
         if Usuario.objects.filter(correo=correo).exists():
-            return Response({'error': 'Username already taken'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'El correo introducido ya tiene asociada una cuenta'}, status=status.HTTP_400_BAD_REQUEST)
 
-        DAOs.create_user(user)
-        return Response({'message': 'User registered successfully'}, status=status.HTTP_200_OK)
+        DAOs.crearUsuario(user)
+        return Response({'message': 'Usuario registrado con éxito'}, status=status.HTTP_200_OK)
 
-'''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO (igual que el de register)'''
+'''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO
+{
+    "correo": "john.doe@example.com",
+    "nombre": "John Doe",
+    "sexo": "Male",
+    "nacimiento": "1985-03-10",
+    "contrasegna": "5U3rP@55w0rd",
+    "pais": "United States"
+}
+'''
 
-class UserUpdateAPIView(APIView): # funciona
+class ActualizarUsuarioAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email')
-        nombre = request.data.get('name')
-        sexo = request.data.get('gender')
-        nacimiento = request.data.get('dateOfBirth')
-        contrasegna = request.data.get('password')
-        pais = request.data.get('country')
-        user = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
-        DAOs.update_user(user)
-        return Response({'message': 'User updated successfully'}, status=status.HTTP_200_OK)
+        correo = request.data.get('correo')
+        nombre = request.data.get('nombre')
+        sexo = request.data.get('sexo')
+        nacimiento = request.data.get('nacimiento')
+        contrasegna = request.data.get('contrasegna')
+        pais = request.data.get('pais')
+        usuario = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
+        DAOs.actualizarUsuario(usuario)
+        return Response({'message': 'Usuario actualizado con éxito'}, status=status.HTTP_200_OK)
 
-class UserDeleteAPIView(APIView): #funciona
+'''EJEMPLO DE FORMATO JSON PARA ELIMINAR USUARIO
+{
+    "correo": "john.doe@example.com"
+}
+'''
+class EliminarUsuarioAPI(APIView): #funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email')
-        DAOs.remove_user(correo)
-        return Response({'message': 'User deleted successfully'}, status=status.HTTP_200_OK)
+        correo = request.data.get('correo') # coger el correo de la sesión
+        DAOs.eliminarUsuario(correo)
+        return Response({'message': 'Usuario eliminado con éxito'}, status=status.HTTP_200_OK)
 
-class FriendAdditionAPIView(APIView): # funciona
+
+'''EJEMPLO DE FORMATO JSON PARA SEGUIR A UN AMIGO
+{
+    "correo": "john.doe@example.com",
+    "amigo": "sarah@gmail.com"
+}
+'''
+class SeguirAmigoAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
-        amigo = request.data.get('friend') # coger el correo del amigo
-        DAOs.add_friend(correo, amigo)
-        return Response({'message': 'Friend added successfully'}, status=status.HTTP_200_OK) 
+        correo = request.data.get('correo') # coger el correo de la sesión
+        amigo = request.data.get('amigo') # coger el correo del amigo
+        DAOs.agnadirAmigo(correo, amigo)
+        return Response({'message': 'Amigo añadido con éxito'}, status=status.HTTP_200_OK) 
     
-class GetFriendsAPIView(APIView):
+class ListarAmigosAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
-        friends = DAOs.get_friends(correo)
-        if friends != None:
-            return Response({'friends': friends}, status=status.HTTP_200_OK)
+        correo = request.data.get('correo') # coger el correo de la sesión
+        amigos = DAOs.listarAmigos(correo)
+        if amigos != None:
+            return Response({'amigos': amigos}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene amigos'}, status=status.HTTP_200_OK)
 
-
-class RemoveFriendAPIView(APIView): # funciona
+'''EJEMPLO DE FORMATO JSON PARA DEJAR DE SEGUIR A UN AMIGO
+{
+    "correo": "john.doe@example.com",
+    "amigo": "sarah@gmail.com"
+}
+'''
+class DejarDeSeguirAmigoAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
-        amigo = request.data.get('friend')
-        DAOs.remove_friend(correo, amigo)
-        return Response({'message': 'Friend removed successfully'}, status=status.HTTP_200_OK)
+        correo = request.data.get('correo') # coger el correo de la sesión
+        amigo = request.data.get('amigo')
+        DAOs.eliminarAmigo(correo, amigo)
+        return Response({'message': 'Amigo eliminado con éxito'}, status=status.HTTP_200_OK)
     
-class AreFriendsAPIView(APIView): # funciona
+'''EJEMPLO DE FORMATO JSON PARA COMPROBAR SI DOS USUARIOS SON AMIGOS
+{
+    "correo": "john.doe@example.com",
+    "amigo": "sarah@gmail.com"
+}
+'''
+class SonAmigosAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
-        amigo = request.data.get('friend')
-        if DAOs.are_friends(correo, amigo) == True:
+        correo = request.data.get('correo') # coger el correo de la sesión
+        amigo = request.data.get('amigo')
+        if DAOs.sonAmigos(correo, amigo) == True:
             return Response({'message': 'Son amigos'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
-            
-class CreatePlaylistAPIView(APIView): # funciona
+
+'''EJEMPLO DE FORMATO JSON PARA CREAR UNA PLAYLIST        
+{
+    "correo": "sarah@gmail.com",
+    "nombre": "Playlist de Paco",
+    "publica": true
+}'''
+class CrearPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email')
+        correo = request.data.get('correo')
         nombre = request.data.get('nombre')
         publica = request.data.get('publica')
         if Playlist.objects.filter(nombre=nombre).exists():            
             if Colabora.objects.filter(miUsuario=correo, miPlaylist=DAOs.get_playlist_by_name(nombre).id).exists():
-                    return Response({'error': 'Playlist already exists'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'error': 'La playlist ya existe'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            DAOs.create_playlist(correo, nombre, publica)
-            return Response({'message': 'Playlist created successfully'}, status=status.HTTP_200_OK)
+            DAOs.crearPlaylist(correo, nombre, publica)
+            return Response({'message': 'La playlist se ha creado con éxito'}, status=status.HTTP_200_OK)
 
-'''''{
+'''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR UNA PLAYLIST
+{
     "id_playlist": "2",
     "nombre": "Playlist de Sarah",
     "publica": "False"
-}'''''
+}'''
 
-class UpdatePlaylistAPIView(APIView): # funciona
+class ActualizarPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         id_playlist = request.data.get('id_playlist')
         nombre = request.data.get('nombre')
         publica = request.data.get('publica')
-        DAOs.update_playlist_details(id_playlist, nombre, publica)
-        return Response({'message': 'Playlist updated successfully'}, status=status.HTTP_200_OK)
+        DAOs.actualizarPlaylist(id_playlist, nombre, publica)
+        return Response({'message': 'La playlist ha sido actualizada con éxito'}, status=status.HTTP_200_OK)
 
-class GetSongsFromPlaylistAPIView(APIView):
+class ListarCancionesDePlaylistAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
+        correo = request.data.get('correo') # coger el correo de la sesión
         playlist = request.data.get('playlist') # de dónde se coge la playlist?
         # habría que mirar la tabla Colabora tmb?
-        songs = DAOs.get_songs_from_playlist(playlist.id)
-        if songs != None:
-            return Response({'songs': songs}, status=status.HTTP_200_OK)
+        canciones = DAOs.listarCancionesPlaylist(playlist.id)
+        if canciones != None:
+            return Response({'songs': canciones}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'La playlist no tiene canciones'}, status=status.HTTP_200_OK)
         
         # ACABAR
-
-'''{
+'''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A UNA PLAYLIST
+{
     "id_playlist": "2",
     "id_cancion": "26"
 }'''
 
-class AddSongToPlaylistAPIView(APIView): # funciona
+class AgnadirCancionPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         #correo = request.data.get('email') # coger correo de la sesión
         id_playlist = request.data.get('id_playlist')
         id_cancion = request.data.get('id_cancion')
         if Contiene.objects.filter(miAudio=id_cancion, miPlaylist=id_playlist).exists():
-            return Response({'error': 'Song already exists in playlist'}, status=status.HTTP_400_BAD_REQUEST)
-        DAOs.add_song_to_playlist(id_playlist, id_cancion)
-        return Response({'message': 'Song added to playlist successfully'}, status=status.HTTP_200_OK)
+            return Response({'error': 'La canción ya está en la playlist'}, status=status.HTTP_400_BAD_REQUEST)
+        DAOs.agnadirCancionPlaylist(id_playlist, id_cancion)
+        return Response({'message': 'La canción ha sido añadida con éxito a la playlist'}, status=status.HTTP_200_OK)
 
-class RemoveSongFromPlaylistAPIView(APIView): # funciona
+'''EJEMPLO DE FORMATO JSON PARA ELIMINAR UNA CANCIÓN DE UNA PLAYLIST
+{
+    "id_playlist": "2",
+    "id_cancion": "26"
+}'''
+
+class EliminarCancionPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         id_playlist = request.data.get('id_playlist')
         id_cancion = request.data.get('id_cancion')
         if not Contiene.objects.filter(miAudio=id_cancion, miPlaylist=id_playlist).exists():
-            return Response({'error': 'Song does not exist in playlist'}, status=status.HTTP_400_BAD_REQUEST)
-        DAOs.remove_song_from_playlist(id_playlist, id_cancion)
-        return Response({'message': 'Song removed from playlist successfully'}, status=status.HTTP_200_OK)
+            return Response({'error': 'La canción no existe en la playlist'}, status=status.HTTP_400_BAD_REQUEST)
+        DAOs.eliminarCancionPlaylist(id_playlist, id_cancion)
+        return Response({'message': 'La canción ha sido eliminada con éxito de la playlist'}, status=status.HTTP_200_OK)
 
-class GetPlaylistsFromUserAPIView(APIView):
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LAS PLAYLISTS DE UN USUARIO
+{
+    "correo": "john.doe@example.com"
+}
+'''
+class ListarPlaylistsDeUsuarioAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
-        playlists = DAOs.get_playlists_from_user(correo)
+        correo = request.data.get('correo') # coger el correo de la sesión
+        playlists = DAOs.listarPlaylistsUsuario(correo)
         if playlists != None:
             return Response({'playlists': playlists}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene playlists'}, status=status.HTTP_200_OK)
 
-'''{
+'''EJEMPLO DE FORMATO JSON PARA CREAR CANCIÓN
+{
     "nombre": "Buenas tardes",
     "miAlbum": "album de Paco5",
     "puntuacion": "5"
 }'''
 
 # aquí falta el atributo cantantes
-class CreateSongAPIView(APIView): # funciona
+class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
@@ -491,65 +542,68 @@ class CreateSongAPIView(APIView): # funciona
         puntuacion = request.data.get('puntuacion')
         miAlbum = DAOs.get_album_by_name(miAlbum)
         cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion)
-        DAOs.create_song(cancion)
-        return Response({'message': 'Song created successfully'}, status=status.HTTP_200_OK)
+        DAOs.crearCancion(cancion)
+        return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 
-'''{
+'''EJEMPLO DE FORMATO JSON PARA PUNTUAR UNA CANCIÓN
+{}
     "id_cancion": "27",
     "puntuacion": "4"
 }'''
 
-class AddSongRatingAPIView(APIView): # funciona
+class PuntuarCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         id_cancion = request.data.get('id_cancion')
         puntuacion = request.data.get('puntuacion')
-        DAOs.add_song_rating(id_cancion, puntuacion)
-        return Response({'message': 'Song rating added successfully'}, status=status.HTTP_200_OK)
+        DAOs.puntuarCancion(id_cancion, puntuacion)
+        return Response({'message': 'Canción puntuada con éxito'}, status=status.HTTP_200_OK)
 
-'''{
+'''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A LA COLA DE REPRODUCCIÓN
+{
     "correo": "sarah@gmail.com",
     "id_cancion": "27"
 }'''
 
-class AddSongToQueueAPIView(APIView): # funciona
+class AgnadirCancionColaAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo')
         id_cancion = request.data.get('id_cancion')
         DAOs.add_song_to_queue(correo, id_cancion)
-        return Response({'message': 'Song added to queue successfully'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Canción añadida a la cola de reproducción con éxito'}, status=status.HTTP_200_OK)
 
-class RemoveSongFromQueueAPIView(APIView): # funciona
+class EliminarCancionColaAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo')
         id_cancion = request.data.get('id_cancion')
         if not Cola.objects.filter(miUsuario=correo, miAudio=id_cancion).exists():
-            return Response({'error': 'Song does not exist in queue'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'La canción no existe en la cola de reproducción'}, status=status.HTTP_400_BAD_REQUEST)
         DAOs.remove_song_from_queue(correo, id_cancion)
-        return Response({'message': 'Song removed from queue successfully'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Canción eliminada de la cola de reproducción con éxito'}, status=status.HTTP_200_OK)
 
-'''{
+'''EJEMPLO DE FORMATO JSON PARA CREAR ÁLBUM
+{
     "nombre": "album de Sarah"
 }'''
 
 # no se si está bien
-class CreateAlbumAPIView(APIView): # funciona
+class CrearAlbumAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
         album = Album(nombre=nombre)
         DAOs.create_album(album)
-        return Response({'message': 'Album created successfully'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Álbum creado con éxito'}, status=status.HTTP_200_OK)
 
-
-'''{
+'''EJEMPLO DE FORMATO JSON PARA CREAR AÑADIR CANCIÓN A UN ÁLBUM
+{
     "nombre_album": "album de Sarah",
     "nombre_cancion": "Buenas tardes"
 }'''
 
-class AddSongToAlbumAPIView(APIView): # funciona
+class AgnadirCancionAlbumAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre_album = request.data.get('nombre_album')
@@ -557,31 +611,31 @@ class AddSongToAlbumAPIView(APIView): # funciona
         nombre_cancion = request.data.get('nombre_cancion')
         cancion = DAOs.get_song_by_name(nombre_cancion)
         if Cancion.objects.filter(nombre=nombre_cancion, miAlbum=album).exists():
-            return Response({'message': 'Song is already in album'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'La cancion ya existe está en el álbum'}, status=status.HTTP_400_BAD_REQUEST)
         DAOs.add_song_to_album(album, cancion)
-        return Response({'message': 'Song added to album successfully'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Canción añadida al álbum con éxito'}, status=status.HTTP_200_OK)
 
-
-'''{
+'''EJEMPLO DE FORMATO JSON PARA CREAR CAPITULO
+{
     "nombre": "episodio1",
     "descripcion": "descripcion del epidodio1"
     "miPodcast": "podcast de Sarah" 
 }'''
 # se tiene que hacer primero createPodcast
 # sin acabar
-class CreateEpisodeAPIView(APIView):
+class CrearCapituloAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
         miPodcast = request.data.get('miPodcast')
         if not nombre:
-            return Response({'error': 'Name is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
 
         logger.debug(f'Nombre recibido: {nombre}')
 
         DAOs.create_episode(nombre, descripcion, miPodcast)
-        return Response({'message': 'Episodio almacenado correctamente'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Capítulo almacenado correctamente'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
 {
@@ -589,43 +643,53 @@ class CreateEpisodeAPIView(APIView):
     "descripcion": "Kanye West descrption here..."
 }
 '''
-class CreateArtistAPIView(APIView):
+class CrearArtistaAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
         artista = Artista(nombre=nombre, descripcion=descripcion)
-        DAOs.create_artist(artista)
-        return Response({'message': 'Artist created successfully'}, status=status.HTTP_200_OK)
+        DAOs.crearArtista(artista)
+        return Response({'message': 'Artista creado con éxito'}, status=status.HTTP_200_OK)
     
-class GetUserHistoryAPIView(APIView): 
+'''EJEMPLO DE FORMATO JSON PARA LISTAR EL HISTORIAL DE UN USUARIO
+{
+    "correo": "sarah@gmail.com"
+}'''
+
+class ListarHistorialAPI(APIView): 
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
+        correo = request.data.get('correo') # coger el correo de la sesión
         history = DAOs.get_user_history(correo)
         if history != None:
             return Response({'history': history}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene historial'}, status=status.HTTP_200_OK)
 
-'''{
-    "email": "sarah@gmail.com",
+'''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN AL HISTORIAL DE UN USUARIO
+{
+    "correo": "sarah@gmail.com"
     "cancion_nombre": "Buenas tardes"
 }'''
 
-class AddSongToHistoryAPIView(APIView): # funciona
+class AgnadirCancionHistorialAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('email') # coger el correo de la sesión
         cancion_nombre = request.data.get('cancion_nombre') # coger el nombre de la cancion
         cancion = DAOs.get_song_by_name(cancion_nombre)
         DAOs.add_song_to_history(correo, cancion)
-        return Response({'message': 'Song added to history successfully'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Canción añadida al historial con éxito'}, status=status.HTTP_200_OK)
     
 # lo hacemos???
-#class RemoveSongFromHistoryAPIView(APIView):
-
-class GetUserQueueAPIView(APIView):
+#class EliminarCancionHistorialAPI(APIView):
+    
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LA COLA DE REPRODUCCIÓN DE UN USUARIO
+{
+    "correo": "sarah@gmail.com"
+}'''
+class ListarColaAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('email') # coger el correo de la sesión
@@ -635,13 +699,17 @@ class GetUserQueueAPIView(APIView):
         else:
             return Response({'message': 'No tiene cola de reproducción'}, status=status.HTTP_200_OK)
 
-class GetAlbumSongsAPIView(APIView):
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UN ÁLBUM
+{
+    "nombreAlbum": "album de Sarah"
+}'''
+class ListarCancionesAlbumAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         nombreAlbum = request.data.get('nombreAlbum')
         album = DAOs.get_album_by_name(nombreAlbum)
-        songs = DAOs.get_album_songs(album)
-        if songs != None:
-            return Response({'songs': songs}, status=status.HTTP_200_OK)
+        canciones = DAOs.get_album_songs(album)
+        if canciones != None:
+            return Response({'songs': canciones}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No hay canciones en el álbum'}, status=status.HTTP_200_OK)    

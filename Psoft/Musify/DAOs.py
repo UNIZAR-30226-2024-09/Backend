@@ -393,6 +393,14 @@ def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id
     return episode.miPodcast
 
 #DAOs DE PODCAST
+
+# SIN COMPROBAR
+def crearPodcast(podcastVO): #Se crea el podcast
+    return Capitulo.objects.create(
+        nombre=podcastVO.nombre,
+        presentadores=podcastVO.presentadores
+    )
+
 # SIN COMPROBAR
 def listarCapitulosPodcast(podcastId): #Devuelve todos los capitulos de un podcast dado su id
     podcast = Podcast.objects.get(pk=podcastId)

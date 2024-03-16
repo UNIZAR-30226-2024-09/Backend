@@ -588,7 +588,6 @@ class EliminarCancionColaAPI(APIView): # funciona
     "nombre": "album de Sarah"
 }'''
 
-# no se si está bien
 class CrearAlbumAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
@@ -615,20 +614,36 @@ class AgnadirCancionAlbumAPI(APIView): # funciona
         DAOs.agnadirCancionAlbum(album, cancion)
         return Response({'message': 'Canción añadida al álbum con éxito'}, status=status.HTTP_200_OK)
 
+
+class CrearPodcastAPI(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        presentadores = request.data.get('presentadores')
+
+        if not nombre:
+            return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
+
+        logger.debug(f'Nombre recibido: {nombre}')
+        podcast = Podcast(nombre=nombre, presentadores=presentadores)
+        DAOs.crearPodcast(podcast)
+        return Response({'message': 'Podcast almacenado correctamente'}, status=status.HTTP_200_OK)
+
+
 '''EJEMPLO DE FORMATO JSON PARA CREAR CAPITULO
 {
     "nombre": "episodio1",
     "descripcion": "descripcion del epidodio1"
     "miPodcast": "podcast de Sarah" 
 }'''
-# se tiene que hacer primero createPodcast
-# sin acabar
+
 class CrearCapituloAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
         miPodcast = request.data.get('miPodcast')
+        miPodcast = DAOs.conseguirPodcastPorNombre(miPodcast)
 
         if not nombre:
             return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)

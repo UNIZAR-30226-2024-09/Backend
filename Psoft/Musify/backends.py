@@ -8,7 +8,7 @@ class CorreoBackend(ModelBackend):
         try:
             user = Usuario.objects.get(correo=correo)
             print(f"Usuario encontrado: {user}")  # Imprime el usuario encontrado
-            if DAOs.check_user_password(correo, password):
+            if DAOs.comprobarContrasegna(correo, password):
                 print("La contraseña es correcta, autenticación exitosa.")  # Imprime si la contraseña es correcta
                 return user
             else:

@@ -63,12 +63,12 @@ class Historial(models.Model):
     miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE, related_name='veces_escuchado')
 
 
-class Favorito(models.Model):
+'''class Favorito(models.Model):
     miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='audios_favoritos')
     miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE, related_name='veces_marcado_favorito')
 
     class Meta:
-        unique_together = ('miUsuario', 'miAudio',)
+        unique_together = ('miUsuario', 'miAudio',)'''
 
 
 class Cola(models.Model):

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.http import HttpResponse
-from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Favorito, Cola, Genero, Pertenecen, Album, Artista
+from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista
 from . import DAOs
 from Psoft.serializers import UserSerializer
 from rest_framework import viewsets
@@ -615,7 +615,12 @@ class AgnadirCancionAlbumAPI(APIView): # funciona
         return Response({'message': 'Canción añadida al álbum con éxito'}, status=status.HTTP_200_OK)
 
 
-class CrearPodcastAPI(APIView):
+'''EJEMPLO DE FORMATO JSON PARA CREAR PODCAST
+{
+    "nombre": "podcast1",
+    "presentadores": "presentador1, presentador2"
+}'''
+class CrearPodcastAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
@@ -634,9 +639,10 @@ class CrearPodcastAPI(APIView):
 {
     "nombre": "episodio1",
     "descripcion": "descripcion del epidodio1"
-    "miPodcast": "podcast de Sarah" 
+    "miPodcast": "podcast1" 
 }'''
 
+# no va pq en la bd no está la columna nombre en la tabla capítulo
 class CrearCapituloAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):

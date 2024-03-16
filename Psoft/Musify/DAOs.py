@@ -1,6 +1,6 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Favorito ,Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista
+from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista
 
 
 #DAOs DE ARTISTA
@@ -394,9 +394,9 @@ def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id
 
 #DAOs DE PODCAST
 
-# SIN COMPROBAR
+# COMPORBADO
 def crearPodcast(podcastVO): #Se crea el podcast
-    return Capitulo.objects.create(
+    return Podcast.objects.create(
         nombre=podcastVO.nombre,
         presentadores=podcastVO.presentadores
     )

@@ -596,6 +596,20 @@ class CrearAlbumAPI(APIView): # funciona
         DAOs.crearAlbum(album)
         return Response({'message': 'Álbum creado con éxito'}, status=status.HTTP_200_OK)
 
+'''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR ÁLBUM
+{
+    "albumId": "1",
+    "nombre": "album de Sarah"
+}'''
+class ActualizarAlbumAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        albumId = request.data.get('albumId')
+        nombre = request.data.get('nombre')
+        album = Album(id=albumId, nombre=nombre)
+        DAOs.actualizarAlbum(album)
+        return Response({'message': 'Álbum actualizado con éxito'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA CREAR AÑADIR CANCIÓN A UN ÁLBUM
 {
     "albumNombre": "album de Sarah",
@@ -683,7 +697,7 @@ class ActualizarCapituloAPI(APIView):
     "descripcion": "Kanye West descrption here..."
 }
 '''
-class CrearArtistaAPI(APIView):
+class CrearArtistaAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
@@ -754,17 +768,59 @@ class ListarCancionesAlbumAPI(APIView):
         else:
             return Response({'message': 'No hay canciones en el álbum'}, status=status.HTTP_200_OK)    
 
+'''EJEMPLO DE FORMATO JSON PARA CREAR GÉNERO
+{
+    "genero": "pop"
+}'''
+class CrearGeneroAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('genero')
+        genero = Genero(nombre=nombre)
+        DAOs.crearGenero(genero)
+        return Response({'message': 'Género creado con éxito'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR GÉNERO A UNA CANCIÓN
 {
     "genero": "pop",
-    "cancion": "Buenas tardes"
+    "cancionId": "15"
 }'''
-class AgnadirGeneroAPI(APIView): # para canciones, hacer en el mismo para podcasts?
+class AgnadirGeneroAPI(APIView): # funciona # para canciones, hacer en el mismo para podcasts?
     permission_classes = [AllowAny]
     def post(self, request):
         generoNombre = request.data.get('genero')
-        cancionNombre = request.data.get('cancion')
-        cancion = DAOs.conseguirCancionPorNombre(cancionNombre)
+        cancionId = request.data.get('cancionId')
+        cancion = DAOs.conseguirCancionPorId(cancionId)
         genero = DAOs.conseguirGeneroPorNombre(generoNombre)
         DAOs.crearPertenecen(genero, cancion)
         return Response({'message': 'Género añadido con éxito'}, status=status.HTTP_200_OK)
+
+'''EJEMPLO DE FORMATO JSON PARA CREAR PODCAST
+{
+    "nombre": "podcast1",
+    "presentadores": "arturo valls, patricia conde"
+}''' 
+class CrearPodcastAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        presentadores = request.data.get('presentadores')
+        podcast = Podcast(nombre=nombre, presentadores=presentadores)
+        DAOs.crearPodcast(podcast)
+        return Response({'message': 'Podcast creado con éxito'}, status=status.HTTP_200_OK)
+
+'''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR PODCAST
+{
+    "podcastId": "2",
+    "nombre": "podcast2",
+    "presentadores": "arturo valls, patricia conde"
+}'''
+class ActualizarPodcastAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        podcastId = request.data.get('podcastId')
+        nombre = request.data.get('nombre')
+        presentadores = request.data.get('presentadores')
+        podcast = Podcast(id=podcastId, nombre=nombre, presentadores=presentadores)
+        DAOs.actualizarPodcast(podcast)
+        return Response({'message': 'Podcast actualizado con éxito'}, status=status.HTTP_200_OK)

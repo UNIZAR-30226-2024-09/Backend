@@ -216,13 +216,13 @@ def conseguirCancionPorId(cancionId): #Devuelve la cancion dado su id
 
 # EN PROCESO, está en la view q no saca nada por la terminal
 def albumCancion(cancionId): #Devuelve el album de una cancion dado su id
-    song = Cancion.objects.get(pk=cancionId)
-    return song.miAlbum
+    cancion = Cancion.objects.get(pk=cancionId)
+    return cancion.miAlbum
 
 # EN PROCESO, está en la view q no saca nada por la terminal
 def artistasCancion(cancionId): #Devuelve los artistas de una cancion dado su id
-    song = Cancion.objects.get(pk=cancionId)
-    return song.cantantes
+    cancion = Cancion.objects.get(pk=cancionId)
+    return cancion.cantantes
 
 # SIN COMPROBAR (QUITAR QUIZÁS)
 def audioDeCancion(cancionId): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
@@ -231,14 +231,14 @@ def audioDeCancion(cancionId): #Devuelve el audio de una cancion dado su id(Con 
 # EN PROCESO
 #EN LA API
 def puntuarCancion(cancionId, puntuacion): #añade puntuación a una canción
-    song = Cancion.objects.get(pk=cancionId)
-    song.puntuacion = puntuacion
-    song.save()
+    cancion = Cancion.objects.get(pk=cancionId)
+    cancion.puntuacion = puntuacion
+    cancion.save()
 
 # EN PROCESO
 def puntuacionCancion(cancionId): #Devuelve la puntuación de una canción
-    song = Cancion.objects.get(pk=cancionId)
-    return song.puntuacion
+    cancion = Cancion.objects.get(pk=cancionId)
+    return cancion.puntuacion
 
 #DAOs DE HISTORIAL
 
@@ -305,9 +305,10 @@ def listarCola(usuarioCorreo): #Devuelve la cola de reproduccion del usuario dev
 #DAOs DE GENERO
 
 # EN PROCESO
-def crearGenero(nombre): #Crea y devuelve el genero como vo
+# EN LA API
+def crearGenero(generoVO): #Crea y devuelve el genero como vo
     return Genero.objects.create(
-        nombre=nombre
+        nombre=generoVO.nombre
     )
 
 # EN PROCESO
@@ -395,11 +396,20 @@ def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id
 #DAOs DE PODCAST
 
 # COMPORBADO
+# EN LA API
 def crearPodcast(podcastVO): #Se crea el podcast
     return Podcast.objects.create(
         nombre=podcastVO.nombre,
         presentadores=podcastVO.presentadores
     )
+
+# COMPROBADO
+# EN LA API
+def actualizarPodcast(podcastVO): #Se actualiza el podcast
+    podcast = Podcast.objects.get(pk=podcastVO.id)
+    podcast.nombre = podcastVO.nombre
+    podcast.presentadores = podcastVO.presentadores
+    podcast.save()
 
 # SIN COMPROBAR
 def listarCapitulosPodcast(podcastId): #Devuelve todos los capitulos de un podcast dado su id

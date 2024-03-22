@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista
 from . import DAOs
-from Psoft.serializers import UserSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -275,7 +275,7 @@ def test_album(request):
 #API
 class UserViewSet(viewsets.ModelViewSet): #funciona
     queryset = Usuario.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UsuarioSerializer
 
 
         
@@ -390,13 +390,18 @@ class SeguirAmigoAPI(APIView): # funciona
         DAOs.agnadirAmigo(correo, amigo)
         return Response({'message': 'Amigo añadido con éxito'}, status=status.HTTP_200_OK) 
     
+'''EJEMPLO DE FORMATO JSON PARA LISTAR AMIGOS
+{
+    "correo": "john.doe@example.com"
+}'''
 class ListarAmigosAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         amigos = DAOs.listarAmigos(correo)
-        if amigos != None:
-            return Response({'amigos': amigos}, status=status.HTTP_200_OK)
+        if amigos:
+            serializer = AmigosSerializer(amigos, many=True)
+            return Response({'amigos': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene amigos'}, status=status.HTTP_200_OK)
 
@@ -465,19 +470,27 @@ class ActualizarPlaylistAPI(APIView): # funciona
         DAOs.actualizarPlaylist(playlistId, nombre, publica)
         return Response({'message': 'La playlist ha sido actualizada con éxito'}, status=status.HTTP_200_OK)
 
-class ListarCancionesDePlaylistAPI(APIView):
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UNA PLAYLIST
+{
+    "correo": "sarah@gmail.com",
+    "playlistId": "2"
+}'''
+class ListarCancionesPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
+
     def post(self, request):
-        correo = request.data.get('correo') # coger el correo de la sesión
-        playlist = request.data.get('playlist') # de dónde se coge la playlist?
-        # habría que mirar la tabla Colabora tmb?
-        canciones = DAOs.listarCancionesPlaylist(playlist.id)
-        if canciones != None:
-            return Response({'songs': canciones}, status=status.HTTP_200_OK)
+        playlistId = request.data.get('playlistId')  # Obtener el ID de la playlist
+
+        canciones = DAOs.listarCancionesPlaylist(playlistId)
+        # Verificar si se encontraron canciones en la playlist
+        if canciones:
+            serializer = CancionSerializer(canciones, many=True)
+            # Devolver la lista de canciones serializadas en formato JSON
+            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
         else:
+            # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
             return Response({'message': 'La playlist no tiene canciones'}, status=status.HTTP_200_OK)
         
-        # ACABAR
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A UNA PLAYLIST
 {
     "playlistId": "2",
@@ -510,19 +523,20 @@ class EliminarCancionPlaylistAPI(APIView): # funciona
             return Response({'error': 'La canción no existe en la playlist'}, status=status.HTTP_400_BAD_REQUEST)
         DAOs.eliminarCancionPlaylist(playlistId, cancionId)
         return Response({'message': 'La canción ha sido eliminada con éxito de la playlist'}, status=status.HTTP_200_OK)
-
+ 
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LAS PLAYLISTS DE UN USUARIO
 {
-    "correo": "john.doe@example.com"
+    "correo": "sarah@gmail.com"
 }
 '''
-class ListarPlaylistsDeUsuarioAPI(APIView):
+class ListarPlaylistsUsuarioAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         playlists = DAOs.listarPlaylistsUsuario(correo)
-        if playlists != None:
-            return Response({'playlists': playlists}, status=status.HTTP_200_OK)
+        if playlists:
+            serializer = PlaylistSerializer(playlists, many=True)
+            return Response({'playlists': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene playlists'}, status=status.HTTP_200_OK)
 
@@ -705,19 +719,19 @@ class CrearArtistaAPI(APIView): # funciona
         artista = Artista(nombre=nombre, descripcion=descripcion)
         DAOs.crearArtista(artista)
         return Response({'message': 'Artista creado con éxito'}, status=status.HTTP_200_OK)
-    
+
 '''EJEMPLO DE FORMATO JSON PARA LISTAR EL HISTORIAL DE UN USUARIO
 {
     "correo": "sarah@gmail.com"
 }'''
-
 class ListarHistorialAPI(APIView): 
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
-        history = DAOs.listarHistorial(correo)
-        if history != None:
-            return Response({'history': history}, status=status.HTTP_200_OK)
+        historial = DAOs.listarHistorial(correo)
+        if historial:
+            serializer = HistorialSerializer(historial, many=True)
+            return Response({'historial': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene historial'}, status=status.HTTP_200_OK)
 

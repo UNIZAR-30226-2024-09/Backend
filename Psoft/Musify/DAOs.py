@@ -56,12 +56,17 @@ def eliminarUsuario(correo): #Se elimina el usuario y todas sus relaciones
     usuario = Usuario.objects.get(pk=correo)
     usuario.delete()
 
-# COMPROBADO
-# EN LA API
+
+
 def listarAmigos(correo): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
     usuario = Usuario.objects.get(correo=correo)
-    amigos = Amigo.objects.filter(micorreo1=usuario).all() | Amigo.objects.filter(micorreo2=usuario).all()
-    return [amigo.micorreo1 if amigo.micorreo1 != usuario else amigo.micorreo2 for amigo in amigos]
+    #amigos = Amigo.objects.filter(micorreo1=usuario).all() | Amigo.objects.filter(micorreo2=usuario).all()
+    #return [amigo.micorreo1 if amigo.micorreo1 != usuario else amigo.micorreo2 for amigo in amigos]
+    amigos1 = Amigo.objects.filter(micorreo1=usuario).values_list('micorreo2', flat=True)
+    amigos2 = Amigo.objects.filter(micorreo2=usuario).values_list('micorreo1', flat=True)
+    # Combinar y eliminar duplicados de la lista de amigos
+    amigos = set(amigos1) | set(amigos2)
+    return amigos
 
 # COMPROBADO
 # EN LA API

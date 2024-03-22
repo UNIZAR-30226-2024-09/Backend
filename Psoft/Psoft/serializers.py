@@ -1,27 +1,32 @@
 from rest_framework import serializers
 from Musify import models
 
-class UserSerializer(serializers.ModelSerializer):
+class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Usuario
         fields = ['correo', 'nombre', 'sexo', 'nacimiento', 'contrasegna', 'pais']
 
-class FriendsSerializer(serializers.ModelSerializer):
+class AmigosSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Amigo
         fields = ['micorreo1', 'micorreo2']
 
-class SongsSerializer(serializers.ModelSerializer):
+class PlaylistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Playlist
+        fields = ['id', 'nombre', 'publica']
+
+class CancionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cancion
         fields = ['nombre', 'cantantes', 'miAlbum']
 
-class HistorySerializer(serializers.ModelSerializer):
+class HistorialSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Historial
         fields = ['miUsuario', 'miAudio']
 
-class QueueSerializer(serializers.ModelSerializer):
+class ColaSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cola
         fields = ['miUsuario', 'miAudio']

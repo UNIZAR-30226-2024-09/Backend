@@ -19,7 +19,7 @@ from Musify import views
 from django.urls import path, include
 from django.contrib.auth.models import User
 from rest_framework import routers, viewsets
-from .serializers import UserSerializer
+from .serializers import UsuarioSerializer
 
 #ESTO SI HAY QUE DEJARLO, HABRÁ QUE CAMBIARLO A ESPAÑOL TAMBIÉN
 # Routers provide an easy way of automatically determining the URL conf.
@@ -94,4 +94,6 @@ urlpatterns = [
     path('agnadirGenero/', views.AgnadirGeneroAPI.as_view(), name='agnadirGenero'),
     path('crearPodcast/', views.CrearPodcastAPI.as_view(), name='crearPodcast'),
     path('actualizarPodcast/', views.ActualizarPodcastAPI.as_view(), name='actualizarPodcast'),
+    path('listarCancionesPlaylist/', views.ListarCancionesPlaylistAPI.as_view(), name='listarCancionesPlaylist'),
+    path('listarPlaylistsUsuario/', views.ListarPlaylistsUsuarioAPI.as_view(), name='listarPlaylistsUsuario'),
     ]

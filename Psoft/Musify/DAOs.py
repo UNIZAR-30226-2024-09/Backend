@@ -382,11 +382,11 @@ def crearCapitulo(capituloVO): #Se crea el capitulo
     )
 
 #EN LA API
-def actualizarCapitulo(capituloVO): #Se actualiza el capitulo
-    capitulo = Capitulo.objects.get(pk=capituloVO.id)
-    capitulo.nombre = capituloVO.nombre
-    capitulo.descripcion = capituloVO.descripcion,
-    capitulo.miPodcast = capituloVO.miPodcast
+def actualizarCapitulo(capituloId, nuevoNombre, nuevaDescripcion, nuevoPodcast): #Se actualiza el capitulo
+    capitulo = Capitulo.objects.get(pk=capituloId)
+    capitulo.nombre = nuevoNombre
+    capitulo.descripcion = nuevaDescripcion
+    capitulo.miPodcast = nuevoPodcast
     capitulo.save()
 
 # SIN COMPROBAR

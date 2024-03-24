@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista
 from . import DAOs
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -392,9 +392,9 @@ class SeguirAmigoAPI(APIView): # funciona
     
 '''EJEMPLO DE FORMATO JSON PARA LISTAR AMIGOS
 {
-    "correo": "john.doe@example.com"
+    "correo": "Paco@gmail.com"
 }'''
-class ListarAmigosAPI(APIView):
+class ListarAmigosAPI(APIView): 
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
@@ -583,7 +583,7 @@ class AgnadirCancionColaAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo')
-        cancionId = request.data.get('canionId')
+        cancionId = request.data.get('cancionId')
         DAOs.agnadirCancionCola(correo, cancionId)
         return Response({'message': 'Canción añadida a la cola de reproducción con éxito'}, status=status.HTTP_200_OK)
 
@@ -666,12 +666,11 @@ class CrearPodcastAPI(APIView): # funciona
 '''EJEMPLO DE FORMATO JSON PARA CREAR CAPITULO
 {
     "nombre": "episodio1",
-    "descripcion": "descripcion del epidodio1"
+    "descripcion": "descripcion del epidodio1",
     "miPodcast": "podcast1" 
 }'''
 
-# no va pq en la bd no está la columna nombre en la tabla capítulo
-class CrearCapituloAPI(APIView):
+class CrearCapituloAPI(APIView): #funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
@@ -691,18 +690,19 @@ class CrearCapituloAPI(APIView):
 {
     "capituloId": "1",
     "nombre": "episodio1",
-    "descripcion": "descripcion del epidodio1"
-    "miPodcast": "podcast de Sarah" 
+    "descripcion": "descripcion del epidodio1",
+    "miPodcast": "podcast2" 
 }'''
-class ActualizarCapituloAPI(APIView):
+class ActualizarCapituloAPI(APIView): #funciona
     permission_classes = [AllowAny]
     def post(self, request):
         capituloId = request.data.get('capituloId')
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
         miPodcast = request.data.get('miPodcast')
-        capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast)
-        DAOs.actualizarCapitulo(capitulo)
+        miPodcast = DAOs.conseguirPodcastPorNombre(miPodcast)
+        'capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast)'
+        DAOs.actualizarCapitulo(capituloId, nombre, descripcion, miPodcast)
         return Response({'message': 'Capítulo actualizado con éxito'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
@@ -724,13 +724,13 @@ class CrearArtistaAPI(APIView): # funciona
 {
     "correo": "sarah@gmail.com"
 }'''
-class ListarHistorialAPI(APIView): 
+class ListarHistorialAPI(APIView): #funciona
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         historial = DAOs.listarHistorial(correo)
         if historial:
-            serializer = HistorialSerializer(historial, many=True)
+            serializer = CancionSerializer(historial, many=True)
             return Response({'historial': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene historial'}, status=status.HTTP_200_OK)
@@ -757,13 +757,14 @@ class AgnadirCancionHistorialAPI(APIView): # funciona
 {
     "correo": "sarah@gmail.com"
 }'''
-class ListarColaAPI(APIView):
+class ListarColaAPI(APIView): #funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
+        correo = request.data.get('correo') # coger el correo de la sesión
         queue = DAOs.listarCola(correo)
-        if queue != None:
-            return Response({'queue': queue}, status=status.HTTP_200_OK)
+        if queue:
+            serializer = CancionSerializer(queue, many=True)
+            return Response({'queue': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene cola de reproducción'}, status=status.HTTP_200_OK)
 
@@ -771,14 +772,15 @@ class ListarColaAPI(APIView):
 {
     "nombreAlbum": "album de Sarah"
 }'''
-class ListarCancionesAlbumAPI(APIView):
+class ListarCancionesAlbumAPI(APIView): #funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombreAlbum = request.data.get('nombreAlbum')
         album = DAOs.conseguirAlbumPorNombre(nombreAlbum)
         canciones = DAOs.listarCancionesAlbum(album)
-        if canciones != None:
-            return Response({'songs': canciones}, status=status.HTTP_200_OK)
+        if canciones:
+            serializer = CancionSerializer(canciones, many=True)
+            return Response({'songs': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No hay canciones en el álbum'}, status=status.HTTP_200_OK)    
 

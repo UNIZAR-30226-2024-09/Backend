@@ -90,10 +90,13 @@ urlpatterns = [
     path('agnadirCancionHistorial/', views.AgnadirCancionHistorialAPI.as_view(), name='agnadirCancionHistorial'),
     path('crearPodcast/', views.CrearPodcastAPI.as_view(), name='crearPodcast'),
     path('crearCapitulo/', views.CrearCapituloAPI.as_view(), name='crearCapitulo'),
+    path('actualizarCapitulo/', views.ActualizarCapituloAPI.as_view(), name='actualizarCapitulo'),
     path('crearGenero/', views.CrearGeneroAPI.as_view(), name='crearGenero'),
     path('agnadirGenero/', views.AgnadirGeneroAPI.as_view(), name='agnadirGenero'),
     path('crearPodcast/', views.CrearPodcastAPI.as_view(), name='crearPodcast'),
     path('actualizarPodcast/', views.ActualizarPodcastAPI.as_view(), name='actualizarPodcast'),
     path('listarCancionesPlaylist/', views.ListarCancionesPlaylistAPI.as_view(), name='listarCancionesPlaylist'),
     path('listarPlaylistsUsuario/', views.ListarPlaylistsUsuarioAPI.as_view(), name='listarPlaylistsUsuario'),
+    path('listarCancionesAlbum/', views.ListarCancionesAlbumAPI.as_view(), name='listarCancionesAlbum'),
+    path('listarCola/', views.ListarColaAPI.as_view(), name='listarCola'),
     ]

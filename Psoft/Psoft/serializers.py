@@ -9,7 +9,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 class AmigosSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Amigo
-        fields = ['micorreo1', 'micorreo2']
+        fields = ['micorreo1']
 
 class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,11 +21,13 @@ class CancionSerializer(serializers.ModelSerializer):
         model = models.Cancion
         fields = ['nombre', 'cantantes', 'miAlbum']
 
+# este, de momento, no se usa así que igual se podrá quitar
 class HistorialSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Historial
         fields = ['miUsuario', 'miAudio']
 
+# este, de momento, no se usa así que igual se podrá quitar
 class ColaSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cola

@@ -57,15 +57,13 @@ def eliminarUsuario(correo): #Se elimina el usuario y todas sus relaciones
     usuario.delete()
 
 
-
+# COMPROBADO
+# EN LA API
 def listarAmigos(correo): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
     usuario = Usuario.objects.get(correo=correo)
-    #amigos = Amigo.objects.filter(micorreo1=usuario).all() | Amigo.objects.filter(micorreo2=usuario).all()
-    #return [amigo.micorreo1 if amigo.micorreo1 != usuario else amigo.micorreo2 for amigo in amigos]
-    amigos1 = Amigo.objects.filter(micorreo1=usuario).values_list('micorreo2', flat=True)
-    amigos2 = Amigo.objects.filter(micorreo2=usuario).values_list('micorreo1', flat=True)
-    # Combinar y eliminar duplicados de la lista de amigos
-    amigos = set(amigos1) | set(amigos2)
+    amigos1 = Amigo.objects.filter(micorreo1=usuario)
+    amigos2 = Amigo.objects.filter(micorreo2=usuario)
+    amigos = list(amigos1 | amigos2)
     return amigos
 
 # COMPROBADO
@@ -355,7 +353,7 @@ def agnadirCancionAlbum(albumVO, cancionVO): #Se añade la cancion al album
     cancion.save()
 
 # COMPROBADO
-#EN LA API
+# EN LA API
 def listarCancionesAlbum(albumVO): #Devuelve todas las canciones de un album
     album = Album.objects.get(pk=albumVO.id)
     return Cancion.objects.filter(miAlbum=album) #Devuelve todas las canciones??
@@ -417,8 +415,8 @@ def actualizarPodcast(podcastVO): #Se actualiza el podcast
     podcast.save()
 
 # SIN COMPROBAR
-def listarCapitulosPodcast(podcastId): #Devuelve todos los capitulos de un podcast dado su id
-    podcast = Podcast.objects.get(pk=podcastId)
+def listarCapitulosPodcast(podcastVO): #Devuelve todos los capitulos de un podcast dado su id
+    podcast = Podcast.objects.get(pk=podcastVO.id)
     return Capitulo.objects.filter(miPodcast=podcast)
 
 # SIN COMPROBAR

@@ -9,7 +9,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 class AmigosSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Amigo
-        fields = ['micorreo1']
+        fields = ['micorreo1','micorreo2']
 
 class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,4 +32,10 @@ class ColaSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cola
         fields = ['miUsuario', 'miAudio']
+
+class CapituloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Capitulo
+        fields = ['id', 'nombre', 'descripcion', 'miPodcast']
+
 

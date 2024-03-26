@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista
 from . import DAOs
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -394,7 +394,7 @@ class SeguirAmigoAPI(APIView): # funciona
 {
     "correo": "Paco@gmail.com"
 }'''
-class ListarAmigosAPI(APIView): 
+class ListarAmigosAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
@@ -704,6 +704,22 @@ class ActualizarCapituloAPI(APIView): #funciona
         'capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast)'
         DAOs.actualizarCapitulo(capituloId, nombre, descripcion, miPodcast)
         return Response({'message': 'Capítulo actualizado con éxito'}, status=status.HTTP_200_OK)
+    
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LOS CAPITULOS DE UN PODCAST
+{
+    "nombrePodcast": "podcast1"
+}'''
+class ListarCapitulosPodcastAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombrePodcast = request.data.get('nombrePodcast')
+        podcast = DAOs.conseguirPodcastPorNombre(nombrePodcast)
+        capitulos = DAOs.listarCapitulosPodcast(podcast)
+        if capitulos:
+            serializer = CapituloSerializer(capitulos, many=True)
+            return Response({'capitulos': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay capitulos en el podcast'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
 {

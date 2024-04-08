@@ -11,6 +11,35 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 
+#Spotify
+from dotenv import load_dotenv
+import base64
+import os
+from requests import get, post
+import json
+load_dotenv()
+
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
+def get_token(): #Sacado de tutorial, deberia funcionar
+    auth_string = client_id + ":" + client_secret
+    auth_bytes = auth_string.encode('utf-8')
+    auth_base64 = str(base64.b64encode(auth_bytes), 'utf-8')
+
+    url='https://accounts.spotify.com/api/token'
+    headers = {
+        'Authorization': 'Basic ' + auth_base64,
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    data = {"grant_type": 'client_credentials'}
+    result = post(url, headers=headers, data=data)
+    json_result = json.loads(result.text)
+    token = json_result['access_token']
+    return token
+token = get_token()
+def get_auth_header(token):
+    return {'Authorization': 'Bearer ' + token}
+
 # VISTAS DE PRUEBA
 ''''
 
@@ -856,3 +885,36 @@ class ActualizarPodcastAPI(APIView): # funciona
         podcast = Podcast(id=podcastId, nombre=nombre, presentadores=presentadores)
         DAOs.actualizarPodcast(podcast)
         return Response({'message': 'Podcast actualizado con éxito'}, status=status.HTTP_200_OK)
+
+'''
+EJEMPLO DE BUSCAR ARTISTA
+{
+    "artist_name": "Kanye West"
+}
+
+'''
+
+class BuscarArtistaSPOTY(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # Obtain token using the get_token() function
+        token = get_token()
+
+        # Check if token is obtained
+        if token:
+            artist_name = request.data.get('artist_name')
+            url = "https://api.spotify.com/v1/search?q="
+            headers = get_auth_header(token)
+            query = f"{artist_name}&type=artist&limit=1"
+            query_url = url + query
+            artist_response = get(query_url, headers=headers)
+
+            # Check if response is successful
+            if artist_response.status_code == 200:
+                json_artist = artist_response.json()
+                return Response({'artist': json_artist}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Failed to retrieve artist information'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({'message': 'Failed to obtain access token'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -318,6 +318,7 @@ class UserViewSet(viewsets.ModelViewSet): #funciona
 class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) funciona
     permission_classes = [AllowAny]
     def post(self, request):
+        
         correo = request.data.get('correo')
         contrasegna = request.data.get('contrasegna')
 

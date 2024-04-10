@@ -178,7 +178,9 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         #letra=song_vo.letra,
         #cantantes=song_vo.cantantes,
         miAlbum=cancionVO.miAlbum,
-        puntuacion=cancionVO.puntuacion
+        puntuacion=cancionVO.puntuacion,
+        archivo_mp3=cancionVO.archivo_mp3,
+        foto=cancionVO.foto
     )
 
 '''# SIN COMPROBAR (QUITAR QUIZÁS)

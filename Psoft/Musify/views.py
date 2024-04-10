@@ -573,8 +573,10 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
 '''EJEMPLO DE FORMATO JSON PARA CREAR CANCIÓN
 {
     "nombre": "Buenas tardes",
+    "foto": "",
     "miAlbum": "album de Paco5",
-    "puntuacion": "5"
+    "puntuacion": "5",
+    "archivo_mp3": ""
 }'''
 
 # aquí falta el atributo cantantes
@@ -582,10 +584,12 @@ class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
+        foto = request.data.get('foto')
         miAlbum = request.data.get('miAlbum')
         puntuacion = request.data.get('puntuacion')
+        archivo_mp3 = request.data.get('archivo_mp3')
         miAlbum = DAOs.conseguirAlbumPorNombre(miAlbum)
-        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion)
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, archivo_mp3=archivo_mp3, foto=foto)
         DAOs.crearCancion(cancion)
         return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 

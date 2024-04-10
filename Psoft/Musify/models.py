@@ -40,6 +40,8 @@ class Cancion(models.Model):
     miAlbum = models.ForeignKey(Album, on_delete=models.CASCADE,null = True)
     puntuacion = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)
+    archivo_mp3 = models.BinaryField(default=b'\x00')
+    foto = models.BinaryField(default=b'\x00')
 
 
 class Colabora(models.Model):

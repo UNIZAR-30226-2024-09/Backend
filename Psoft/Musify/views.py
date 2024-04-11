@@ -18,7 +18,7 @@ import os
 from requests import get, post
 import json
 load_dotenv()
-
+'''
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 def get_token(): #Sacado de tutorial, deberia funcionar
@@ -39,7 +39,7 @@ def get_token(): #Sacado de tutorial, deberia funcionar
 token = get_token()
 def get_auth_header(token):
     return {'Authorization': 'Bearer ' + token}
-
+'''
 # VISTAS DE PRUEBA
 ''''
 
@@ -499,6 +499,20 @@ class ActualizarPlaylistAPI(APIView): # funciona
         publica = request.data.get('publica')
         DAOs.actualizarPlaylist(playlistId, nombre, publica)
         return Response({'message': 'La playlist ha sido actualizada con éxito'}, status=status.HTTP_200_OK)
+    
+class ListarCancionesAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        canciones = DAOs.listarCanciones()
+        # Verificar si se encontraron canciones en la playlist
+        if canciones:
+            serializer = CancionSerializer(canciones, many=True)
+            # Devolver la lista de canciones serializadas en formato JSON
+            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
+            return Response({'message': 'La playlist no tiene canciones'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UNA PLAYLIST
 {

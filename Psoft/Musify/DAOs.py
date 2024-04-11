@@ -148,6 +148,11 @@ def eliminarCancionPlaylist(playlistId, cancionId): #Se elimina la cancion de la
 
 # COMPROBADO
 #EN LA API
+def listarCanciones(): #Devuelve todas las canciones
+    return Cancion.objects.all()
+
+# COMPROBADO
+#EN LA API
 def listarCancionesPlaylist(playlistId): #Devuelve las canciones de una playlist dado su id
     playlist = Playlist.objects.get(pk=playlistId)
     

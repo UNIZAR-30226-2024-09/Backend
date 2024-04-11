@@ -573,23 +573,31 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
 '''EJEMPLO DE FORMATO JSON PARA CREAR CANCIÓN
 {
     "nombre": "Buenas tardes",
-    "foto": "",
+    "nombre_foto": "Homecoming_cover.jpg",
     "miAlbum": "album de Paco5",
     "puntuacion": "5",
-    "archivo_mp3": ""
+    "nombre_archivo_mp3": "Kanye West - Homecoming_LQ488QrqGE4.mp3"
 }'''
 
+def convertir_a_binario(ruta):
+    #entre las comillas hay que poner la ruta del archivo, teniendo en cuenta que ruta tiene el nombre del archivo
+    with open(r"\\" + ruta, "rb") as archivo:
+        contenido_binario = archivo.read()
+        contenido_base64 = base64.b64encode(contenido_binario)
+    return contenido_base64
 # aquí falta el atributo cantantes
 class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
-        foto = request.data.get('foto')
+        nombre_foto = request.data.get('nombre_foto')
         miAlbum = request.data.get('miAlbum')
         puntuacion = request.data.get('puntuacion')
-        archivo_mp3 = request.data.get('archivo_mp3')
+        nombre_archivo_mp3 = request.data.get('nombre_archivo_mp3')
         miAlbum = DAOs.conseguirAlbumPorNombre(miAlbum)
-        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, archivo_mp3=archivo_mp3, foto=foto)
+        contenido_binario_mp3 = convertir_a_binario(nombre_archivo_mp3)
+        contenido_binario_foto = convertir_a_binario(nombre_foto)
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, archivo_mp3=contenido_binario_mp3, foto=contenido_binario_foto)
         DAOs.crearCancion(cancion)
         return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 

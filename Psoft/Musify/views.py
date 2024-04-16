@@ -852,7 +852,7 @@ class ListarCancionesAlbumAPI(APIView): #funciona
         canciones = DAOs.listarCancionesAlbum(album)
         if canciones:
             serializer = CancionSerializer(canciones, many=True)
-            return Response({'songs': serializer.data}, status=status.HTTP_200_OK)
+            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No hay canciones en el álbum'}, status=status.HTTP_200_OK)    
 
@@ -882,6 +882,21 @@ class AgnadirGeneroAPI(APIView): # funciona # para canciones, hacer en el mismo 
         genero = DAOs.conseguirGeneroPorNombre(generoNombre)
         DAOs.crearPertenecen(genero, cancion)
         return Response({'message': 'Género añadido con éxito'}, status=status.HTTP_200_OK)
+
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UN GÉNERO
+{
+    "genero": "pop"
+}'''
+class FiltrarCancionesPorGeneroAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        genero = request.data.get('genero')
+        canciones = DAOs.listarCancionesGenero(genero)
+        if canciones:
+            serializer = CancionSerializer(canciones, many=True)
+            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay canciones en ese género'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR PODCAST
 {

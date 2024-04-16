@@ -101,6 +101,6 @@ urlpatterns = [
     path('listarCola/', views.ListarColaAPI.as_view(), name='listarCola'),
     path('listarCapitulosPodcast/', views.ListarCapitulosPodcastAPI.as_view(), name='listarCapitulosPodcast'),
     path('listarCanciones/', views.ListarCancionesAPI.as_view(), name='listarCanciones'),
-
-    path('', views.BuscarArtistaSPOTY.as_view(), name='buscarArtistaSPOTY'),
+    path('filtrarCancionesPorGenero/', views.FiltrarCancionesPorGeneroAPI.as_view(), name='filtrarCancionesPorGenero'),
+    path('buscarArtistaSPOTY', views.BuscarArtistaSPOTY.as_view(), name='buscarArtistaSPOTY'),
     ]

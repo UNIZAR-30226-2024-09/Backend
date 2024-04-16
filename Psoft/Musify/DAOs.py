@@ -333,8 +333,8 @@ def listarGeneros(): #Devuelve todos los generos
 def listarCancionesGenero(generoNombre): #Devuelve todas las canciones de un genero dado su nombre
     genero = Genero.objects.get(nombre=generoNombre)
     ids = Pertenecen.objects.filter(miGenero=genero)
-    for id in ids:
-        print(Pertenecen.objects.get(pk=id.id).miAudio.nombre + "\n")
+    canciones = [pertenecen_object.miAudio for pertenecen_object in ids]
+    return canciones
 
 #DAOs DE ALBUM
 

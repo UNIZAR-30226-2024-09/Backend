@@ -42,6 +42,7 @@ class Cancion(models.Model):
     nombre = models.CharField(max_length=255, null=False)
     archivo_mp3 = models.BinaryField(default=b'\x00')
     foto = models.BinaryField(default=b'\x00')
+    favorito = models.BooleanField(default=False)
 
 
 class Colabora(models.Model):
@@ -94,6 +95,7 @@ class Podcast(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
     presentadores = models.CharField(max_length=255, null=False)
+    favorito = models.BooleanField(default=False)
 
 
 class Capitulo(models.Model):

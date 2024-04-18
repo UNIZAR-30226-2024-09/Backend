@@ -1,15 +1,22 @@
 from django.db import connection  # Assuming you're using Django
 
 from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista
-
+from django.core.exceptions import ObjectDoesNotExist
 
 #DAOs DE ARTISTA
 
 def crearArtista(artistaVO): #Se crea el artista
     Artista.objects.create(nombre=artistaVO.nombre, descripcion=artistaVO.descripcion)
 
-def conseguirArtistaPorNombre(nombre): #Devuelve el artista dado su nombre
-    return Artista.objects.get(nombre=nombre)
+#def conseguirArtistaPorNombre(nombre): #Devuelve el artista dado su nombre
+#    return Artista.objects.get(nombre=nombre)
+def buscarArtista(nombre):
+    try:
+        nombre = nombre.lower()
+        return Artista.objects.filter(nombre__istartswith=nombre)
+    except ObjectDoesNotExist:
+        return None
+
 
 #DAOs DE USUARIO
 
@@ -173,8 +180,15 @@ def listarCancionesPlaylist(playlistId): #Devuelve las canciones de una playlist
     return [Cancion.objects.get(pk=id).to_VO() for id in ids]'''
 
 # COMPROBADO
-def conseguirPlaylistPorNombre(playlistName): #devuelve una playlist dado su nombre
-    return Playlist.objects.get(nombre=playlistName)
+#def conseguirPlaylistPorNombre(playlistName): #devuelve una playlist dado su nombre
+#    return Playlist.objects.get(nombre=playlistName)
+def buscarPlaylist(playlistNombre):
+    try:
+        playlistNombre = playlistNombre.lower()
+        return Playlist.objects.filter(nombre__istartswith=playlistNombre)
+    except ObjectDoesNotExist:
+        return None
+
 
 #DAOs DE CANCION
 
@@ -218,10 +232,14 @@ def listarGenerosCancion(cancionId): #Devuelve los generos de una cancion dado s
     ids = Pertenecen.objects.filter(miAudio=cancion)
     return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
 
+#COMPROBADO
+def buscarCancion(cancionNombre):
+    try:
+        cancionNombre = cancionNombre.lower()
+        return Cancion.objects.filter(nombre__istartswith=cancionNombre)
+    except ObjectDoesNotExist:
+        return None
 
-# COMPROBADO
-def conseguirCancionPorNombre(cancionNombre): #Devuelve la cancion dado su nombre
-    return Cancion.objects.get(nombre=cancionNombre)
 
 # COMPROBADO
 def conseguirCancionPorId(cancionId): #Devuelve la cancion dado su id
@@ -373,9 +391,14 @@ def conseguirAlbumPorId(albumId): #Devuelve el album dado su id
     return Album.objects.get(pk=albumId)
 
 # COMPROBADO
-def conseguirAlbumPorNombre(albumNombre): #Devuelve el album dado su nombre
-    return Album.objects.get(nombre=albumNombre)
-
+#def conseguirAlbumPorNombre(albumNombre): #Devuelve el album dado su nombre
+#    return Album.objects.get(nombre=albumNombre)
+def buscarAlbum(albumNombre):
+    try:
+        albumNombre = albumNombre.lower()
+        return Album.objects.filter(nombre__istartswith=albumNombre)
+    except ObjectDoesNotExist:
+        return None
 
 #DAOs DE CAPITULO
 
@@ -402,8 +425,15 @@ def conseguirCapituloPorId(capituloId): #Devuelve el capitulo dado su id
     return Capitulo.objects.get(pk=capituloId)
 
 # SIN COMPROBAR
-def conseguirCapituloPorNombre(capituloNombre): #Devuelve el capítulo dado su nombre
-    return Capitulo.objects.get(nombre=capituloNombre)
+#def conseguirCapituloPorNombre(capituloNombre): #Devuelve el capítulo dado su nombre
+#    return Capitulo.objects.get(nombre=capituloNombre)
+
+def buscarCapitulo(capituloNombre):
+    try:
+        capituloNombre = capituloNombre.lower()
+        return Capitulo.objects.filter(nombre__istartswith=capituloNombre)
+    except ObjectDoesNotExist:
+        return None
 
 # SIN COMPROBAR
 def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id
@@ -433,14 +463,24 @@ def listarCapitulosPodcast(podcastVO): #Devuelve todos los capitulos de un podca
     podcast = Podcast.objects.get(pk=podcastVO.id)
     return Capitulo.objects.filter(miPodcast=podcast)
 
+def listarPodcasts(): #Devuelve todos los podcasts
+    return Podcast.objects.all()
+
 # SIN COMPROBAR
 def conseguirPodcastPorId(podcastId): #Devuelve el podcast dado su id
     return Podcast.objects.get(pk=podcastId)
 
 # SIN COMPROBAR
 # NO SE SI ESTÁ BIEN
-def conseguirPodcastPorNombre(podcastNombre): #Devuelve el podcast dado su nombre
-    return Podcast.objects.get(nombre=podcastNombre)
+#def conseguirPodcastPorNombre(podcastNombre): #Devuelve el podcast dado su nombre
+#    return Podcast.objects.get(nombre=podcastNombre)
+def buscarPodcast(podcastNombre):
+    try:
+        podcastNombre = podcastNombre.lower()
+        return Podcast.objects.filter(nombre__istartswith=podcastNombre)
+    except ObjectDoesNotExist:
+        return None
+
 
 # SIN COMPROBAR
 def listarGenerosPodcast(podcastId): #Devuelve los generos de un podcast dado su id

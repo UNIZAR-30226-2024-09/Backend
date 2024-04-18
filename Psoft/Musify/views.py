@@ -512,7 +512,22 @@ class ListarCancionesAPI(APIView): # funciona
             return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
         else:
             # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
-            return Response({'message': 'La playlist no tiene canciones'}, status=status.HTTP_200_OK)
+            return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
+        
+class ListarPodcastsAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        podcasts = DAOs.listarPodcasts()
+        # Verificar si se encontraron podcasts en la playlist
+        if podcasts:
+            serializer = PodcastSerializer(podcasts, many=True)
+            # Devolver la lista de podcasts serializados en formato JSON
+            return Response({'podcasts': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            # Si no se encontraron podcasts, devolver un mensaje indicando lo mismo
+            return Response({'message': 'No hay podcasts'}, status=status.HTTP_200_OK)
+
 
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UNA PLAYLIST
 {
@@ -962,53 +977,41 @@ class BuscarArtistaSPOTY(APIView):
             return Response({'message': 'Failed to obtain access token'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 '''
-EJEMPLO DE BUSCAR CANCION
+EJEMPLO DE BUSCAR
 {
-    "nombre": "Fardos"
+    "nombre": "a"
 }'''
 class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo de debajo
     permission_classes = [AllowAny]
-
     def post(self, request):
         nombre_objeto = request.data.get('nombre')
-        objeto = DAOs.conseguirCancionPorNombre(nombre_objeto)
-        if Cancion.objects.filter(nombre=nombre_objeto).exists():
-            serializer = CancionSerializer(objeto)
-            return Response({'nombre': serializer.data}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'No se ha encontrado la canción'}, status=status.HTTP_404_NOT_FOUND)
-        
-
-
-
-
-'''class BuscarAPI(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        nombre = request.data.get('nombre')
         resultados = []
-
-
-        if cancion:
-            serializer = CancionSerializer(cancion)
-            resultados.append({'cancion': serializer.data})
-        if capitulo:
-            serializer = CapituloSerializer(capitulo)
-            resultados.append({'capitulo': serializer.data})
-        if podcast:
-            serializer = PodcastSerializer(podcast)
-            resultados.append({'podcast': serializer.data})
-        if artista:
-            serializer = ArtistaSerializer(artista)
-            resultados.append({'artista': serializer.data})
-        if album:
-            serializer = AlbumSerializer(album)
-            resultados.append({'album': serializer.data})
-        if playlist:
-            serializer = PlaylistSerializer(playlist)
-            resultados.append({'playlist': serializer.data})
+        objeto = DAOs.buscarCancion(nombre_objeto)
+        if objeto is not None:
+            serializer = CancionSerializer(objeto, many=True)
+            resultados.extend([{'cancion': data} for data in serializer.data])
+        objeto = DAOs.buscarCapitulo(nombre_objeto)
+        if objeto is not None:
+            serializer = CapituloSerializer(objeto, many=True)
+            resultados.extend([{'capitulo': data} for data in serializer.data])
+        objeto = DAOs.buscarPodcast(nombre_objeto)
+        if objeto is not None:
+            serializer = PodcastSerializer(objeto, many=True)
+            resultados.extend([{'podcast': data} for data in serializer.data])
+        objeto = DAOs.buscarArtista(nombre_objeto)
+        if objeto is not None:
+            serializer = ArtistaSerializer(objeto, many=True)
+            resultados.extend([{'artista': data} for data in serializer.data])
+        objeto = DAOs.buscarAlbum(nombre_objeto)
+        if objeto is not None:
+            serializer = AlbumSerializer(objeto, many=True)
+            resultados.extend([{'album': data} for data in serializer.data])
+        objeto = DAOs.buscarPlaylist(nombre_objeto)
+        if objeto is not None:
+            serializer = PlaylistSerializer(objeto, many=True)
+            resultados.extend([{'playlist': data} for data in serializer.data])
         if resultados:
             return Response(resultados, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'No se han encontrado coincidencias'}, status=status.HTTP_404_NOT_FOUND)'''
+            return Response({'message': 'No se han encontrado coincidencias'}, status=status.HTTP_404_NOT_FOUND)
+        

@@ -644,6 +644,26 @@ class PuntuarCancionAPI(APIView): # funciona
         DAOs.puntuarCancion(cancionId, puntuacion)
         return Response({'message': 'Canción puntuada con éxito'}, status=status.HTTP_200_OK)
 
+'''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCION A FAVORITOS
+{
+    "cancionId": "14",
+    "favorito": "True"
+}'''
+class EditarCancionFavoritosAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        cancionId = request.data.get('cancionId')
+        favorito = request.data.get('favorito')
+        cancionVO = DAOs.conseguirCancionPorId(cancionId)
+        DAOs.editarFavoritoCancion(cancionVO, favorito)
+        if favorito:
+            DAOs.agnadirCancionPlaylist(111, cancionId) # ID de la playlist de favoritos
+            return Response({'message': 'Canción añadida a favoritos con éxito'}, status=status.HTTP_200_OK)
+        else:
+            DAOs.eliminarCancionPlaylist(111, cancionId)
+            return Response({'message': 'Canción eliminada de favoritos con éxito'}, status=status.HTTP_200_OK)
+
+
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A LA COLA DE REPRODUCCIÓN
 {
     "correo": "sarah@gmail.com",

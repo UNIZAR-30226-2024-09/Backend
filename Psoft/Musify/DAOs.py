@@ -8,8 +8,12 @@ from django.core.exceptions import ObjectDoesNotExist
 def crearArtista(artistaVO): #Se crea el artista
     Artista.objects.create(nombre=artistaVO.nombre, descripcion=artistaVO.descripcion)
 
-#def conseguirArtistaPorNombre(nombre): #Devuelve el artista dado su nombre
-#    return Artista.objects.get(nombre=nombre)
+def conseguirArtistaPorNombre(nombre): #Devuelve el artista dado su nombre
+    try:
+        return Artista.objects.get(nombre=nombre)
+    except ObjectDoesNotExist:
+        return None
+    
 def buscarArtista(nombre):
     try:
         nombre = nombre.lower()
@@ -22,7 +26,10 @@ def buscarArtista(nombre):
 
 # COMPROBADO
 def conseguirUsuarioPorCorreo(correo): #Se busca el usuario por su correo
-    return Usuario.objects.get(correo=correo)
+    try:
+        return Usuario.objects.get(correo=correo)
+    except ObjectDoesNotExist:
+        return None
 
 # COMPROBAD0
 def comprobarContrasegna(correo, contrasegna): #se comprueba la contraseña del usuario (iniciar sesión)
@@ -180,8 +187,12 @@ def listarCancionesPlaylist(playlistId): #Devuelve las canciones de una playlist
     return [Cancion.objects.get(pk=id).to_VO() for id in ids]'''
 
 # COMPROBADO
-#def conseguirPlaylistPorNombre(playlistName): #devuelve una playlist dado su nombre
-#    return Playlist.objects.get(nombre=playlistName)
+def conseguirPlaylistPorNombre(playlistName): #Devuelve el playlist dado su nombre
+    try:
+        return Playlist.objects.get(nombre=playlistName)
+    except ObjectDoesNotExist:
+        return None
+    
 def buscarPlaylist(playlistNombre):
     try:
         playlistNombre = playlistNombre.lower()
@@ -204,6 +215,11 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         archivo_mp3=cancionVO.archivo_mp3,
         foto=cancionVO.foto
     )
+
+def editarFavoritoCancion(cancionVO, favorito): #Se actualiza la cancion
+    cancion = Cancion.objects.get(pk=cancionVO.id)
+    cancion.favorito = favorito
+    cancion.save()
 
 '''# SIN COMPROBAR (QUITAR QUIZÁS)
 def get_user_favorites(usuarioCorreo): #Devuelve las canciones favoritas del usuario devueltas como VO
@@ -243,7 +259,10 @@ def buscarCancion(cancionNombre):
 
 # COMPROBADO
 def conseguirCancionPorId(cancionId): #Devuelve la cancion dado su id
-    return Cancion.objects.get(pk=cancionId)
+    try:
+        return Cancion.objects.get(pk=cancionId)
+    except ObjectDoesNotExist:
+        return None
 
 # EN PROCESO, está en la view q no saca nada por la terminal
 def albumCancion(cancionId): #Devuelve el album de una cancion dado su id
@@ -344,7 +363,10 @@ def crearGenero(generoVO): #Crea y devuelve el genero como vo
 
 # EN PROCESO
 def conseguirGeneroPorNombre(nombre):
-    return Genero.objects.get(pk=nombre)
+    try:
+        return Genero.objects.get(pk=nombre)
+    except ObjectDoesNotExist:
+        return None
     
 # SIN COMPROBAR
 def listarGeneros(): #Devuelve todos los generos
@@ -388,11 +410,18 @@ def listarCancionesAlbum(albumVO): #Devuelve todas las canciones de un album
 
 # COMPROBADO
 def conseguirAlbumPorId(albumId): #Devuelve el album dado su id
-    return Album.objects.get(pk=albumId)
+    try:
+        return Album.objects.get(pk=albumId)
+    except ObjectDoesNotExist:
+        return None
 
 # COMPROBADO
-#def conseguirAlbumPorNombre(albumNombre): #Devuelve el album dado su nombre
-#    return Album.objects.get(nombre=albumNombre)
+def conseguirAlbumPorNombre(albumNombre): #Devuelve el album dado su nombre
+    try:
+        return Album.objects.get(nombre=albumNombre)
+    except ObjectDoesNotExist:
+        return None
+    
 def buscarAlbum(albumNombre):
     try:
         albumNombre = albumNombre.lower()
@@ -422,12 +451,18 @@ def actualizarCapitulo(capituloId, nuevoNombre, nuevaDescripcion, nuevoPodcast):
 
 # SIN COMPROBAR
 def conseguirCapituloPorId(capituloId): #Devuelve el capitulo dado su id
-    return Capitulo.objects.get(pk=capituloId)
+    try:
+        return Capitulo.objects.get(pk=capituloId)
+    except ObjectDoesNotExist:
+        return None
 
 # SIN COMPROBAR
-#def conseguirCapituloPorNombre(capituloNombre): #Devuelve el capítulo dado su nombre
-#    return Capitulo.objects.get(nombre=capituloNombre)
-
+def conseguirCapituloPorNombre(capituloNombre): #Devuelve el capitulo dado su nombre
+    try:
+        return Capitulo.objects.get(nombre=capituloNombre)
+    except ObjectDoesNotExist:
+        return None
+    
 def buscarCapitulo(capituloNombre):
     try:
         capituloNombre = capituloNombre.lower()
@@ -468,12 +503,19 @@ def listarPodcasts(): #Devuelve todos los podcasts
 
 # SIN COMPROBAR
 def conseguirPodcastPorId(podcastId): #Devuelve el podcast dado su id
-    return Podcast.objects.get(pk=podcastId)
+    try:
+        return Podcast.objects.get(pk=podcastId)
+    except ObjectDoesNotExist:
+        return None
 
 # SIN COMPROBAR
 # NO SE SI ESTÁ BIEN
-#def conseguirPodcastPorNombre(podcastNombre): #Devuelve el podcast dado su nombre
-#    return Podcast.objects.get(nombre=podcastNombre)
+def conseguirPodcastPorNombre(podcastNombre): #Devuelve el podcast dado su nombre
+    try:
+        return Podcast.objects.get(nombre=podcastNombre)
+    except ObjectDoesNotExist:
+        return None
+
 def buscarPodcast(podcastNombre):
     try:
         podcastNombre = podcastNombre.lower()

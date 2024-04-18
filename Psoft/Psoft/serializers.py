@@ -38,4 +38,19 @@ class CapituloSerializer(serializers.ModelSerializer):
         model = models.Capitulo
         fields = ['id', 'nombre', 'descripcion', 'miPodcast']
 
+class PodcastSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Podcast
+        fields = ['id', 'nombre', 'presentadores']
+
+class AlbumSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Album
+        fields = ['id', 'nombre']
+
+class ArtistaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Artista
+        fields = ['id', 'nombre', 'descripcion']
+
 

@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista
 from . import DAOs
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -809,14 +809,14 @@ class ListarHistorialAPI(APIView): #funciona
 
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN AL HISTORIAL DE UN USUARIO
 {
-    "correo": "sarah@gmail.com"
+    "correo": "sarah@gmail.com",
     "cancion_nombre": "Buenas tardes"
 }'''
 
 class AgnadirCancionHistorialAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
-        correo = request.data.get('email') # coger el correo de la sesión
+        correo = request.data.get('correo') # coger el correo de la sesión
         cancion_nombre = request.data.get('cancion_nombre') # coger el nombre de la cancion
         cancion = DAOs.conseguirCancionPorNombre(cancion_nombre)
         DAOs.agnadirCancionHistorial(correo, cancion)
@@ -887,7 +887,7 @@ class AgnadirGeneroAPI(APIView): # funciona # para canciones, hacer en el mismo 
 {
     "genero": "pop"
 }'''
-class FiltrarCancionesPorGeneroAPI(APIView): # funciona
+class FiltrarCancionesPorGeneroAPI(APIView): # funciona #quizás aprovechar para los capitulos
     permission_classes = [AllowAny]
     def post(self, request):
         genero = request.data.get('genero')
@@ -960,3 +960,55 @@ class BuscarArtistaSPOTY(APIView):
                 return Response({'message': 'Failed to retrieve artist information'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({'message': 'Failed to obtain access token'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+'''
+EJEMPLO DE BUSCAR CANCION
+{
+    "nombre": "Fardos"
+}'''
+class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo de debajo
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        nombre_objeto = request.data.get('nombre')
+        objeto = DAOs.conseguirCancionPorNombre(nombre_objeto)
+        if Cancion.objects.filter(nombre=nombre_objeto).exists():
+            serializer = CancionSerializer(objeto)
+            return Response({'nombre': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No se ha encontrado la canción'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
+
+
+'''class BuscarAPI(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        resultados = []
+
+
+        if cancion:
+            serializer = CancionSerializer(cancion)
+            resultados.append({'cancion': serializer.data})
+        if capitulo:
+            serializer = CapituloSerializer(capitulo)
+            resultados.append({'capitulo': serializer.data})
+        if podcast:
+            serializer = PodcastSerializer(podcast)
+            resultados.append({'podcast': serializer.data})
+        if artista:
+            serializer = ArtistaSerializer(artista)
+            resultados.append({'artista': serializer.data})
+        if album:
+            serializer = AlbumSerializer(album)
+            resultados.append({'album': serializer.data})
+        if playlist:
+            serializer = PlaylistSerializer(playlist)
+            resultados.append({'playlist': serializer.data})
+        if resultados:
+            return Response(resultados, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No se han encontrado coincidencias'}, status=status.HTTP_404_NOT_FOUND)'''

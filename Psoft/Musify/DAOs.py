@@ -8,6 +8,9 @@ from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Can
 def crearArtista(artistaVO): #Se crea el artista
     Artista.objects.create(nombre=artistaVO.nombre, descripcion=artistaVO.descripcion)
 
+def conseguirArtistaPorNombre(nombre): #Devuelve el artista dado su nombre
+    return Artista.objects.get(nombre=nombre)
+
 #DAOs DE USUARIO
 
 # COMPROBADO
@@ -264,7 +267,7 @@ def listarHistorial(usuarioCorreo): #Devuelve el historial de escucha del usuari
 #EN LA API
 def agnadirCancionHistorial(usuarioCorreo, cancion): #Se añade la cancion al historial
     usuario = Usuario.objects.get(pk=usuarioCorreo)
-    cancion = cancion.objects.get(pk=cancion.id)
+    cancion = Cancion.objects.get(pk=cancion.id)
     Historial.objects.create(
         miUsuario=usuario,
         miAudio=cancion
@@ -397,6 +400,10 @@ def actualizarCapitulo(capituloId, nuevoNombre, nuevaDescripcion, nuevoPodcast):
 # SIN COMPROBAR
 def conseguirCapituloPorId(capituloId): #Devuelve el capitulo dado su id
     return Capitulo.objects.get(pk=capituloId)
+
+# SIN COMPROBAR
+def conseguirCapituloPorNombre(capituloNombre): #Devuelve el capítulo dado su nombre
+    return Capitulo.objects.get(nombre=capituloNombre)
 
 # SIN COMPROBAR
 def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id

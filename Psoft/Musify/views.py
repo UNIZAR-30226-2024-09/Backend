@@ -424,6 +424,7 @@ class RegistroAPI(APIView): # funciona
             return Response({'error': 'El correo introducido ya tiene asociada una cuenta'}, status=status.HTTP_400_BAD_REQUEST)
 
         DAOs.crearUsuario(usuario)
+        DAOs.crearPlaylist(correo,"Favoritos",False)
         return Response({'message': 'Usuario registrado con éxito'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO
@@ -666,12 +667,12 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
 }'''
 
 def convertir_a_binario(ruta):
-    #entre las comillas hay que poner la ruta del archivo, teniendo en cuenta que ruta tiene el nombre del archivo
+    #entre las comillas y antes de las dos barras hay que poner la ruta del archivo, teniendo en cuenta que ruta tiene el nombre del archivo
     with open(r"\\" + ruta, "rb") as archivo:
         contenido_binario = archivo.read()
         contenido_base64 = base64.b64encode(contenido_binario)
     return contenido_base64
-# aquí falta el atributo cantantes
+
 class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
@@ -680,7 +681,10 @@ class CrearCancionAPI(APIView): # funciona
         miAlbum = request.data.get('miAlbum')
         puntuacion = request.data.get('puntuacion')
         nombre_archivo_mp3 = request.data.get('nombre_archivo_mp3')
-        miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
+        if miAlbum is not '':
+            miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
+        else:
+            miAlbum = None
         contenido_binario_mp3 = convertir_a_binario(nombre_archivo_mp3)
         contenido_binario_foto = convertir_a_binario(nombre_foto)
         cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, archivo_mp3=contenido_binario_mp3, foto=contenido_binario_foto)
@@ -701,25 +705,43 @@ class PuntuarCancionAPI(APIView): # funciona
         DAOs.puntuarCancion(cancionId, puntuacion)
         return Response({'message': 'Canción puntuada con éxito'}, status=status.HTTP_200_OK)
 
-'''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCION A FAVORITOS
+'''EJEMPLO DE FORMATO JSON PARA AÑADIR O QUITAR UNA CANCION DE FAVORITOS
 {
+    "correo": "sarah@gmail.com",
     "cancionId": "14",
     "favorito": "True"
 }'''
 class EditarCancionFavoritosAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
+        correo = request.data.get('correo')
         cancionId = request.data.get('cancionId')
         favorito = request.data.get('favorito')
-        cancionVO = DAOs.conseguirCancionPorId(cancionId)
-        DAOs.editarFavoritoCancion(cancionVO, favorito)
-        if favorito:
-            DAOs.agnadirCancionPlaylist(111, cancionId) # ID de la playlist de favoritos
+        playlistId = DAOs.favoritoUsuario(correo)
+        if favorito == "True":
+            DAOs.agnadirCancionPlaylist(playlistId, cancionId)
             return Response({'message': 'Canción añadida a favoritos con éxito'}, status=status.HTTP_200_OK)
         else:
-            DAOs.eliminarCancionPlaylist(111, cancionId)
+            DAOs.eliminarCancionPlaylist(playlistId, cancionId)
             return Response({'message': 'Canción eliminada de favoritos con éxito'}, status=status.HTTP_200_OK)
 
+'''EJEMPLO DE FORMATO JSON PARA SABER SI UNA CANCIÓN ESTÁ EN FAVORITOS PARA EL USUARIO
+{
+    "correo": "prueba@gmail",
+    "cancionId": "14",
+}'''
+class EsFavoritaAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo')
+        cancionId = request.data.get('cancionId')
+        cancionVO = DAOs.conseguirCancionPorId(cancionId)
+        if cancionVO is not None:
+            if DAOs.cancionFavorita(correo, cancionVO):
+                return Response({'message': 'La canción está en favoritos'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'La canción no está en favoritos'}, status=status.HTTP_200_OK)
+        
 
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A LA COLA DE REPRODUCCIÓN
 {
@@ -975,9 +997,24 @@ class AgnadirGeneroAPI(APIView): # funciona # para canciones, hacer en el mismo 
         DAOs.crearPertenecen(genero, cancion)
         return Response({'message': 'Género añadido con éxito'}, status=status.HTTP_200_OK)
 
+'''EJEMPLO DE FORMATO JSON PARA AÑADIR CANTANTE A UNA CANCIÓN
+{
+    "artista": "2",
+    "cancionId": "15"
+}'''
+class AgnadirCantanteAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        artistaId = request.data.get('artista')
+        cancionId = request.data.get('cancionId')
+        artista = DAOs.conseguirArtistaPorId(artistaId)
+        cancion = DAOs.conseguirCancionPorId(cancionId)
+        DAOs.crearCantan(cancion, artista)
+        return Response({'message': 'Cantante añadido con éxito'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UN GÉNERO
 {
-    "genero": "pop"
+    "genero": "Pop"
 }'''
 class FiltrarCancionesPorGeneroAPI(APIView): # funciona #quizás aprovechar para los capitulos
     permission_classes = [AllowAny]

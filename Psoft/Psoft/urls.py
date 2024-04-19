@@ -107,4 +107,7 @@ urlpatterns = [
     path('listarPodcasts/', views.ListarPodcastsAPI.as_view(), name='listarPodcasts'),
     path('google/login/', views.IniciarSesionConGoogleAPI.as_view(), name='iniciarSesionConGoogle'),
     path('google/callback/', views.GoogleCallbackAPI.as_view(), name='googleCallback'),
+    path('agnadirCantante/', views.AgnadirCantanteAPI.as_view(), name='agnadirCantante'),
+    path('editarCancionFavoritos/', views.EditarCancionFavoritosAPI.as_view(), name='editarCancionFavoritos'),
+    path('esFavorita/', views.EsFavoritaAPI.as_view(), name='esFavorita'),
     ]

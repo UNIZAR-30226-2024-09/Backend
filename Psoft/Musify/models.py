@@ -36,14 +36,12 @@ class Artista(models.Model):
 class Cancion(models.Model):
     id = models.AutoField(primary_key=True)
     #letra = models.CharField(max_length=255, null=False)
-    cantantes = models.ManyToManyField(Artista)
+    #cantantes = models.ManyToManyField(Artista)
     miAlbum = models.ForeignKey(Album, on_delete=models.CASCADE,null = True)
     puntuacion = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)
     archivo_mp3 = models.BinaryField(default=b'\x00')
     foto = models.BinaryField(default=b'\x00')
-    favorito = models.BooleanField(default=False)
-
 
 class Colabora(models.Model):
     miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='playlists_colaboradas')
@@ -89,7 +87,8 @@ class Pertenecen(models.Model):
     miGenero = models.ForeignKey(Genero, on_delete=models.CASCADE)
     miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE)
 
-
+    class Meta:
+        unique_together = ('miGenero', 'miAudio',)
 
 class Podcast(models.Model):
     id = models.AutoField(primary_key=True)
@@ -104,3 +103,10 @@ class Capitulo(models.Model):
     descripcion = models.CharField(max_length=255, blank=True)
     miPodcast = models.ForeignKey(Podcast, on_delete=models.CASCADE, related_name='capitulos')
 
+class Cantan(models.Model):
+    id = models.AutoField(primary_key=True)
+    miArtista = models.ForeignKey(Artista, on_delete=models.CASCADE)
+    miCancion = models.ForeignKey(Cancion, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('miArtista', 'miCancion',)

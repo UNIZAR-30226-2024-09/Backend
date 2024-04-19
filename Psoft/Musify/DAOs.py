@@ -1,12 +1,18 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista
+from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan
 from django.core.exceptions import ObjectDoesNotExist
 
 #DAOs DE ARTISTA
 
 def crearArtista(artistaVO): #Se crea el artista
     Artista.objects.create(nombre=artistaVO.nombre, descripcion=artistaVO.descripcion)
+
+def conseguirArtistaPorId(artistaId): #Devuelve el artista dado su id
+    try:
+        return Artista.objects.get(pk=artistaId)
+    except ObjectDoesNotExist:
+        return None
 
 def conseguirArtistaPorNombre(nombre): #Devuelve el artista dado su nombre
     try:
@@ -20,6 +26,7 @@ def buscarArtista(nombre):
         return Artista.objects.filter(nombre__istartswith=nombre)
     except ObjectDoesNotExist:
         return None
+
 
 
 #DAOs DE USUARIO
@@ -148,9 +155,9 @@ def listarPlaylistsUsuario(correo): #Devuelve todas las playlists del usuario de
 
 # COMPROBADO
 #EN LA API
-def agnadirCancionPlaylist(playlistId, cancion_id): #Se añade la cancion a la playlist
+def agnadirCancionPlaylist(playlistId, cancionId): #Se añade la cancion a la playlist
     playlist = Playlist.objects.get(pk=playlistId)
-    song = Cancion.objects.get(pk=cancion_id)
+    song = Cancion.objects.get(pk=cancionId)
     Contiene.objects.create(
         miAudio=song,
         miPlaylist=playlist
@@ -215,11 +222,17 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         archivo_mp3=cancionVO.archivo_mp3,
         foto=cancionVO.foto
     )
+# devuelve el id de la playlist favoritos del usuario
+def favoritoUsuario(correo):
+    usuario = Usuario.objects.get(pk=correo)
+    return Playlist.objects.get(colaboradores__miUsuario=usuario, nombre="Favoritos").id
 
-def editarFavoritoCancion(cancionVO, favorito): #Se actualiza la cancion
+def cancionFavorita(correo, cancionVO):
+    usuario = Usuario.objects.get(pk=correo)
+    playlist = Playlist.objects.get(colaboradores__miUsuario=usuario, nombre="Favoritos")
     cancion = Cancion.objects.get(pk=cancionVO.id)
-    cancion.favorito = favorito
-    cancion.save()
+    return Contiene.objects.filter(miAudio=cancion, miPlaylist=playlist).exists()
+    
 
 '''# SIN COMPROBAR (QUITAR QUIZÁS)
 def get_user_favorites(usuarioCorreo): #Devuelve las canciones favoritas del usuario devueltas como VO
@@ -551,4 +564,10 @@ def crearPertenecen(miGeneroVO, miAudioVO):
     return Pertenecen.objects.create(
         miGenero=miGeneroVO,
         miAudio=miAudioVO
+    )
+
+def crearCantan(cancionVO, artistaVO):
+    return Cantan.objects.create(
+        miCancion=cancionVO,
+        miArtista=artistaVO
     )

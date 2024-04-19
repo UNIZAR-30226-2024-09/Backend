@@ -603,7 +603,7 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
 {
     "nombre": "Buenas tardes",
     "nombre_foto": "Homecoming_cover.jpg",
-    "miAlbum": "album de Paco5",
+    "miAlbum": "15",
     "puntuacion": "5",
     "nombre_archivo_mp3": "Kanye West - Homecoming_LQ488QrqGE4.mp3"
 }'''
@@ -623,7 +623,7 @@ class CrearCancionAPI(APIView): # funciona
         miAlbum = request.data.get('miAlbum')
         puntuacion = request.data.get('puntuacion')
         nombre_archivo_mp3 = request.data.get('nombre_archivo_mp3')
-        miAlbum = DAOs.conseguirAlbumPorNombre(miAlbum)
+        miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
         contenido_binario_mp3 = convertir_a_binario(nombre_archivo_mp3)
         contenido_binario_foto = convertir_a_binario(nombre_foto)
         cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, archivo_mp3=contenido_binario_mp3, foto=contenido_binario_foto)

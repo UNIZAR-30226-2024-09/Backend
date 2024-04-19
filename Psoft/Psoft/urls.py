@@ -105,4 +105,6 @@ urlpatterns = [
     path('buscarArtistaSPOTY/', views.BuscarArtistaSPOTY.as_view(), name='buscarArtistaSPOTY'),
     path('buscar/', views.BuscarAPI.as_view(), name='buscar'),
     path('listarPodcasts/', views.ListarPodcastsAPI.as_view(), name='listarPodcasts'),
+    path('google/login/', views.IniciarSesionConGoogleAPI.as_view(), name='iniciarSesionConGoogle'),
+    path('google/callback/', views.GoogleCallbackAPI.as_view(), name='googleCallback'),
     ]

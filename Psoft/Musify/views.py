@@ -332,6 +332,63 @@ class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) fu
             # El usuario no ha sido autenticado, devolver respuesta de error
             return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+class IniciarSesionConGoogleAPI(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        # Verifica si el usuario ya está autenticado
+        if request.user.is_authenticated:
+            return redirect('home')  # Redirige al usuario a la página principal si ya está autenticado
+
+        # URL de redireccionamiento después de la autenticación exitosa
+        redirect_uri = request.build_absolute_uri('/google/callback')
+
+        # URL de autorización de Google
+        auth_uri = 'https://accounts.google.com/o/oauth2/auth'
+        # Configura los parámetros de la solicitud de autenticación
+        auth_params = {
+            'client_id': settings.GOOGLE_CLIENT_ID,
+            'redirect_uri': redirect_uri,
+            'scope': 'email profile openid',
+            'response_type': 'code'
+        }
+        # Genera la URL de autorización de Google
+        auth_url = '{}?{}'.format(auth_uri, urllib.parse.urlencode(auth_params))
+
+        return redirect(auth_url)
+
+class GoogleCallbackAPI(APIView):
+    permission_classes = [AllowAny]
+    def google_callback(request):
+        # Obtiene el código de autorización de la solicitud
+        code = request.GET.get('code')
+
+        # Intercambia el código de autorización por un token de acceso
+        token_url = 'https://oauth2.googleapis.com/token'
+        token_params = {
+            'code': code,
+            'client_id': settings.GOOGLE_CLIENT_ID,
+            'client_secret': settings.GOOGLE_CLIENT_SECRET,
+            'redirect_uri': request.build_absolute_uri('/google/callback'),
+            'grant_type': 'authorization_code'
+        }
+        response = requests.post(token_url, data=token_params)
+
+        # Obtiene el token de acceso y verifica su validez
+        if response.status_code == 200:
+            token_info = response.json()
+            id_token.verify_oauth2_token(token_info['id_token'], requests.Request(), settings.GOOGLE_CLIENT_ID)
+
+            # El token es válido, autentica al usuario y redirige a la página principal
+            # Aquí debes implementar la lógica para crear o autenticar al usuario en tu sistema
+            # Por ejemplo:
+            # user = authenticate(request, google_token=token_info['id_token'])
+            # login(request, user)
+            return redirect('home')
+        else:
+            # Error al obtener el token de acceso, redirige a una página de error
+            return redirect('error')
+
 '''EJEMPLO DE FORMATO JSON PARA REGISTRO
 {
     "correo": "john.doe@example.com",

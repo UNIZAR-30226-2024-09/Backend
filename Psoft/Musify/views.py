@@ -330,7 +330,7 @@ class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) fu
             # El usuario no ha sido autenticado, devolver respuesta de error
             return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
 
-
+'''
 class IniciarSesionConGoogleAPI(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -386,7 +386,7 @@ class GoogleCallbackAPI(APIView):
         else:
             # Error al obtener el token de acceso, redirige a una página de error
             return redirect('error')
-
+'''
 '''EJEMPLO DE FORMATO JSON PARA REGISTRO
 {
     "correo": "john.doe@example.com",

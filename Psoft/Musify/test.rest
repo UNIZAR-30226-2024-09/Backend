@@ -2,7 +2,7 @@ POST http://localhost:8000/registro/
 Content-Type: application/json
 
 {
-    "correo": "paco1@example.com",
+    "correo": "paco2@example.com",
     "nombre": "Paco",
     "sexo": "Male",
     "nacimiento": "1985-03-10",

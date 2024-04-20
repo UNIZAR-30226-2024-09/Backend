@@ -18,7 +18,6 @@ import os
 from requests import get, post
 import json
 load_dotenv()
-'''
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 def get_token(): #Sacado de tutorial, deberia funcionar
@@ -39,7 +38,6 @@ def get_token(): #Sacado de tutorial, deberia funcionar
 token = get_token()
 def get_auth_header(token):
     return {'Authorization': 'Bearer ' + token}
-'''
 # VISTAS DE PRUEBA
 ''''
 

@@ -1,12 +1,65 @@
 from django.db import models
 
-class Usuario(models.Model):
-    correo = models.CharField(max_length=255, primary_key=True)
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils import timezone
+from django.conf import settings
+import uuid
+
+class CustomToken(models.Model):
+    key = models.CharField(max_length=40, primary_key=True, default=uuid.uuid4)
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='custom_token', on_delete=models.CASCADE)
+    created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.key
+
+
+class UsuarioManager(BaseUserManager):
+    def create_user(self, correo, nombre, contrasegna, **extra_fields):
+        if not correo:
+            raise ValueError('El correo electrónico es obligatorio')
+        email = self.normalize_email(correo)
+        usuario = self.model(correo=email, nombre=nombre, **extra_fields)
+        usuario.set_password(contrasegna)
+        usuario.save(using=self._db)
+        return usuario
+
+    def create_superuser(self, correo, nombre, contrasegna, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(correo, nombre, contrasegna, **extra_fields)
+
+class Usuario(AbstractBaseUser):
+    correo = models.CharField(max_length=255, primary_key=True, unique=True)
     nombre = models.CharField(max_length=255, null=False)
     sexo = models.CharField(max_length=255, blank=True)
     nacimiento = models.DateField(blank=True, null=True)
     contrasegna = models.CharField(max_length=255, null=False)
     pais = models.CharField(max_length=255, blank=True)
+
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UsuarioManager()
+
+    USERNAME_FIELD = 'correo'
+    REQUIRED_FIELDS = ['nombre']
+
+    def __str__(self):
+        return self.correo
+
+    def has_perm(self, perm, obj=None):
+        return self.is_staff
+
+    def has_module_perms(self, app_label):
+        return self.is_staff
 
 class Amigo(models.Model):
     micorreo1 = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='amigos1')

@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.http import HttpResponse
-from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista
+from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista, CustomToken
 from . import DAOs
 from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
@@ -423,7 +424,8 @@ class RegistroAPI(APIView): # funciona
 
         DAOs.crearUsuario(usuario)
         DAOs.crearPlaylist(correo,"Favoritos",False)
-        return Response({'message': 'Usuario registrado con éxito'}, status=status.HTTP_200_OK)
+        token = CustomToken.objects.create(usuario=usuario)
+        return Response({'message': 'Usuario registrado con éxito',"token": token.key}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO
 {

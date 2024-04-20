@@ -309,8 +309,8 @@ class UserViewSet(viewsets.ModelViewSet): #funciona
         
 '''EJEMPLO DE FORMATO JSON PARA INICIAR SESION
 {
-    "correo": "nerea@ejemplo.com",
-    "contrasegna": "nerea"
+    "correo": "john.doe@example.com",
+    "contrasegna": "5U3rP@55w0rd"
 }
 '''
 
@@ -326,7 +326,8 @@ class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) fu
 
         if usuario is not None:
             # El usuario ha sido autenticado, devolver respuesta de éxito
-            return Response({'message': 'Inicio de sesión correcto'}, status=status.HTTP_200_OK)
+            token, created = CustomToken.objects.get_or_create(usuario=usuario)
+            return Response({'message': 'Inicio de sesión correcto',"token": token.key}, status=status.HTTP_200_OK)
         else:
             # El usuario no ha sido autenticado, devolver respuesta de error
             return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)

@@ -564,6 +564,7 @@ class ListarCancionesAPI(APIView): # funciona
 
     def post(self, request):
         canciones = DAOs.listarCanciones()
+        canciones[:3] #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
         # Verificar si se encontraron canciones en la playlist
         if canciones:
             serializer = CancionSerializer(canciones, many=True)

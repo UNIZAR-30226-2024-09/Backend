@@ -150,6 +150,8 @@ class Podcast(models.Model):
     nombre = models.CharField(max_length=255, null=False)
     presentadores = models.CharField(max_length=255, null=False)
     favorito = models.BooleanField(default=False)
+    puntuacion = models.IntegerField(blank=True, null=True)
+    numPuntuaciones = models.IntegerField(blank=True, null=True)
 
 
 class Capitulo(models.Model):
@@ -165,3 +167,4 @@ class Cantan(models.Model):
 
     class Meta:
         unique_together = ('miArtista', 'miCancion',)
+

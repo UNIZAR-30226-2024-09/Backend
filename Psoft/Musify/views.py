@@ -839,6 +839,18 @@ class CrearPodcastAPI(APIView): # funciona
         DAOs.crearPodcast(podcast)
         return Response({'message': 'Podcast almacenado correctamente'}, status=status.HTTP_200_OK)
 
+class PuntuarPodcastAPI(APIView): #comprobar
+    permission_classes = [AllowAny]
+    def post(self, request):
+        cancionId = request.data.get('podcastId')
+        puntuacion = request.data.get('puntuacion')
+        puntuacionActual = DAOs.puntuacionPodcast('podcastId')
+        numeroPuntuaciones = DAOs.numeroPuntuacionesPodcast('podcastId')
+        puntuacion = (puntuacionActual + puntuacion) / (numeroPuntuaciones + 1)
+        DAOs.aumentarNumeroPuntuacionesPodcast('podcastId', numeroPuntuaciones + 1)
+        DAOs.puntuarPodcast(podcastId, puntuacion)
+        return Response({'message': 'Podcast puntuada con éxito'}, status=status.HTTP_200_OK)
+
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR CAPITULO
 {
@@ -1044,7 +1056,7 @@ class CrearPodcastAPI(APIView): # funciona
     def post(self, request):
         nombre = request.data.get('nombre')
         presentadores = request.data.get('presentadores')
-        podcast = Podcast(nombre=nombre, presentadores=presentadores)
+        podcast = Podcast(nombre=nombre, presentadores=presentadores, puntuacion=0, numPuntuaciones=0)
         DAOs.crearPodcast(podcast)
         return Response({'message': 'Podcast creado con éxito'}, status=status.HTTP_200_OK)
 

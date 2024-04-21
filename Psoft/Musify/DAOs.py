@@ -219,6 +219,7 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         #cantantes=song_vo.cantantes,
         miAlbum=cancionVO.miAlbum,
         puntuacion=cancionVO.puntuacion,
+        numPuntuaciones=cancionVO.numPuntuaciones,
         archivo_mp3=cancionVO.archivo_mp3,
         foto=cancionVO.foto
     )
@@ -505,8 +506,29 @@ def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id
 def crearPodcast(podcastVO): #Se crea el podcast
     return Podcast.objects.create(
         nombre=podcastVO.nombre,
-        presentadores=podcastVO.presentadores
+        presentadores=podcastVO.presentadores,
+        puntuacion=podcastVO.puntuacion,
+        numPuntuaciones=podcastVO.numPuntuaciones
     )
+
+
+def puntuacionPodcast(podcastId): #Devuelve la puntuación de un podcast dado su id
+    podcast = Podcast.objects.get(pk=podcastId)
+    return podcast.puntuacion
+
+def puntuarPodcast(podcastId, puntuacion): #añade puntuación a un podcast
+    podcast = Podcast.objects.get(pk=podcastId)
+    podcast.puntuacion = puntuacion
+    podcast.save()
+
+def numeroPuntuacionesPodcast(podcastId): #Devuelve el número de puntuaciones de una canción
+    podcast = Podcast.objects.get(pk=podcastId)
+    return podcast.numPuntuaciones
+
+def aumentarNumeroPuntuacionesPodcast(podcastId, numeroPuntuaciones): #Aumenta el número de puntuaciones de una canción
+    podcast = Podcast.objects.get(pk=podcastId)
+    podcast.numPuntuaciones = numeroPuntuaciones
+    podcast.save() 
 
 # COMPROBADO
 # EN LA API

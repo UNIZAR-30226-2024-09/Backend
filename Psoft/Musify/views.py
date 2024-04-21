@@ -681,7 +681,8 @@ class CrearCancionAPI(APIView): # funciona
         nombre = request.data.get('nombre')
         nombre_foto = request.data.get('nombre_foto')
         miAlbum = request.data.get('miAlbum')
-        puntuacion = request.data.get('puntuacion')
+        puntuacion = 0 # cuando se crea la canción en nuestra app, se crea con puntuación 0
+        numeroPuntuaciones = 0
         nombre_archivo_mp3 = request.data.get('nombre_archivo_mp3')
         if miAlbum is not '':
             miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
@@ -689,7 +690,7 @@ class CrearCancionAPI(APIView): # funciona
             miAlbum = None
         contenido_binario_mp3 = convertir_a_binario(nombre_archivo_mp3)
         contenido_binario_foto = convertir_a_binario(nombre_foto)
-        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, archivo_mp3=contenido_binario_mp3, foto=contenido_binario_foto)
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivo_mp3=contenido_binario_mp3, foto=contenido_binario_foto)
         DAOs.crearCancion(cancion)
         return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 
@@ -699,7 +700,7 @@ class CrearCancionAPI(APIView): # funciona
     "puntuacion": "4"
 }'''
 
-class PuntuarCancionAPI(APIView): # funciona
+class PuntuarCancionAPI(APIView): # comprobar
     permission_classes = [AllowAny]
     def post(self, request):
         cancionId = request.data.get('cancionId')
@@ -707,6 +708,7 @@ class PuntuarCancionAPI(APIView): # funciona
         puntuacionActual = DAOs.puntuacionCancion('cancionId')
         numeroPuntuaciones = DAOs.numeroPuntuaciones('cancionId')
         puntuacion = (puntuacionActual + puntuacion) / (numeroPuntuaciones + 1)
+        DAOs.aumentarNumeroPuntuaciones('cancionId', numeroPuntuaciones + 1)
         DAOs.puntuarCancion(cancionId, puntuacion)
         return Response({'message': 'Canción puntuada con éxito'}, status=status.HTTP_200_OK)
 
@@ -1133,4 +1135,6 @@ class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo 
             return Response(resultados, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No se han encontrado coincidencias'}, status=status.HTTP_404_NOT_FOUND)
+
+
         

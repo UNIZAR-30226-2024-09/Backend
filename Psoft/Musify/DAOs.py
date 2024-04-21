@@ -307,6 +307,11 @@ def numeroPuntuaciones(cancionId): #Devuelve el número de puntuaciones de una c
     cancion = Cancion.objects.get(pk=cancionId)
     return cancion.pnumPuntuaciones
 
+def aumentarNumeroPuntuaciones(cancionId, numeroPuntuaciones): #Aumenta el número de puntuaciones de una canción
+    cancion = Cancion.objects.get(pk=cancionId)
+    cancion.numPuntuaciones = numeroPuntuaciones
+    cancion.save() 
+
 
 #DAOs DE HISTORIAL
 

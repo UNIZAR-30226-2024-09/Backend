@@ -168,3 +168,15 @@ class Cantan(models.Model):
     class Meta:
         unique_together = ('miArtista', 'miCancion',)
 
+class PuntuaCancion(models.Model):
+    id = models.AutoField(primary_key=True)
+    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    miCancion = models.ForeignKey(Cancion, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(null=False)
+
+class PuntuaPodcast(models.Model):
+    id = models.AutoField(primary_key=True)
+    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    miPodcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(null=False)
+

@@ -1149,4 +1149,11 @@ class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo 
             return Response({'message': 'No se han encontrado coincidencias'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class RecomendarAPI(APIView):
+    def post(self, request):
+        correo = request.data.get('correo')
+        genero_id = request.data.get('genero_id') # esto sería que recomiende por género
+        resultados = []
+
+        canciones_por_genero = Pertenecen.objects.filter(miGenero_id=genero_id).values_list('miAudio_id', flat=True)
         

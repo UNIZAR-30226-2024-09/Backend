@@ -292,22 +292,32 @@ def artistasCancion(cancionId): #Devuelve los artistas de una cancion dado su id
 def audioDeCancion(cancionId): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
     return Cancion.objects.get(pk=cancionId).audio
 
-# EN PROCESO
+# SIN COMPROBAR
 #EN LA API
 def puntuarCancion(cancionId, puntuacion): #añade puntuación a una canción
+    correo = Usuario.objects.get(pk=correo)
     cancion = Cancion.objects.get(pk=cancionId)
     cancion.puntuacion = puntuacion
     cancion.save()
+    puntuaCancion = puntuaCancion.objects.create (
+        miUsuario = correo,
+        miCancion = cancion,
+        puntuacion = puntuacion
+    )
+    puntuaCancion.save()
 
-# EN PROCESO
+
+# SIN COMPROBAR
 def puntuacionCancion(cancionId): #Devuelve la puntuación de una canción
     cancion = Cancion.objects.get(pk=cancionId)
     return cancion.puntuacion
 
+# SIN COMPROBAR
 def numeroPuntuaciones(cancionId): #Devuelve el número de puntuaciones de una canción
     cancion = Cancion.objects.get(pk=cancionId)
     return cancion.pnumPuntuaciones
 
+# SIN COMPROBAR
 def aumentarNumeroPuntuaciones(cancionId, numeroPuntuaciones): #Aumenta el número de puntuaciones de una canción
     cancion = Cancion.objects.get(pk=cancionId)
     cancion.numPuntuaciones = numeroPuntuaciones
@@ -511,20 +521,29 @@ def crearPodcast(podcastVO): #Se crea el podcast
         numPuntuaciones=podcastVO.numPuntuaciones
     )
 
-
+# SIN COMPROBAR
 def puntuacionPodcast(podcastId): #Devuelve la puntuación de un podcast dado su id
     podcast = Podcast.objects.get(pk=podcastId)
     return podcast.puntuacion
 
+# SIN COMPROBAR
 def puntuarPodcast(podcastId, puntuacion): #añade puntuación a un podcast
     podcast = Podcast.objects.get(pk=podcastId)
     podcast.puntuacion = puntuacion
     podcast.save()
+    puntuaPodcast = puntuaPodcast.objects.create (
+        miUsuario = correo,
+        miPodcast = podcast,
+        puntuacion = puntuacion
+    )
+    puntuaPodcast.save()
 
+# SIN COMPROBAR
 def numeroPuntuacionesPodcast(podcastId): #Devuelve el número de puntuaciones de una canción
     podcast = Podcast.objects.get(pk=podcastId)
     return podcast.numPuntuaciones
 
+# SIN COMPROBAR
 def aumentarNumeroPuntuacionesPodcast(podcastId, numeroPuntuaciones): #Aumenta el número de puntuaciones de una canción
     podcast = Podcast.objects.get(pk=podcastId)
     podcast.numPuntuaciones = numeroPuntuaciones
@@ -603,3 +622,20 @@ def crearCantan(cancionVO, artistaVO):
         miCancion=cancionVO,
         miArtista=artistaVO
     )
+
+
+#DAOs para recomendar
+
+#def recomendar():
+#    with connection.cursor() as cursor:
+#        cursor.execute("SELECT * FROM Musify_cancion ORDER BY puntuacion DESC LIMIT 5")
+#        return cursor.fetchall()
+
+#def generosCancionesMejorPuntuadasPorUsuario(usuarioId):
+#    generos_destacados = PuntuaCancion.objects.filter(miUsuario=usuarioId, puntuacion__in=[4, 5]).values_list('miCancion__genero__nombre', flat=True).distinct()
+    
+    # Convertir el resultado a una lista para poder devolverla
+#    generos_destacados = list(generos_destacados)
+    
+#    return generos_destacados
+

@@ -92,9 +92,11 @@ class Cancion(models.Model):
     #cantantes = models.ManyToManyField(Artista)
     miAlbum = models.ForeignKey(Album, on_delete=models.CASCADE,null = True)
     puntuacion = models.IntegerField(blank=True, null=True)
+    numPuntuaciones = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)
     archivo_mp3 = models.BinaryField(default=b'\x00')
     foto = models.BinaryField(default=b'\x00')
+
 
 class Colabora(models.Model):
     miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='playlists_colaboradas')

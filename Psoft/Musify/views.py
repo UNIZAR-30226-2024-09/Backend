@@ -704,6 +704,9 @@ class PuntuarCancionAPI(APIView): # funciona
     def post(self, request):
         cancionId = request.data.get('cancionId')
         puntuacion = request.data.get('puntuacion')
+        puntuacionActual = DAOs.puntuacionCancion('cancionId')
+        numeroPuntuaciones = DAOs.numeroPuntuaciones('cancionId')
+        puntuacion = (puntuacionActual + puntuacion) / (numeroPuntuaciones + 1)
         DAOs.puntuarCancion(cancionId, puntuacion)
         return Response({'message': 'Canción puntuada con éxito'}, status=status.HTTP_200_OK)
 

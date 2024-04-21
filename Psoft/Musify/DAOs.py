@@ -303,6 +303,11 @@ def puntuacionCancion(cancionId): #Devuelve la puntuación de una canción
     cancion = Cancion.objects.get(pk=cancionId)
     return cancion.puntuacion
 
+def numeroPuntuaciones(cancionId): #Devuelve el número de puntuaciones de una canción
+    cancion = Cancion.objects.get(pk=cancionId)
+    return cancion.pnumPuntuaciones
+
+
 #DAOs DE HISTORIAL
 
 # COMPROBADO

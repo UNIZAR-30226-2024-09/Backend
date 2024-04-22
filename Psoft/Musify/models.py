@@ -80,23 +80,28 @@ class Playlist(models.Model):
 class Album(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
+    foto = models.BinaryField(default=b'\x00')
 
+
+class Presentador(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=255, null=False)
+    foto = models.BinaryField(default=b'\x00')
+    descripcion = models.CharField(max_length=500, null=True)
 
 class Artista(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
-    #Foto sale de la api, si no la metemos aqui en binarios
-    descripcion = models.CharField(max_length=500, null=True) #Hasta donde tengo entendido tambien se puede sacar de la api pero por si acaso
-                                                                #que si sacamos muchas cosas nos caparan el limite de peticiones
+    foto = models.BinaryField(default=b'\x00')
+    descripcion = models.CharField(max_length=500, null=True)
+
 class Cancion(models.Model):
     id = models.AutoField(primary_key=True)
-    #letra = models.CharField(max_length=255, null=False)
-    #cantantes = models.ManyToManyField(Artista)
     miAlbum = models.ForeignKey(Album, on_delete=models.CASCADE,null = True)
     puntuacion = models.IntegerField(blank=True, null=True)
     numPuntuaciones = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)
-    archivo_mp3 = models.BinaryField(default=b'\x00')
+    archivoMp3 = models.BinaryField(default=b'\x00')
     foto = models.BinaryField(default=b'\x00')
 
 
@@ -121,14 +126,6 @@ class Historial(models.Model):
     miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE, related_name='veces_escuchado')
 
 
-'''class Favorito(models.Model):
-    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='audios_favoritos')
-    miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE, related_name='veces_marcado_favorito')
-
-    class Meta:
-        unique_together = ('miUsuario', 'miAudio',)'''
-
-
 class Cola(models.Model):
     id = models.AutoField(primary_key=True)
     miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -150,17 +147,17 @@ class Pertenecen(models.Model):
 class Podcast(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
-    presentadores = models.CharField(max_length=255, null=False)
-    favorito = models.BooleanField(default=False)
+    #presentadores = models.CharField(max_length=255, null=False)
     puntuacion = models.IntegerField(blank=True, null=True)
     numPuntuaciones = models.IntegerField(blank=True, null=True)
-
+    foto = models.BinaryField(default=b'\x00')
 
 class Capitulo(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
     descripcion = models.CharField(max_length=255, blank=True)
     miPodcast = models.ForeignKey(Podcast, on_delete=models.CASCADE, related_name='capitulos')
+    archivoMp3 = models.BinaryField(default=b'\x00')
 
 class Cantan(models.Model):
     id = models.AutoField(primary_key=True)
@@ -169,6 +166,14 @@ class Cantan(models.Model):
 
     class Meta:
         unique_together = ('miArtista', 'miCancion',)
+
+class Interpretan(models.Model):
+    id = models.AutoField(primary_key=True)
+    miPresentador = models.ForeignKey(Presentador, on_delete=models.CASCADE)
+    miPodcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('miPresentador', 'miPodcast',)
 
 #class PuntuaCancion(models.Model):
 #    id = models.AutoField(primary_key=True)

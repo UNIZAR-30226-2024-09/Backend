@@ -674,15 +674,15 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
 '''EJEMPLO DE FORMATO JSON PARA CREAR CANCIÓN
 {
     "nombre": "Buenas tardes",
-    "nombre_foto": "Homecoming_cover.jpg",
+    "nombreFoto": "Homecoming_cover.jpg",
     "miAlbum": "15",
     "puntuacion": "5",
-    "nombre_archivo_mp3": "Kanye West - Homecoming_LQ488QrqGE4.mp3"
+    "nombreArchivoMp3": "Kanye West - Homecoming_LQ488QrqGE4.mp3"
 }'''
 
-def convertir_a_binario(ruta):
+def convertirBinario(ruta):
     #entre las comillas y antes de las dos barras hay que poner la ruta del archivo, teniendo en cuenta que ruta tiene el nombre del archivo
-    with open(r"\\" + ruta, "rb") as archivo:
+    with open(r"C:\Users\nerea\OneDrive\Escritorio\Inginformatica\3o\Proyecto_software\Prácticas\\" + ruta, "rb") as archivo:
         contenido_binario = archivo.read()
         contenido_base64 = base64.b64encode(contenido_binario)
     return contenido_base64
@@ -691,18 +691,18 @@ class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
-        nombre_foto = request.data.get('nombre_foto')
+        nombreFoto = request.data.get('nombreFoto')
         miAlbum = request.data.get('miAlbum')
         puntuacion = 0 # cuando se crea la canción en nuestra app, se crea con puntuación 0
         numeroPuntuaciones = 0
-        nombre_archivo_mp3 = request.data.get('nombre_archivo_mp3')
+        nombreMp3 = request.data.get('nombreArchivoMp3')
         if miAlbum != '':
             miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
         else:
             miAlbum = None
-        contenido_binario_mp3 = convertir_a_binario(nombre_archivo_mp3)
-        contenido_binario_foto = convertir_a_binario(nombre_foto)
-        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivo_mp3=contenido_binario_mp3, foto=contenido_binario_foto)
+        contenidoBinarioMp3 = convertirBinario(nombreMp3)
+        contenidoBinarioFoto = convertirBinario(nombreFoto)
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivoMp3=contenidoBinarioMp3, foto=contenidoBinarioFoto)
         DAOs.crearCancion(cancion)
         return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 
@@ -831,30 +831,10 @@ class AgnadirCancionAlbumAPI(APIView): # funciona
         DAOs.agnadirCancionAlbum(album, cancion)
         return Response({'message': 'Canción añadida al álbum con éxito'}, status=status.HTTP_200_OK)
 
-
-'''EJEMPLO DE FORMATO JSON PARA CREAR PODCAST
-{
-    "nombre": "podcast1",
-    "presentadores": "presentador1, presentador2"
-}'''
-class CrearPodcastAPI(APIView): # funciona
-    permission_classes = [AllowAny]
-    def post(self, request):
-        nombre = request.data.get('nombre')
-        presentadores = request.data.get('presentadores')
-
-        if not nombre:
-            return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
-
-        logger.debug(f'Nombre recibido: {nombre}')
-        podcast = Podcast(nombre=nombre, presentadores=presentadores)
-        DAOs.crearPodcast(podcast)
-        return Response({'message': 'Podcast almacenado correctamente'}, status=status.HTTP_200_OK)
-
 class PuntuarPodcastAPI(APIView): #comprobar
     permission_classes = [AllowAny]
     def post(self, request):
-        cancionId = request.data.get('podcastId')
+        podcastId = request.data.get('podcastId')
         puntuacion = request.data.get('puntuacion')
         puntuacionActual = DAOs.puntuacionPodcast('podcastId')
         numeroPuntuaciones = DAOs.numeroPuntuacionesPodcast('podcastId')
@@ -868,7 +848,8 @@ class PuntuarPodcastAPI(APIView): #comprobar
 {
     "nombre": "episodio1",
     "descripcion": "descripcion del epidodio1",
-    "miPodcast": "podcast1" 
+    "podcastId": "2",
+    "nombreArchivoMp3": "archivo.mp3"
 }'''
 
 class CrearCapituloAPI(APIView): #funciona
@@ -876,16 +857,21 @@ class CrearCapituloAPI(APIView): #funciona
     def post(self, request):
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
-        miPodcast = request.data.get('miPodcast')
-        miPodcast = DAOs.conseguirPodcastPorNombre(miPodcast)
+        podcastId = request.data.get('podcastId')
+        nombreArchivoMp3 = request.data.get('nombreArchivoMp3')
 
         if not nombre:
             return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
-
-        logger.debug(f'Nombre recibido: {nombre}')
-        capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast)
+        if podcastId != '':
+            miPodcast = DAOs.conseguirPodcastPorId(podcastId)
+        else:
+            miPodcast = None
+        contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
+        capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast, archivoMp3=contenidoBinarioMp3)
         DAOs.crearCapitulo(capitulo)
         return Response({'message': 'Capítulo almacenado correctamente'}, status=status.HTTP_200_OK)
+
+
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR CAPITULO
 {
@@ -1043,6 +1029,22 @@ class AgnadirCantanteAPI(APIView): # funciona
         DAOs.crearCantan(cancion, artista)
         return Response({'message': 'Cantante añadido con éxito'}, status=status.HTTP_200_OK)
 
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LOS ARTISTAS DE UNA CANCIÓN
+{
+    "cancionId": "33"
+}'''
+class ListarArtistasCancionAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        cancionId = request.data.get('cancionId')
+        cancion = DAOs.conseguirCancionPorId(cancionId)
+        artistas = DAOs.listarArtistasCancion(cancion)
+        if artistas:
+            serializer = ArtistaSerializer(artistas, many=True)
+            return Response({'artistas': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay artistas en la canción'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UN GÉNERO
 {
     "genero": "Pop"
@@ -1061,14 +1063,16 @@ class FiltrarCancionesPorGeneroAPI(APIView): # funciona #quizás aprovechar para
 '''EJEMPLO DE FORMATO JSON PARA CREAR PODCAST
 {
     "nombre": "podcast1",
-    "presentadores": "arturo valls, patricia conde"
+    "nombreFoto": "foto.jpg",
+    
 }''' 
 class CrearPodcastAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
-        presentadores = request.data.get('presentadores')
-        podcast = Podcast(nombre=nombre, presentadores=presentadores, puntuacion=0, numPuntuaciones=0)
+        nombreFoto = request.data.get('nombreFoto')
+        contenidoBinarioFoto = convertirBinario(nombreFoto)
+        podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0, foto=contenidoBinarioFoto)
         DAOs.crearPodcast(podcast)
         return Response({'message': 'Podcast creado con éxito'}, status=status.HTTP_200_OK)
 

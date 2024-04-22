@@ -287,10 +287,10 @@ def albumCancion(cancionId): #Devuelve el album de una cancion dado su id
     cancion = Cancion.objects.get(pk=cancionId)
     return cancion.miAlbum
 
-# EN PROCESO, está en la view q no saca nada por la terminal
-def artistasCancion(cancionId): #Devuelve los artistas de una cancion dado su id
-    cancion = Cancion.objects.get(pk=cancionId)
-    return cancion.cantantes
+def listarArtistasCancion(cancionVO): #Devuelve los artistas de una cancion dado su id
+    ids = Cantan.objects.filter(miCancion=cancionVO.id)
+    artistas = [cantanObject.miArtista for cantanObject in ids]
+    return artistas
 
 # SIN COMPROBAR (QUITAR QUIZÁS)
 def audioDeCancion(cancionId): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
@@ -426,13 +426,15 @@ def listarGenerosFavoritos(correo): #Devuelve los generos favoritos del usuario
 #EN LA API
 def crearAlbum(albumVO): #Se crea el album sin canciones
     return Album.objects.create(
-        nombre=albumVO.nombre
+        nombre=albumVO.nombre,
+        foto=albumVO.foto
     )
 
 # EN LA API
 def actualizarAlbum(albumVO): #Se actualiza el album
     album = Album.objects.get(pk=albumVO.id)
     album.nombre = albumVO.nombre
+    album.foto = albumVO.foto
     album.save()
 
 # COMPROBADO
@@ -479,7 +481,8 @@ def crearCapitulo(capituloVO): #Se crea el capitulo
     return Capitulo.objects.create(
         nombre=capituloVO.nombre,
         descripcion=capituloVO.descripcion,
-        miPodcast=capituloVO.miPodcast
+        miPodcast=capituloVO.miPodcast,
+        archivoMp3=capituloVO.archivoMp3
     )
 
 #EN LA API
@@ -523,9 +526,9 @@ def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id
 def crearPodcast(podcastVO): #Se crea el podcast
     return Podcast.objects.create(
         nombre=podcastVO.nombre,
-        presentadores=podcastVO.presentadores,
         puntuacion=podcastVO.puntuacion,
-        numPuntuaciones=podcastVO.numPuntuaciones
+        numPuntuaciones=podcastVO.numPuntuaciones,
+        foto=podcastVO.foto
     )
 
 # SIN COMPROBAR

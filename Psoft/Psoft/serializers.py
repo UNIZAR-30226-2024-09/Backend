@@ -36,21 +36,21 @@ class ColaSerializer(serializers.ModelSerializer):
 class CapituloSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Capitulo
-        fields = ['id', 'nombre', 'descripcion', 'miPodcast']
+        fields = ['id', 'nombre', 'descripcion', 'miPodcast', 'archivo_mp3']
 
 class PodcastSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Podcast
-        fields = ['id', 'nombre', 'presentadores', 'favorito']
+        fields = ['id', 'nombre', 'presentadores', 'favorito', 'foto']
 
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Album
-        fields = ['id', 'nombre']
+        fields = ['id', 'nombre', 'foto']
 
 class ArtistaSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Artista
-        fields = ['id', 'nombre', 'descripcion']
+        fields = ['id', 'nombre', 'descripcion', 'foto']
 
 

@@ -13,6 +13,11 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 from django.shortcuts import redirect
 from django.contrib.auth import logout
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
+from .utils import generate_token
 
 #Spotify
 from dotenv import load_dotenv
@@ -50,6 +55,29 @@ def home(request):
 def lougout_view(request):
     logout(request)
     return redirect("/")
+
+# CORREO DE VERIFICACIÓN
+#def send_verification_email(user, request):
+#   current_site = get_current_site(request)
+#   subject = 'Verifica tu cuenta de Musify'
+#   message = render_to_string('authentication/activate.html', {
+#       'user': user,
+#       'domain': current_site,
+#       'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+#       'token': generate_token.make_token(user)
+#})
+
+#def activate_user(request, uidb64, token):
+#    try:
+#       uid = force_text(urlsafe_base64_decode(uidb64))
+#       user = Usuario.objects.get(pk=uid)
+#    except Exception as e:
+#       user = None
+#    if user and generate_token.check_token(user, token):
+#       user.is_email_verified = True
+#       user.save()
+#       messages.add_message(request, messages.SUCCESS, 'Cuenta verificada con éxito')
+#       return redirect(reverse('login'))
 ''''
 
 def home(request):

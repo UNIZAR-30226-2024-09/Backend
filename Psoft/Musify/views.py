@@ -11,6 +11,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
+from django.shortcuts import redirect
+from django.contrib.auth import logout
 
 #Spotify
 from dotenv import load_dotenv
@@ -21,25 +23,33 @@ import json
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
-def get_token(): #Sacado de tutorial, deberia funcionar
-    auth_string = client_id + ":" + client_secret
-    auth_bytes = auth_string.encode('utf-8')
-    auth_base64 = str(base64.b64encode(auth_bytes), 'utf-8')
+#def get_token(): #Sacado de tutorial, deberia funcionar
+#    auth_string = client_id + ":" + client_secret
+#    auth_bytes = auth_string.encode('utf-8')
+#    auth_base64 = str(base64.b64encode(auth_bytes), 'utf-8')
 
-    url='https://accounts.spotify.com/api/token'
-    headers = {
-        'Authorization': 'Basic ' + auth_base64,
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-    data = {"grant_type": 'client_credentials'}
-    result = post(url, headers=headers, data=data)
-    json_result = json.loads(result.text)
-    token = json_result['access_token']
-    return token
-token = get_token()
-def get_auth_header(token):
-    return {'Authorization': 'Bearer ' + token}
+#    url='https://accounts.spotify.com/api/token'
+#    headers = {
+#        'Authorization': 'Basic ' + auth_base64,
+#        'Content-Type': 'application/x-www-form-urlencoded'
+#    }
+#    data = {"grant_type": 'client_credentials'}
+#    result = post(url, headers=headers, data=data)
+#    json_result = json.loads(result.text)
+#    token = json_result['access_token']
+#    return token
+#token = get_token()
+#def get_auth_header(token):
+#    return {'Authorization': 'Bearer ' + token}
 # VISTAS DE PRUEBA
+
+# GOOGLE
+def home(request):
+    return render(request, 'home.html')
+
+def lougout_view(request):
+    logout(request)
+    return redirect("/")
 ''''
 
 def home(request):
@@ -412,6 +422,8 @@ class RegistroAPI(APIView): # funciona
         nacimiento = request.data.get('nacimiento')
         contrasegna = request.data.get('contrasegna')
         pais = request.data.get('pais')
+        generos_seleccionados = request.POST.getlist('generos') # no se si es post o data
+        artistas_seleccionados = request.POST.getlist('artistas') # no se si es post o data
 
         if not nombre:
             return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
@@ -684,7 +696,7 @@ class CrearCancionAPI(APIView): # funciona
         puntuacion = 0 # cuando se crea la canción en nuestra app, se crea con puntuación 0
         numeroPuntuaciones = 0
         nombre_archivo_mp3 = request.data.get('nombre_archivo_mp3')
-        if miAlbum is not '':
+        if miAlbum != '':
             miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
         else:
             miAlbum = None
@@ -1149,11 +1161,30 @@ class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo 
             return Response({'message': 'No se han encontrado coincidencias'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class RecomendarAPI(APIView):
+class RecomendarAPI(APIView): #comprobar
     def post(self, request):
         correo = request.data.get('correo')
-        genero_id = request.data.get('genero_id') # esto sería que recomiende por género
+        #genero_id = request.data.get('genero_id') # esto sería que recomiende por género
+        #artista_id = request.data.get('artista_id') # y por artista
         resultados = []
 
-        canciones_por_genero = Pertenecen.objects.filter(miGenero_id=genero_id).values_list('miAudio_id', flat=True)
+        generos_favoritos = DAOs.listarGenerosFavoritos(correo) # por hacer
+
+        for genero in generos_favoritos:
+            # obtener todas las canciones de ese género
+            canciones_del_genero = Pertenecen.objects.filter(miGenero=genero).distinct()
+            canciones_recomendadas = random.sample(list(canciones_del_genero), 3)
+            for cancion in canciones_recomendadas:
+                resultados.append(cancion)
+
+        artistas_favoritos = DAOs.listarArtistasFavoritos(correo) # por hacer
+
+        for artista in artistas_favoritos:
+            # obtener todas las canciones de ese artista
+            canciones_del_artista = Cantan.objects.filter(miArtista=artista).distinct()
+            canciones_recomendadas = random.sample(list(canciones_del_artista), 3)
+            for cancion in canciones_recomendadas:
+                resultados.append(cancion)
+
+        return resultados
         

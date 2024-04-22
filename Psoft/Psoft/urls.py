@@ -110,4 +110,5 @@ urlpatterns = [
     path('agnadirCantante/', views.AgnadirCantanteAPI.as_view(), name='agnadirCantante'),
     path('editarCancionFavoritos/', views.EditarCancionFavoritosAPI.as_view(), name='editarCancionFavoritos'),
     path('esFavorita/', views.EsFavoritaAPI.as_view(), name='esFavorita'),
+    path('accounts/', include('allauth.urls'))
     ]

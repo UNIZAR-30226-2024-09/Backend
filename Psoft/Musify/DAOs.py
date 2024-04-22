@@ -27,6 +27,8 @@ def buscarArtista(nombre):
     except ObjectDoesNotExist:
         return None
 
+def listarArtistasFavoritos(correo):
+    return Usuario.objects.get(pk=correo).artistas_favoritos.all()
 
 
 #DAOs DE USUARIO
@@ -52,7 +54,9 @@ def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
         contrasegna=usuarioVO.contrasegna,
         nacimiento=usuarioVO.nacimiento,
         sexo=usuarioVO.sexo,
-        pais=usuarioVO.pais
+        pais=usuarioVO.pais,
+        generos_favoritos=usuarioVO.generos_favoritos,
+        artistas_favoritos=usuarioVO.artistas_favoritos
     )
 
 # COMPROBADO
@@ -412,6 +416,9 @@ def listarCancionesGenero(generoNombre): #Devuelve todas las canciones de un gen
     ids = Pertenecen.objects.filter(miGenero=genero)
     canciones = [pertenecen_object.miAudio for pertenecen_object in ids]
     return canciones
+
+def listarGenerosFavoritos(correo): #Devuelve los generos favoritos del usuario
+    return Usuario.objects.get(pk=correo).generos_favoritos.all()
 
 #DAOs DE ALBUM
 

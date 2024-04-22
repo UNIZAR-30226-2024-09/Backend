@@ -42,6 +42,8 @@ class Usuario(AbstractBaseUser):
     nacimiento = models.DateField(blank=True, null=True)
     contrasegna = models.CharField(max_length=255, null=False)
     pais = models.CharField(max_length=255, blank=True)
+    generos_favoritos = models.ManyToManyField('Genero', related_name='generos_favoritos')
+    artistas_favoritos = models.ManyToManyField('Artista', related_name='artistas_favoritos')
 
 
     is_active = models.BooleanField(default=True)
@@ -168,15 +170,15 @@ class Cantan(models.Model):
     class Meta:
         unique_together = ('miArtista', 'miCancion',)
 
-class PuntuaCancion(models.Model):
-    id = models.AutoField(primary_key=True)
-    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    miCancion = models.ForeignKey(Cancion, on_delete=models.CASCADE)
-    puntuacion = models.IntegerField(null=False)
+#class PuntuaCancion(models.Model):
+#    id = models.AutoField(primary_key=True)
+#    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+#    miCancion = models.ForeignKey(Cancion, on_delete=models.CASCADE)
+#    puntuacion = models.IntegerField(null=False)
 
-class PuntuaPodcast(models.Model):
-    id = models.AutoField(primary_key=True)
-    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    miPodcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
-    puntuacion = models.IntegerField(null=False)
+#class PuntuaPodcast(models.Model):
+#    id = models.AutoField(primary_key=True)
+#    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+#    miPodcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+#    puntuacion = models.IntegerField(null=False)
 

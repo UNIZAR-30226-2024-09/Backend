@@ -112,4 +112,7 @@ urlpatterns = [
     path('esFavorita/', views.EsFavoritaAPI.as_view(), name='esFavorita'),
     path('accounts/', include('allauth.urls')),
     path('listarArtistasCancion/', views.ListarArtistasCancionAPI.as_view(), name='listarArtistasCancion'),
+    path('crearPresentador/', views.CrearPresentadorAPI.as_view(), name='crearPresentador'),
+    path('agnadirPresentador/', views.AgnadirPresentadorAPI.as_view(), name='agnadirPresentador'),
+    path('listarPresentadoresPodcast/', views.ListarPresentadoresPodcastAPI.as_view(), name='listarPresentadoresPodcast'),
     ]

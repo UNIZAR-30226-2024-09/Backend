@@ -19,7 +19,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
 class CancionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cancion
-        fields = ['id', 'nombre', 'miAlbum', 'puntuacion', 'archivo_mp3', 'foto']
+        fields = ['id', 'nombre', 'miAlbum', 'puntuacion', 'archivoMp3', 'foto']
 
 # este, de momento, no se usa así que igual se podrá quitar
 class HistorialSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class ColaSerializer(serializers.ModelSerializer):
 class CapituloSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Capitulo
-        fields = ['id', 'nombre', 'descripcion', 'miPodcast', 'archivo_mp3']
+        fields = ['id', 'nombre', 'descripcion', 'miPodcast', 'archivoMp3']
 
 class PodcastSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,6 +49,11 @@ class AlbumSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre', 'foto']
 
 class ArtistaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Artista
+        fields = ['id', 'nombre', 'descripcion', 'foto']
+
+class PresentadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Artista
         fields = ['id', 'nombre', 'descripcion', 'foto']

@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.http import HttpResponse
-from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista, CustomToken
+from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista, CustomToken, Presentador
 from . import DAOs
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,11 +13,11 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 from django.shortcuts import redirect
 from django.contrib.auth import logout
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
-from .utils import generate_token
+#from django.contrib.sites.shortcuts import get_current_site
+#from django.template.loader import render_to_string
+#from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+#from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
+#from .utils import generate_token
 
 #Spotify
 from dotenv import load_dotenv
@@ -710,7 +710,7 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
 
 def convertirBinario(ruta):
     #entre las comillas y antes de las dos barras hay que poner la ruta del archivo, teniendo en cuenta que ruta tiene el nombre del archivo
-    with open(r"C:\Users\nerea\OneDrive\Escritorio\Inginformatica\3o\Proyecto_software\Prácticas\\" + ruta, "rb") as archivo:
+    with open(r"C:\Users\nerea\Downloads\\" + ruta, "rb") as archivo:
         contenido_binario = archivo.read()
         contenido_base64 = base64.b64encode(contenido_binario)
     return contenido_base64
@@ -939,6 +939,7 @@ class ListarCapitulosPodcastAPI(APIView): #funciona
 '''EJEMPLO DE FORMATO JSON PARA CREAR ARTISTA
 {
     "nombre": "Kanye West",
+    "nombreFoto": "Kanye_West.jpg",
     "descripcion": "Kanye West descrption here..."
 }
 '''
@@ -946,10 +947,31 @@ class CrearArtistaAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
         nombre = request.data.get('nombre')
+        foto = request.data.get('nombreFoto')
         descripcion = request.data.get('descripcion')
-        artista = Artista(nombre=nombre, descripcion=descripcion)
+        contenidoBinarioFoto = convertirBinario(foto)
+        artista = Artista(nombre=nombre, foto=contenidoBinarioFoto, descripcion=descripcion)
         DAOs.crearArtista(artista)
         return Response({'message': 'Artista creado con éxito'}, status=status.HTTP_200_OK)
+    
+    '''EJEMPLO DE FORMATO JSON PARA CREAR PRESENTADOR
+{
+    "nombre": "Kanye West",
+    "nombreFoto": "Kanye_West.jpg",
+    "descripcion": "Kanye West descrption here..."
+}
+'''
+class CrearPresentadorAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        nombreFoto = request.data.get('nombreFoto')
+        descripcion = request.data.get('descripcion')
+        contenidoBinarioFoto = convertirBinario(nombreFoto)
+        presentador = Presentador(nombre=nombre, foto=contenidoBinarioFoto, descripcion=descripcion)
+        DAOs.crearPresentador(presentador)
+        return Response({'message': 'Presentador creado con éxito'}, status=status.HTTP_200_OK)
+
 
 '''EJEMPLO DE FORMATO JSON PARA LISTAR EL HISTORIAL DE UN USUARIO
 {
@@ -1057,6 +1079,21 @@ class AgnadirCantanteAPI(APIView): # funciona
         DAOs.crearCantan(cancion, artista)
         return Response({'message': 'Cantante añadido con éxito'}, status=status.HTTP_200_OK)
 
+'''EJEMPLO DE FORMATO JSON PARA AÑADIR PRESENTADOR A UN PODCAST
+{
+    "presentador": "2",
+    "podcastId": "15"
+}'''
+class AgnadirPresentadorAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        presentadorId = request.data.get('presentador')
+        podcastId = request.data.get('podcastId')
+        presentador = DAOs.conseguirPresentadorPorId(presentadorId)
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        DAOs.crearInterpretan(podcast, presentador)
+        return Response({'message': 'Presentador añadido con éxito'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LOS ARTISTAS DE UNA CANCIÓN
 {
     "cancionId": "33"
@@ -1072,6 +1109,22 @@ class ListarArtistasCancionAPI(APIView): #funciona
             return Response({'artistas': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No hay artistas en la canción'}, status=status.HTTP_200_OK)
+        
+'''EJEMPLO DE FORMATO JSON PARA LISTAR LOS PRESENTADORES DE UN PODCAST
+{
+    "podcastId": "14"
+}'''
+class ListarPresentadoresPodcastAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    def post(self, request):
+        podcastId = request.data.get('podcastId')
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        presentadores = DAOs.listarPresentadoresPodcast(podcast)
+        if presentadores:
+            serializer = PresentadorSerializer(presentadores, many=True)
+            return Response({'presentadores': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay presentadores en el podcast'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LAS CANCIONES DE UN GÉNERO
 {

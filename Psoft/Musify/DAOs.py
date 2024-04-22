@@ -1,12 +1,15 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan
+from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan, Presentador, Interpretan
 from django.core.exceptions import ObjectDoesNotExist
 
 #DAOs DE ARTISTA
 
 def crearArtista(artistaVO): #Se crea el artista
-    Artista.objects.create(nombre=artistaVO.nombre, descripcion=artistaVO.descripcion)
+    Artista.objects.create(nombre=artistaVO.nombre, foto=artistaVO.foto, descripcion=artistaVO.descripcion)
+
+def crearPresentador(presentadorVO): #Se crea el artista
+    Presentador.objects.create(nombre=presentadorVO.nombre, foto=presentadorVO.foto, descripcion=presentadorVO.descripcion)
 
 def conseguirArtistaPorId(artistaId): #Devuelve el artista dado su id
     try:
@@ -30,6 +33,11 @@ def buscarArtista(nombre):
 def listarArtistasFavoritos(correo):
     return Usuario.objects.get(pk=correo).artistas_favoritos.all()
 
+def conseguirPresentadorPorId(presentadorId): #Devuelve el presentador dado su id
+    try:
+        return Presentador.objects.get(pk=presentadorId)
+    except ObjectDoesNotExist:
+        return None
 
 #DAOs DE USUARIO
 
@@ -224,7 +232,7 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         miAlbum=cancionVO.miAlbum,
         puntuacion=cancionVO.puntuacion,
         numPuntuaciones=cancionVO.numPuntuaciones,
-        archivo_mp3=cancionVO.archivo_mp3,
+        archivoMp3=cancionVO.archivoMp3,
         foto=cancionVO.foto
     )
 # devuelve el id de la playlist favoritos del usuario
@@ -291,6 +299,11 @@ def listarArtistasCancion(cancionVO): #Devuelve los artistas de una cancion dado
     ids = Cantan.objects.filter(miCancion=cancionVO.id)
     artistas = [cantanObject.miArtista for cantanObject in ids]
     return artistas
+
+def listarPresentadoresPodcast(podcastVO): #Devuelve los presentadores de un podcast dado su id
+    ids = Interpretan.objects.filter(miPodcast=podcastVO.id)
+    presentadores = [interpretanObject.miPresentador for interpretanObject in ids]
+    return presentadores
 
 # SIN COMPROBAR (QUITAR QUIZÁS)
 def audioDeCancion(cancionId): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
@@ -645,6 +658,12 @@ def crearCantan(cancionVO, artistaVO):
         miArtista=artistaVO
     )
 
+
+def crearInterpretan(podcastVO, presentadorVO):
+    return Interpretan.objects.create(
+        miPodcast=podcastVO,
+        miPresentador=presentadorVO
+    )
 
 #DAOs para recomendar
 

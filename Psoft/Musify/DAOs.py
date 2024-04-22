@@ -379,8 +379,20 @@ def eliminarCancionCola(usuarioCorreo, cancionId): #Se elimina la cancion de la 
     Cola.objects.filter(miUsuario=usuario, miAudio=cancion).delete()
 
 
-# lo hacemos? no se si dijimos si se podía o no añadir un episodio a la cola
-# def add_episode_to_queue(user_email, episode_id)
+# SIN COMPROBAR
+def agnadirCapituloCola(usuarioCorreo, capituloId):
+    usuario = Usuario.objects.get(pk=usuarioCorreo)
+    capitulo = Capitulo.objects.get(pk=capituloId)
+    Cola.objects.create(
+        miUsuario=usuario,
+        miAudio=capitulo
+    )
+
+# SIN COMPROBAR
+def eliminarCapituloCola(usuarioCorreo, capituloId): #Se elimina la cancion de la cola de reproduccion
+    usuario = Usuario.objects.get(pk=usuarioCorreo)
+    capitulo = Capitulo.objects.get(pk=capituloId)
+    Cola.objects.filter(miUsuario=usuario, miAudio=capitulo).delete()
 
 # COMPROBADO
 #EN LA API

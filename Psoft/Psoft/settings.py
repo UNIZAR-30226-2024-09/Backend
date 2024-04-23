@@ -180,3 +180,11 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_DIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/"
+
+# Email settings
+EMAIL_FROM_USER = 'musify2024@gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get('EMAIL_FROM_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587

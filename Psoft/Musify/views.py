@@ -13,11 +13,14 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 from django.shortcuts import redirect
 from django.contrib.auth import logout
-#from django.contrib.sites.shortcuts import get_current_site
-#from django.template.loader import render_to_string
-#from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-#from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
-#from .utils import generate_token
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
+from .utils import generate_token 
+from django.core.mail import EmailMessage
+from django.conf import settings
+import threading
 
 #Spotify
 from dotenv import load_dotenv
@@ -56,16 +59,30 @@ def lougout_view(request):
     logout(request)
     return redirect("/")
 
+
 # CORREO DE VERIFICACIÓN
-#def send_verification_email(user, request):
-#   current_site = get_current_site(request)
-#   subject = 'Verifica tu cuenta de Musify'
-#   message = render_to_string('authentication/activate.html', {
-#       'user': user,
-#       'domain': current_site,
-#       'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-#       'token': generate_token.make_token(user)
-#})
+
+# thread para el evío de correo de verificación
+class EmailThread(threading.Thread):
+    def __init__(self, email):
+        self.email = email
+        threading.Thread.__init__(self)
+    
+    def run(self):
+        self.email.send()
+
+def send_activation_email(user, request):
+   current_site = get_current_site(request)
+   email_subject = 'Verifica tu cuenta de Musify'
+   email_body = render_to_string('authentication/activate.html', {
+       'user': user,
+       'domain': current_site,
+       'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+       'token': generate_token.make_token(user)
+    })
+    #email=EmailMessage(subject=email_subject, body=email_body, from_email=settings.EMAIL_FROM_USER,
+    #            to=[user.correo])
+    #EmailThread(email).start()
 
 #def activate_user(request, uidb64, token):
 #    try:
@@ -78,6 +95,7 @@ def lougout_view(request):
 #       user.save()
 #       messages.add_message(request, messages.SUCCESS, 'Cuenta verificada con éxito')
 #       return redirect(reverse('login'))
+#   return render(request, 'authentication/activate-failed.html', {"user"})
 ''''
 
 def home(request):
@@ -361,7 +379,8 @@ class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) fu
 
         # Autenticar al usuario
         usuario = authenticate(correo=correo, contrasegna=contrasegna)
-
+        if not usuario.is_email_verified:
+            return Response({'error': 'Correo no verificado'}, status=status.HTTP_401_UNAUTHORIZED)
         if usuario is not None:
             # El usuario ha sido autenticado, devolver respuesta de éxito
             token, created = CustomToken.objects.get_or_create(usuario=usuario)
@@ -462,7 +481,7 @@ class RegistroAPI(APIView): # funciona
 
         if Usuario.objects.filter(correo=correo).exists():
             return Response({'error': 'El correo introducido ya tiene asociada una cuenta'}, status=status.HTTP_400_BAD_REQUEST)
-
+        send_activation_email(usuario, request)
         DAOs.crearUsuario(usuario)
         DAOs.crearPlaylist(correo,"Favoritos",False)
         token = CustomToken.objects.create(usuario=usuario)

@@ -111,6 +111,7 @@ urlpatterns = [
     path('editarCancionFavoritos/', views.EditarCancionFavoritosAPI.as_view(), name='editarCancionFavoritos'),
     path('esFavorita/', views.EsFavoritaAPI.as_view(), name='esFavorita'),
     path('accounts/', include('allauth.urls')),
+    #path('activate-user/<uidb64>/<token>', views.activate_user, name='activate'),
     path('listarArtistasCancion/', views.ListarArtistasCancionAPI.as_view(), name='listarArtistasCancion'),
     path('crearPresentador/', views.CrearPresentadorAPI.as_view(), name='crearPresentador'),
     path('agnadirPresentador/', views.AgnadirPresentadorAPI.as_view(), name='agnadirPresentador'),

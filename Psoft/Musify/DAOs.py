@@ -1,6 +1,6 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario, Amigo, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan, Presentador, Interpretan
+from .models import Usuario, Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan, Presentador, Interpretan
 from django.core.exceptions import ObjectDoesNotExist
 
 #DAOs DE ARTISTA
@@ -102,35 +102,87 @@ def eliminarUsuario(correo): #Se elimina el usuario y todas sus relaciones
 
 # COMPROBADO
 # EN LA API
-def listarAmigos(correo): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
-    usuario = Usuario.objects.get(correo=correo)
-    amigos1 = Amigo.objects.filter(micorreo1=usuario)
-    amigos2 = Amigo.objects.filter(micorreo2=usuario)
-    amigos = list(amigos1 | amigos2)
-    return amigos
+#def listarAmigos(correo): #Devuelve todos los amigos del usuario TODO: Revisar, no tengo claro si es correcto
+#    usuario = Usuario.objects.get(correo=correo)
+#    amigos1 = Amigo.objects.filter(micorreo1=usuario)
+#    amigos2 = Amigo.objects.filter(micorreo2=usuario)
+#    amigos = list(amigos1 | amigos2)
+#    return amigos
 
-# COMPROBADO
-# EN LA API
-def agnadirAmigo(usuarioCorreo, amigoId): #Se crean las relaciones de amistad
-    usuario = Usuario.objects.get(pk=usuarioCorreo)
-    amigo = Usuario.objects.get(pk=amigoId)
-    Amigo.objects.create(
-        micorreo1=usuario,
-        micorreo2=amigo
+# SIN COMPROBAR
+def listarSeguidos(correo): #Devuelve los usuarios a los que sigue
+    usuario = Usuario.objects.get(correo=correo)
+    seguidos = Seguidos.objects.filter(miUsuario=usuario)
+    return seguidos
+
+# SIN COMPROBAR
+def numeroSeguidos(correo): #Devuelve el número de usuarios a los que sigue
+    usuario = Usuario.objects.get(correo=correo)
+    return Seguidos.objects.filter(miUsuario=usuario).count()
+
+# SIN COMPROBAR
+def agnadirSeguido(correo, correoSeguido): #Se añade un seguido al usuario "correo"
+    usuario = Usuario.objects.get(correo=correo)
+    seguido = Usuario.objects.get(correo=correoSeguido)
+    Seguido.objects.create(
+        miUsuario=usuario,
+        seguido=seguido
     )
 
-# COMPROBADO
-# EN LA API
-def eliminarAmigo(usuarioCorreo, amigoId): #Se eliminan las relaciones de amistad
-    usuario = Usuario.objects.get(pk=usuarioCorreo)
-    amigo = Usuario.objects.get(pk=amigoId)
-    Amigo.objects.filter(micorreo1=usuario, micorreo2=amigo).delete()
-    Amigo.objects.filter(micorreo1=amigo, micorreo2=usuario).delete()
+# SIN COMPROBAR
+def eliminarSeguido(correo, correoSeguido): #Se elimina un seguido al usuario "correo"
+    usuario = Usuario.objects.get(correo=correo)
+    seguido = Usuario.objects.get(correo=correoSeguido)
+    Seguido.objects.filter(miUsuario=usuario, seguido=seguido).delete()
+
+# SIN COMPROBAR
+def listarSeguidores(correo): #Devuelve los seguidores del usuario
+    usuario = Usuario.objects.get(correo=correo)
+    seguidores = Seguidores.objects.filter(miUsuario=usuario)
+    return seguidores
+
+# SIN COMPROBAR
+def numeroSeguidores(correo): #Devuelve el número de seguidores del usuario
+    usuario = Usuario.objects.get(correo=correo)
+    return Seguidores.objects.filter(miUsuario=usuario).count()
+
+# SIN COMPROBAR
+def agnadirSeguidor(correo, correoSeguidor): #Se añade un seguidor al usuario "correo"
+    usuario = Usuario.objects.get(correo=correo)
+    seguidor = Usuario.objects.get(correo=correoSeguidor)
+    Seguidor.objects.create(
+        miUsuario=usuario,
+        seguidor=seguidor
+    )
+
+# SIN COMPROBAR
+def eliminarSeguidor(correo, correoSeguidor): #Se elimina un seguidor al usuario "correo"
+    usuario = Usuario.objects.get(correo=correo)
+    seguidor = Usuario.objects.get(correo=correoSeguidor)
+    Seguidor.objects.filter(miUsuario=usuario, seguidor=seguidor).delete()
 
 # COMPROBADO
 # EN LA API
-def sonAmigos(usuarioCorreo, amigoCorreo): #Devuelve si dos usuarios son amigos
-    return Amigo.objects.filter(micorreo1=usuarioCorreo, micorreo2=amigoCorreo).exists() or Amigo.objects.filter(micorreo1=amigoCorreo, micorreo2=usuarioCorreo).exists()
+#def agnadirAmigo(usuarioCorreo, amigoId): #Se crean las relaciones de amistad
+#    usuario = Usuario.objects.get(pk=usuarioCorreo)
+#    amigo = Usuario.objects.get(pk=amigoId)
+#    Amigo.objects.create(
+#        micorreo1=usuario,
+#        micorreo2=amigo
+#    )
+
+# COMPROBADO
+# EN LA API
+#def eliminarAmigo(usuarioCorreo, amigoId): #Se eliminan las relaciones de amistad
+#    usuario = Usuario.objects.get(pk=usuarioCorreo)
+#    amigo = Usuario.objects.get(pk=amigoId)
+#    Amigo.objects.filter(micorreo1=usuario, micorreo2=amigo).delete()
+#    Amigo.objects.filter(micorreo1=amigo, micorreo2=usuario).delete()
+
+# COMPROBADO
+# EN LA API
+#def sonAmigos(usuarioCorreo, amigoCorreo): #Devuelve si dos usuarios son amigos
+#    return Amigo.objects.filter(micorreo1=usuarioCorreo, micorreo2=amigoCorreo).exists() or Amigo.objects.filter(micorreo1=amigoCorreo, micorreo2=usuarioCorreo).exists()
 
 #DAOs DE PLAYLIST
 

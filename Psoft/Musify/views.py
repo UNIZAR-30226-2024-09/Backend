@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.http import HttpResponse
-from .models import Usuario, Amigo, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista, CustomToken, Presentador
+from .models import Usuario, Seguido, Seguidor, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista, CustomToken, Presentador
 from . import DAOs
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, AmigosSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -381,8 +381,11 @@ class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) fu
 
         # Autenticar al usuario
         usuario = authenticate(correo=correo, contrasegna=contrasegna)
-        if not usuario.is_email_verified:
-            return Response({'error': 'Correo no verificado'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # para el envío de correo de verificación
+        #if not usuario.is_email_verified:
+        #    return Response({'error': 'Correo no verificado'}, status=status.HTTP_401_UNAUTHORIZED)
+        
         if usuario is not None:
             # El usuario ha sido autenticado, devolver respuesta de éxito
             token, created = CustomToken.objects.get_or_create(usuario=usuario)
@@ -532,28 +535,81 @@ class EliminarUsuarioAPI(APIView): #funciona
     "amigo": "sarah@gmail.com"
 }
 '''
-class SeguirAmigoAPI(APIView): # funciona
+#class SeguirAmigoAPI(APIView): # funciona
+#    permission_classes = [AllowAny]
+#    def post(self, request):
+#        correo = request.data.get('correo') # coger el correo de la sesión
+#        amigo = request.data.get('amigo') # coger el correo del amigo
+#        DAOs.agnadirAmigo(correo, amigo)
+#        return Response({'message': 'Amigo añadido con éxito'}, status=status.HTTP_200_OK) 
+
+'''EJEMPLO DE FORMATO JSON PARA SEGUIR A UN USUARIO
+{
+    "correo": "john.doe@example.com",
+    "seguido": "sarah@gmail.com"
+}
+'''
+class SeguirAPI(APIView): # sin comprobar
     permission_classes = [AllowAny]
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
-        amigo = request.data.get('amigo') # coger el correo del amigo
-        DAOs.agnadirAmigo(correo, amigo)
-        return Response({'message': 'Amigo añadido con éxito'}, status=status.HTTP_200_OK) 
-    
+        seguido = request.data.get('seguido') # coger el correo del usuario a seguir
+        DAOs.agnadirSeguido(correo, seguido)
+        DAOs.seguidorSeguidor(seguido, correo)
+        return Response({'message': 'Usuario seguido con éxito'}, status=status.HTTP_200_OK)
+
+'''EJEMPLO DE FORMATO JSON PARA DEJAR DE SEGUIR A UN USUARIO
+{
+    "correo": "john.doe@example.com",
+    "seguido": "sarah@gmail.com"
+}
+'''
+class DejarDeSeguirAPI(APIView): # sin comprobar
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo') # coger el correo de la sesión
+        seguido = request.data.get('seguido')
+        DAOs.eliminarSeguido(correo, seguido)
+        DAOs.eliminarSeguidor(seguido, correo)
+        return Response({'message': 'Usuario dejado de seguir con éxito'}, status=status.HTTP_200_OK)
+
+
+class ListarSeguidosAPI(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo') # coger el correo de la sesión
+        seguidos = DAOs.listarSeguidos(correo)
+        if seguidos:
+            serializer = SeguidosSerializer(seguidos, many=True)
+            return Response({'seguidos': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No sigue a nadie'}, status=status.HTTP_200_OK)   
+
+class ListarSeguidoresAPI(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        correo = request.data.get('correo') # coger el correo de la sesión
+        seguidores = DAOs.listarSeguidores(correo)
+        if seguidores:
+            serializer = SeguidoresSerializer(seguidores, many=True)
+            return Response({'seguidores': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No tiene seguidores'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA LISTAR AMIGOS
 {
     "correo": "Paco@gmail.com"
 }'''
-class ListarAmigosAPI(APIView): # funciona
-    permission_classes = [AllowAny]
-    def post(self, request):
-        correo = request.data.get('correo') # coger el correo de la sesión
-        amigos = DAOs.listarAmigos(correo)
-        if amigos:
-            serializer = AmigosSerializer(amigos, many=True)
-            return Response({'amigos': serializer.data}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'No tiene amigos'}, status=status.HTTP_200_OK)
+#class ListarAmigosAPI(APIView): # funciona
+#    permission_classes = [AllowAny]
+#    def post(self, request):
+#        correo = request.data.get('correo') # coger el correo de la sesión
+#        amigos = DAOs.listarAmigos(correo)
+#        if amigos:
+#            serializer = AmigosSerializer(amigos, many=True)
+#            return Response({'amigos': serializer.data}, status=status.HTTP_200_OK)
+#        else:
+#            return Response({'message': 'No tiene amigos'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA DEJAR DE SEGUIR A UN AMIGO
 {
@@ -561,13 +617,13 @@ class ListarAmigosAPI(APIView): # funciona
     "amigo": "sarah@gmail.com"
 }
 '''
-class DejarDeSeguirAmigoAPI(APIView): # funciona
-    permission_classes = [AllowAny]
-    def post(self, request):
-        correo = request.data.get('correo') # coger el correo de la sesión
-        amigo = request.data.get('amigo')
-        DAOs.eliminarAmigo(correo, amigo)
-        return Response({'message': 'Amigo eliminado con éxito'}, status=status.HTTP_200_OK)
+#class DejarDeSeguirAmigoAPI(APIView): # funciona
+#    permission_classes = [AllowAny]
+#    def post(self, request):
+#        correo = request.data.get('correo') # coger el correo de la sesión
+#        amigo = request.data.get('amigo')
+#        DAOs.eliminarAmigo(correo, amigo)
+#        return Response({'message': 'Amigo eliminado con éxito'}, status=status.HTTP_200_OK)
     
 '''EJEMPLO DE FORMATO JSON PARA COMPROBAR SI DOS USUARIOS SON AMIGOS
 {
@@ -575,15 +631,15 @@ class DejarDeSeguirAmigoAPI(APIView): # funciona
     "amigo": "sarah@gmail.com"
 }
 '''
-class SonAmigosAPI(APIView): # funciona
-    permission_classes = [AllowAny]
-    def post(self, request):
-        correo = request.data.get('correo') # coger el correo de la sesión
-        amigo = request.data.get('amigo')
-        if DAOs.sonAmigos(correo, amigo) == True:
-            return Response({'message': 'Son amigos'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
+#class SonAmigosAPI(APIView): # funciona
+#    permission_classes = [AllowAny]
+#    def post(self, request):
+#        correo = request.data.get('correo') # coger el correo de la sesión
+#        amigo = request.data.get('amigo')
+#        if DAOs.sonAmigos(correo, amigo) == True:
+#            return Response({'message': 'Son amigos'}, status=status.HTTP_200_OK)
+#        else:
+#            return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR UNA PLAYLIST        
 {

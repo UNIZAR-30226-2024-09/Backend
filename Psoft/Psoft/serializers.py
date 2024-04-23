@@ -6,10 +6,20 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = models.Usuario
         fields = ['correo', 'nombre', 'sexo', 'nacimiento', 'contrasegna', 'pais']
 
-class AmigosSerializer(serializers.ModelSerializer):
+#class AmigosSerializer(serializers.ModelSerializer):
+#    class Meta:
+#        model = models.Amigo
+#        fields = ['micorreo1','micorreo2']
+
+class SeguidoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Amigo
-        fields = ['micorreo1','micorreo2']
+        model = models.Seguido
+        fields = ['miUsuario','seguido']
+
+class SeguidorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Seguido
+        fields = ['seguidor','miUsuario']
 
 class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:

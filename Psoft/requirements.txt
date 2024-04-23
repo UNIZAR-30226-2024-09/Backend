@@ -23,3 +23,5 @@ net-tools
 requests
 python-dotenv
 django-allauth
+setuptools
+drf-yasg

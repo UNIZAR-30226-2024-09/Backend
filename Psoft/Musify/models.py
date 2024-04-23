@@ -49,6 +49,7 @@ class Usuario(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    # para el correo de verificación
     is_email_verified = models.BooleanField(default=False)
 
     objects = UsuarioManager()
@@ -65,13 +66,24 @@ class Usuario(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return self.is_staff
 
-class Amigo(models.Model):
-    micorreo1 = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='amigos1')
-    micorreo2 = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='amigos2')
 
+#class Amigo(models.Model):
+#    micorreo1 = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='amigos1')
+#    micorreo2 = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='amigos2')
+#    class Meta:
+#        unique_together = ('micorreo1', 'micorreo2',)
+
+class Seguido(models.Model):
+    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='miUsuario')
+    seguido = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='seguido')
     class Meta:
-        unique_together = ('micorreo1', 'micorreo2',)
+        unique_together = ('miUsuario', 'seguido')
 
+class Seguidor(models.Model):
+    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='miUsuario2')
+    seguidor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='seguidor')
+    class Meta:
+        unique_together = ('miUsuario', 'seguidor')
 
 class Playlist(models.Model):
     id = models.AutoField(primary_key=True)

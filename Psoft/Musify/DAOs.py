@@ -435,9 +435,9 @@ def eliminarCancionHistorial(usuarioCorreo, cancionId): #Se elimina la cancion d
 
 # COMPROBADO
 #EN LA API
-def agnadirCancionCola(usuarioCorreo, cancionId): #Se añade la cancion a la cola de reproduccion
+def agnadirCancionCola(usuarioCorreo, cancionVO): #Se añade la cancion a la cola de reproduccion
     usuario = Usuario.objects.get(pk=usuarioCorreo)
-    cancion = Cancion.objects.get(pk=cancionId)
+    cancion = Cancion.objects.get(pk=cancionVO.id)
     Cola.objects.create(
         miUsuario=usuario,
         miAudio=cancion

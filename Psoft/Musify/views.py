@@ -374,6 +374,17 @@ class UserViewSet(viewsets.ModelViewSet): #funciona
 
 class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'contrasegna'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'contrasegna': openapi.Schema(type=openapi.TYPE_STRING, description='Contraseña del usuario')
+            },
+        ),
+        responses={200: 'OK - Inicio de sesión correcto'}
+    )
     def post(self, request):
         
         correo = request.data.get('correo')
@@ -466,6 +477,21 @@ import logging
 logger = logging.getLogger(__name__)
 class RegistroAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'nombre', 'sexo', 'nacimiento', 'contrasegna', 'pais'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del usuario'),
+                'sexo': openapi.Schema(type=openapi.TYPE_STRING, description='Sexo del usuario'),
+                'nacimiento': openapi.Schema(type=openapi.TYPE_STRING, description='Fecha de nacimiento del usuario'),
+                'contrasegna': openapi.Schema(type=openapi.TYPE_STRING, description='Contraseña del usuario'),
+                'pais': openapi.Schema(type=openapi.TYPE_STRING, description='País del usuario')
+            },
+        ),
+        responses={200: 'OK - Usuario registrado con éxito'}
+    )
 
     def post(self, request):
         correo = request.data.get('correo')
@@ -523,6 +549,16 @@ class ActualizarUsuarioAPI(APIView): # funciona
 '''
 class EliminarUsuarioAPI(APIView): #funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario')
+            },
+        ),
+        responses={200: 'OK - Usuario eliminado con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         DAOs.eliminarUsuario(correo)
@@ -551,6 +587,17 @@ class EliminarUsuarioAPI(APIView): #funciona
 '''
 class SeguirAPI(APIView): # sin comprobar
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'seguido'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'seguido': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario a seguir')
+            },
+        ),
+        responses={200: 'OK - Usuario seguido con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         seguido = request.data.get('seguido') # coger el correo del usuario a seguir
@@ -566,6 +613,17 @@ class SeguirAPI(APIView): # sin comprobar
 '''
 class DejarDeSeguirAPI(APIView): # sin comprobar
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'seguido'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'seguido': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario a dejar de seguir')
+            },
+        ),
+        responses={200: 'OK - Usuario dejado de seguir con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         seguido = request.data.get('seguido')
@@ -576,6 +634,9 @@ class DejarDeSeguirAPI(APIView): # sin comprobar
 
 class ListarSeguidosAPI(APIView):
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Seguidos listados con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         seguidos = DAOs.listarSeguidos(correo)
@@ -587,6 +648,16 @@ class ListarSeguidosAPI(APIView):
 
 class ListarSeguidoresAPI(APIView):
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario')
+            },
+        ),
+        responses={200: 'OK - Seguidores listados con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         seguidores = DAOs.listarSeguidores(correo)
@@ -649,6 +720,18 @@ class ListarSeguidoresAPI(APIView):
 }'''
 class CrearPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'nombre', 'publica'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la playlist'),
+                'publica': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Indica si la playlist es pública o privada')
+            },
+        ),
+        responses={200: 'OK - Playlist creada con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo')
         nombre = request.data.get('nombre')
@@ -678,7 +761,9 @@ class ActualizarPlaylistAPI(APIView): # funciona
     
 class ListarCancionesAPI(APIView): # funciona
     permission_classes = [AllowAny]
-
+    @swagger_auto_schema(
+        responses={200: 'OK - Canciones listadas con éxito'}
+    )
     def post(self, request):
         canciones = DAOs.listarCanciones()
         canciones[:3] #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
@@ -693,7 +778,9 @@ class ListarCancionesAPI(APIView): # funciona
         
 class ListarPodcastsAPI(APIView): # funciona
     permission_classes = [AllowAny]
-
+    @swagger_auto_schema(
+        responses={200: 'OK - Podcasts listados con éxito'}
+    )
     def post(self, request):
         podcasts = DAOs.listarPodcasts()
         # Verificar si se encontraron podcasts en la playlist
@@ -713,10 +800,18 @@ class ListarPodcastsAPI(APIView): # funciona
 }'''
 class ListarCancionesPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
-
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['playlistId'],
+            properties={
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist')
+            },
+        ),
+        responses={200: 'OK - Canciones listadas con éxito'}
+    )
     def post(self, request):
         playlistId = request.data.get('playlistId')  # Obtener el ID de la playlist
-
         canciones = DAOs.listarCancionesPlaylist(playlistId)
         # Verificar si se encontraron canciones en la playlist
         if canciones:
@@ -735,6 +830,20 @@ class ListarCancionesPlaylistAPI(APIView): # funciona
 
 class AgnadirCancionPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['playlistId', 'cancionId'],
+            properties={
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist'),
+                'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción')
+            },
+        ),
+        responses={
+            200: 'OK - Canción añadida con éxito a la playlist',
+            400: 'Bad Request - La canción ya está en la playlist'
+        }
+    )
     def post(self, request):
         #correo = request.data.get('email') # coger correo de la sesión
         playlistId = request.data.get('playlistId')
@@ -752,6 +861,19 @@ class AgnadirCancionPlaylistAPI(APIView): # funciona
 
 class EliminarCancionPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['playlistId', 'cancionId'],
+            properties={
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist'),
+                'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción')
+            },
+        ),
+        responses={
+            200: 'OK - Canción eliminada con éxito de la playlist',
+            400: 'Bad Request - La canción no existe en la playlist'}
+    )
     def post(self, request):
         playlistId = request.data.get('playlistId')
         cancionId = request.data.get('cancionId')
@@ -767,6 +889,16 @@ class EliminarCancionPlaylistAPI(APIView): # funciona
 '''
 class ListarPlaylistsUsuarioAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario')
+            },
+        ),
+        responses={200: 'OK - Playlists listadas con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         playlists = DAOs.listarPlaylistsUsuario(correo)
@@ -781,19 +913,31 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
     "nombre": "Buenas tardes",
     "nombreFoto": "Homecoming_cover.jpg",
     "miAlbum": "15",
-    "puntuacion": "5",
     "nombreArchivoMp3": "Kanye West - Homecoming_LQ488QrqGE4.mp3"
 }'''
 
 def convertirBinario(ruta):
     #entre las comillas y antes de las dos barras hay que poner la ruta del archivo, teniendo en cuenta que ruta tiene el nombre del archivo
-    with open(r"C:\Users\nerea\Downloads\\" + ruta, "rb") as archivo:
+    with open(r"\\" + ruta, "rb") as archivo:
         contenido_binario = archivo.read()
         contenido_base64 = base64.b64encode(contenido_binario)
     return contenido_base64
 
 class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['nombre', 'nombreFoto', 'miAlbum', 'nombreArchivoMp3'],
+            properties={
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la canción'),
+                'nombreFoto': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la foto'),
+                'miAlbum': openapi.Schema(type=openapi.TYPE_STRING, description='ID del álbum'),
+                'nombreArchivoMp3': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del archivo mp3')
+            },
+        ),
+        responses={200: 'OK - Canción creada con éxito'}
+    )
     def post(self, request):
         nombre = request.data.get('nombre')
         nombreFoto = request.data.get('nombreFoto')
@@ -819,6 +963,17 @@ class CrearCancionAPI(APIView): # funciona
 
 class PuntuarCancionAPI(APIView): # comprobar
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['cancionId', 'puntuacion'],
+            properties={
+                'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción'),
+                'puntuacion': openapi.Schema(type=openapi.TYPE_INTEGER, description='Puntuación a asignar')
+            },
+        ),
+        responses={200: 'OK - Canción puntuada con éxito'}
+    )
     def post(self, request):
         cancionId = request.data.get('cancionId')
         puntuacion = request.data.get('puntuacion')
@@ -837,6 +992,20 @@ class PuntuarCancionAPI(APIView): # comprobar
 }'''
 class EditarCancionFavoritosAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'cancionId', 'favorito'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción'),
+                'favorito': openapi.Schema(type=openapi.TYPE_STRING, description='True si se quiere añadir a favoritos, False si se quiere eliminar')
+            },
+        ),
+        responses={
+            200: 'OK - Canción añadida a favoritos con éxito',
+            200: 'OK - Canción eliminada de favoritos con éxito'}
+    )
     def post(self, request):
         correo = request.data.get('correo')
         cancionId = request.data.get('cancionId')
@@ -856,6 +1025,18 @@ class EditarCancionFavoritosAPI(APIView): # funciona
 }'''
 class EsFavoritaAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'cancionId'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción')
+            },
+        ),
+        responses={200: 'OK - La canción está en favoritos',
+                   200: 'OK - La canción no está en favoritos'}
+    )
     def post(self, request):
         correo = request.data.get('correo')
         cancionId = request.data.get('cancionId')
@@ -875,14 +1056,44 @@ class EsFavoritaAPI(APIView): # funciona
 
 class AgnadirCancionColaAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'cancionId'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción')
+            },
+        ),
+        responses={
+            200: 'OK - Canción añadida a la cola de reproducción con éxito',
+            400: 'Bad Request - La canción no existe'
+        }
+    )
     def post(self, request):
         correo = request.data.get('correo')
         cancionId = request.data.get('cancionId')
-        DAOs.agnadirCancionCola(correo, cancionId)
-        return Response({'message': 'Canción añadida a la cola de reproducción con éxito'}, status=status.HTTP_200_OK)
+        cancion = DAOs.conseguirCancionPorId(cancionId)
+        if cancion is None:
+            return Response({'error': 'La canción no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.agnadirCancionCola(correo, cancion)
+            return Response({'message': 'Canción añadida a la cola de reproducción con éxito'}, status=status.HTTP_200_OK)
 
 class EliminarCancionColaAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'cancionId'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción')
+            },
+        ),
+        responses={200: 'OK - Canción eliminada de la cola de reproducción con éxito',
+                   400: 'Bad Request - La canción no existe en la cola de reproducción'}
+    )
     def post(self, request):
         correo = request.data.get('correo')
         cancionId = request.data.get('cancionId')
@@ -898,6 +1109,16 @@ class EliminarCancionColaAPI(APIView): # funciona
 
 class CrearAlbumAPI(APIView): # funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['nombre'],
+            properties={
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del álbum')
+            },
+        ),
+        responses={200: 'OK - Álbum creado con éxito'}
+    )
     def post(self, request):
         nombre = request.data.get('nombre')
         album = Album(nombre=nombre)
@@ -950,6 +1171,17 @@ class AgnadirCancionAlbumAPI(APIView): # funciona
 
 class PuntuarPodcastAPI(APIView): #comprobar
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['podcastId', 'puntuacion'],
+            properties={
+                'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast'),
+                'puntuacion': openapi.Schema(type=openapi.TYPE_INTEGER, description='Puntuación del podcast')
+            },
+        ),
+        responses={200: 'OK - Podcast puntuada con éxito'}
+    )
     def post(self, request):
         podcastId = request.data.get('podcastId')
         puntuacion = request.data.get('puntuacion')
@@ -971,22 +1203,35 @@ class PuntuarPodcastAPI(APIView): #comprobar
 
 class CrearCapituloAPI(APIView): #funciona
     permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['nombre', 'descripcion', 'podcastId', 'nombreArchivoMp3'],
+            properties={
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del capítulo'),
+                'descripcion': openapi.Schema(type=openapi.TYPE_STRING, description='Descripción del capítulo'),
+                'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast'),
+                'nombreArchivoMp3': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del archivo mp3')
+            },
+        ),
+        responses={200: 'OK - Capítulo almacenado correctamente',
+                   400: 'Bad Request - El podcast no existe'}
+    )
     def post(self, request):
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
         podcastId = request.data.get('podcastId')
         nombreArchivoMp3 = request.data.get('nombreArchivoMp3')
-
-        if not nombre:
-            return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
         if podcastId != '':
             miPodcast = DAOs.conseguirPodcastPorId(podcastId)
-        else:
-            miPodcast = None
-        contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
-        capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast, archivoMp3=contenidoBinarioMp3)
-        DAOs.crearCapitulo(capitulo)
-        return Response({'message': 'Capítulo almacenado correctamente'}, status=status.HTTP_200_OK)
+            if miPodcast is not None:
+                contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
+                capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast, archivoMp3=contenidoBinarioMp3)
+                DAOs.crearCapitulo(capitulo)
+                return Response({'message': 'Capítulo almacenado correctamente'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 
 

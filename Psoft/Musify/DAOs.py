@@ -29,6 +29,13 @@ def buscarArtista(nombre):
         return Artista.objects.filter(nombre__istartswith=nombre)
     except ObjectDoesNotExist:
         return None
+    
+def buscarPresentador(nombre):
+    try:
+        nombre = nombre.lower()
+        return Presentador.objects.filter(nombre__istartswith=nombre)
+    except ObjectDoesNotExist:
+        return None
 
 def listarArtistasFavoritos(correo):
     return Usuario.objects.get(pk=correo).artistas_favoritos.all()

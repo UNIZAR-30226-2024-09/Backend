@@ -20,6 +20,24 @@ from django.urls import path, include
 from django.contrib.auth.models import User
 from rest_framework import routers, viewsets
 from .serializers import UsuarioSerializer
+from django.urls import re_path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      #description="Test description",
+      #terms_of_service="https://www.google.com/policies/terms/",
+      #contact=openapi.Contact(email="contact@snippets.local"),
+      #license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+)
 
 #ESTO SI HAY QUE DEJARLO, HABRÁ QUE CAMBIARLO A ESPAÑOL TAMBIÉN
 # Routers provide an easy way of automatically determining the URL conf.
@@ -43,8 +61,6 @@ router.register(r'removeSongFromQueue', views.EliminarCancionColaAPI,basename='r
 router.register(r'createAlbum', views.CrearAlbumAPI,basename='createAlbum' )
 router.register(r'addSongToAlbum', views.AgnadirCancionAlbumAPI,basename='addSongToAlbum' )
 router.register(r'getHistory', views.ListarHistorialAPI,basename='getHistory' )
-
-
 
 
 
@@ -116,4 +132,5 @@ urlpatterns = [
     path('crearPresentador/', views.CrearPresentadorAPI.as_view(), name='crearPresentador'),
     path('agnadirPresentador/', views.AgnadirPresentadorAPI.as_view(), name='agnadirPresentador'),
     path('listarPresentadoresPodcast/', views.ListarPresentadoresPodcastAPI.as_view(), name='listarPresentadoresPodcast'),
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     ]

@@ -41,7 +41,7 @@ class CapituloSerializer(serializers.ModelSerializer):
 class PodcastSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Podcast
-        fields = ['id', 'nombre', 'presentadores', 'favorito', 'foto']
+        fields = ['id', 'nombre', 'foto']
 
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:

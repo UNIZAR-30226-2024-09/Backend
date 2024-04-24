@@ -527,7 +527,7 @@ class RegistroAPI(APIView): # funciona
     "contrasegna": "5U3rP@55w0rd",
     "pais": "United States"
 }
-'''
+
 
 class ActualizarUsuarioAPI(APIView): # funciona
     permission_classes = [AllowAny]
@@ -540,8 +540,135 @@ class ActualizarUsuarioAPI(APIView): # funciona
         pais = request.data.get('pais')
         usuario = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
         DAOs.actualizarUsuario(usuario)
-        return Response({'message': 'Usuario actualizado con éxito'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Usuario actualizado con éxito'}, status=status.HTTP_200_OK)'''
+    
+class ActualizarUsuarioNombreAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'nombre'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - Nombre de usuario actualizado con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        nombre = request.data.get('nombre')
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        if not usuario:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            DAOs.actualizarUsuarioNombre(usuario, nombre)
+            return Response({'message': 'Nombre de usuario actualizado con éxito'}, status=status.HTTP_200_OK)
+    
+class ActualizarUsuarioSexoAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'sexo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'sexo': openapi.Schema(type=openapi.TYPE_STRING, description='Sexo del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - Sexo de usuario actualizado con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        sexo = request.data.get('sexo')
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        if not usuario:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            DAOs.actualizarUsuarioSexo(usuario, sexo)
+            return Response({'message': 'Sexo de usuario actualizado con éxito'}, status=status.HTTP_200_OK)
+    
+class ActualizarUsuarioNacimientoAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'nacimiento'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'nacimiento': openapi.Schema(type=openapi.TYPE_STRING, description='Fecha de nacimiento del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - Fecha de nacimiento de usuario actualizada con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        nacimiento = request.data.get('nacimiento')
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        DAOs.actualizarUsuarioNacimiento(usuario, nacimiento)
+        return Response({'message': 'Fecha de nacimiento de usuario actualizada con éxito'}, status=status.HTTP_200_OK)
 
+class ActualizarUsuarioPaisAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'pais'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'pais': openapi.Schema(type=openapi.TYPE_STRING, description='País del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - País de usuario actualizado con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        pais = request.data.get('pais')
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        if not usuario:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            DAOs.actualizarUsuarioPais(usuario, pais)
+            return Response({'message': 'País de usuario actualizado con éxito'}, status=status.HTTP_200_OK)
+        
+class ActualizarUsuarioContrasegnaAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'contrasegna'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'contrasegna': openapi.Schema(type=openapi.TYPE_STRING, description='Contraseña del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - Contraseña de usuario actualizada con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        contrasegna = request.data.get('contrasegna')
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        if not usuario:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            DAOs.actualizarUsuarioContrasegna(usuario, contrasegna)
+            return Response({'message': 'Contraseña de usuario actualizada con éxito'}, status=status.HTTP_200_OK)
+    
 '''EJEMPLO DE FORMATO JSON PARA ELIMINAR USUARIO
 {
     "correo": "john.doe@example.com"
@@ -748,7 +875,7 @@ class CrearPlaylistAPI(APIView): # funciona
     "playlistId": "2",
     "nombre": "Playlist de Sarah",
     "publica": "False"
-}'''
+}
 
 class ActualizarPlaylistAPI(APIView): # funciona
     permission_classes = [AllowAny]
@@ -757,8 +884,61 @@ class ActualizarPlaylistAPI(APIView): # funciona
         nombre = request.data.get('nombre')
         publica = request.data.get('publica')
         DAOs.actualizarPlaylist(playlistId, nombre, publica)
-        return Response({'message': 'La playlist ha sido actualizada con éxito'}, status=status.HTTP_200_OK)
+        return Response({'message': 'La playlist ha sido actualizada con éxito'}, status=status.HTTP_200_OK)'''
     
+
+class ActualizarPlaylistNombreAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['playlistId', 'nombre'],
+            properties={
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre de la playlist')
+            },
+        ),
+        responses={
+            200: 'OK - Nombre de la playlist actualizado con éxito',
+            400: 'Bad Request - La playlist no existe'
+            }
+    )
+    def post(self, request):
+        playlistId = request.data.get('playlistId')
+        nombre = request.data.get('nombre')
+        playlist = DAOs.conseguirPlaylistPorId(playlistId)
+        if playlist is None:
+            return Response({'error': 'La playlist no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.actualizarPlaylistNombre(playlist, nombre)
+            return Response({'message': 'Nombre de la playlist actualizado con éxito'}, status=status.HTTP_200_OK)
+        
+class ActualizarPlaylistPublicaAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['playlistId', 'publica'],
+            properties={
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist'),
+                'publica': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Indica si la playlist es pública o privada')
+            },
+        ),
+        responses={
+            200: 'OK - Privacidad de la playlist actualizada con éxito',
+            400: 'Bad Request - La playlist no existe'
+            }
+    )
+    def post(self, request):
+        playlistId = request.data.get('playlistId')
+        publica = request.data.get('publica')
+        playlist = DAOs.conseguirPlaylistPorId(playlistId)
+        if playlist is None:
+            return Response({'error': 'La playlist no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.actualizarPlaylistPublica(playlist, publica)
+            return Response({'message': 'Privacidad de la playlist actualizada con éxito'}, status=status.HTTP_200_OK)
+
 class ListarCancionesAPI(APIView): # funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(
@@ -1129,7 +1309,7 @@ class CrearAlbumAPI(APIView): # funciona
 {
     "albumId": "1",
     "nombre": "album de Sarah"
-}'''
+}
 class ActualizarAlbumAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
@@ -1137,7 +1317,60 @@ class ActualizarAlbumAPI(APIView): # funciona
         nombre = request.data.get('nombre')
         album = Album(id=albumId, nombre=nombre)
         DAOs.actualizarAlbum(album)
-        return Response({'message': 'Álbum actualizado con éxito'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Álbum actualizado con éxito'}, status=status.HTTP_200_OK)'''
+
+class ActualizarAlbumNombreAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['albumId', 'nombre'],
+            properties={
+                'albumId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del álbum'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre del álbum')
+            },
+        ),
+        responses={
+            200: 'OK - Nombre del álbum actualizado con éxito',
+            400: 'Bad Request - El álbum no existe'
+            }
+    )
+    def post(self, request):
+        albumId = request.data.get('albumId')
+        nombre = request.data.get('nombre')
+        album = DAOs.conseguirAlbumPorId(albumId)
+        if album is None:
+            return Response({'error': 'El álbum no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.actualizarAlbumNombre(album, nombre)
+            return Response({'message': 'Nombre del álbum actualizado con éxito'}, status=status.HTTP_200_OK)
+
+class ActualizarAlbumFotoAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['albumId', 'nombreFoto'],
+            properties={
+                'albumId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del álbum'),
+                'nombreFoto': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la foto')
+            },
+        ),
+        responses={
+            200: 'OK - Foto del álbum actualizada con éxito',
+            400: 'Bad Request - El álbum no existe'
+            }
+    )
+    def post(self, request):
+        albumId = request.data.get('albumId')
+        nombreFoto = request.data.get('nombreFoto')
+        album = DAOs.conseguirAlbumPorId(albumId)
+        if album is None:
+            return Response({'error': 'El álbum no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            contenidoBinarioFoto = convertirBinario(nombreFoto)
+            DAOs.actualizarAlbumFoto(album, contenidoBinarioFoto)
+            return Response({'message': 'Foto del álbum actualizada con éxito'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR AÑADIR CANCIÓN A UN ÁLBUM
 {
@@ -1241,7 +1474,7 @@ class CrearCapituloAPI(APIView): #funciona
     "nombre": "episodio1",
     "descripcion": "descripcion del epidodio1",
     "miPodcast": "podcast2" 
-}'''
+}
 class ActualizarCapituloAPI(APIView): #funciona
     permission_classes = [AllowAny]
     def post(self, request):
@@ -1252,8 +1485,117 @@ class ActualizarCapituloAPI(APIView): #funciona
         miPodcast = DAOs.conseguirPodcastPorNombre(miPodcast)
         'capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast)'
         DAOs.actualizarCapitulo(capituloId, nombre, descripcion, miPodcast)
-        return Response({'message': 'Capítulo actualizado con éxito'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Capítulo actualizado con éxito'}, status=status.HTTP_200_OK)'''
     
+class ActualizarCapituloNombreAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['capituloId', 'nombre'],
+            properties={
+                'capituloId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del capítulo'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre del capítulo')
+            },
+        ),
+        responses={
+            200: 'OK - Nombre del capítulo actualizado con éxito',
+            400: 'Bad Request - El capítulo no existe'
+        }
+    )
+    def post(self, request):
+        capituloId = request.data.get('capituloId')
+        nombre = request.data.get('nombre')
+        capitulo = DAOs.conseguirCapituloPorId(capituloId)
+        if capitulo is None:
+            return Response({'error': 'El capítulo no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.actualizarCapituloNombre(capitulo, nombre)
+            return Response({'message': 'Nombre del capítulo actualizado con éxito'}, status=status.HTTP_200_OK)
+    
+class ActualizarCapituloDescripcionAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['capituloId', 'descripcion'],
+            properties={
+                'capituloId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del capítulo'),
+                'descripcion': openapi.Schema(type=openapi.TYPE_STRING, description='Nueva descripción del capítulo')
+            },
+        ),
+        responses={
+            200: 'OK - Descripción del capítulo actualizada con éxito',
+            400: 'Bad Request - El capítulo no existe'
+        }
+    )
+    def post(self, request):
+        capituloId = request.data.get('capituloId')
+        descripcion = request.data.get('descripcion')
+        capitulo = DAOs.conseguirCapituloPorId(capituloId)
+        if capitulo is None:
+            return Response({'error': 'El capítulo no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.actualizarCapituloDescripcion(capitulo, descripcion)
+            return Response({'message': 'Descripción del capítulo actualizada con éxito'}, status=status.HTTP_200_OK)
+        
+class ActualizarCapituloPodcastAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['capituloId', 'miPodcast'],
+            properties={
+                'capituloId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del capítulo'),
+                'miPodcast': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del podcast')
+            },
+        ),
+        responses={
+            200: 'OK - Podcast del capítulo actualizado con éxito',
+            400: 'Bad Request - El capítulo no existe'
+        }
+    )
+    def post(self, request):
+        capituloId = request.data.get('capituloId')
+        miPodcast = request.data.get('miPodcast')
+        capitulo = DAOs.conseguirCapituloPorId(capituloId)
+        miPodcast = DAOs.conseguirPodcastPorNombre(miPodcast)
+        if capitulo is None:
+            return Response({'error': 'El capítulo no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if miPodcast is None:
+                return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                DAOs.actualizarCapituloPodcast(capitulo, miPodcast)
+                return Response({'message': 'Podcast del capítulo actualizado con éxito'}, status=status.HTTP_200_OK)
+            
+class ActualizarCapituloArchivoAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['capituloId', 'nombreArchivoMp3'],
+            properties={
+                'capituloId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del capítulo'),
+                'nombreArchivoMp3': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del archivo mp3')
+            },
+        ),
+        responses={
+            200: 'OK - Archivo del capítulo actualizado con éxito',
+            400: 'Bad Request - El capítulo no existe'
+        }
+    )
+    def post(self, request):
+        capituloId = request.data.get('capituloId')
+        nombreArchivoMp3 = request.data.get('nombreArchivoMp3')
+        capitulo = DAOs.conseguirCapituloPorId(capituloId)
+        if capitulo is None:
+            return Response({'error': 'El capítulo no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
+            DAOs.actualizarCapituloArchivoMp3(capitulo, contenidoBinarioMp3)
+            return Response({'message': 'Archivo del capítulo actualizado con éxito'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LOS CAPITULOS DE UN PODCAST
 {
     "nombrePodcast": "podcast1"
@@ -1701,9 +2043,8 @@ class CrearPodcastAPI(APIView): # funciona
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR PODCAST
 {
     "podcastId": "2",
-    "nombre": "podcast2",
-    "presentadores": "arturo valls, patricia conde"
-}'''
+    "nombre": "podcast2"
+}
 class ActualizarPodcastAPI(APIView): # funciona
     permission_classes = [AllowAny]
     def post(self, request):
@@ -1712,7 +2053,60 @@ class ActualizarPodcastAPI(APIView): # funciona
         presentadores = request.data.get('presentadores')
         podcast = Podcast(id=podcastId, nombre=nombre, presentadores=presentadores)
         DAOs.actualizarPodcast(podcast)
-        return Response({'message': 'Podcast actualizado con éxito'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Podcast actualizado con éxito'}, status=status.HTTP_200_OK)'''
+    
+class ActualizarPodcastNombreAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['podcastId', 'nombre'],
+            properties={
+                'podcastId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del podcast'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre del podcast')
+            },
+        ),
+        responses={
+            200: 'OK - Nombre del podcast actualizado con éxito',
+            400: 'Bad Request - El podcast no existe'
+        }
+    )
+    def post(self, request):
+        podcastId = request.data.get('podcastId')
+        nombre = request.data.get('nombre')
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        if podcast is None:
+            return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.actualizarPodcastNombre(podcast, nombre)
+            return Response({'message': 'Nombre del podcast actualizado con éxito'}, status=status.HTTP_200_OK)
+        
+class ActualizarPodcastFotoAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['podcastId', 'nombreFoto'],
+            properties={
+                'podcastId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del podcast'),
+                'nombreFoto': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la foto del podcast')
+            },
+        ),
+        responses={
+            200: 'OK - Foto del podcast actualizada con éxito',
+            400: 'Bad Request - El podcast no existe'
+        }
+    )
+    def post(self, request):
+        podcastId = request.data.get('podcastId')
+        nombreFoto = request.data.get('nombreFoto')
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        if podcast is None:
+            return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            contenidoBinarioFoto = convertirBinario(nombreFoto)
+            DAOs.actualizarPodcastFoto(podcast, contenidoBinarioFoto)
+            return Response({'message': 'Foto del podcast actualizada con éxito'}, status=status.HTTP_200_OK)
 
 '''
 EJEMPLO DE BUSCAR ARTISTA

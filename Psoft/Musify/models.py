@@ -161,7 +161,6 @@ class Pertenecen(models.Model):
 class Podcast(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
-    #presentadores = models.CharField(max_length=255, null=False)
     puntuacion = models.IntegerField(blank=True, null=True)
     numPuntuaciones = models.IntegerField(blank=True, null=True)
     foto = models.BinaryField(default=b'\x00')

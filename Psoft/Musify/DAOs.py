@@ -93,6 +93,32 @@ def actualizarUsuario(usuarioVO): #Se actualiza el usuario, cambiado para simpli
     usuario.pais = usuarioVO.pais
     usuario.save()
 
+def actualizarUsuarioNombre(usuarioVO, nombre):
+    usuario = Usuario.objects.get(pk=usuarioVO.correo)
+    usuario.nombre = nombre
+    usuario.save()
+
+def actualizarUsuarioSexo(usuarioVO, sexo):
+    usuario = Usuario.objects.get(pk=usuarioVO.correo)
+    usuario.sexo = sexo
+    usuario.save()
+
+def actualizarUsuarioNacimiento(usuarioVO, nacimiento):
+    usuario = Usuario.objects.get(pk=usuarioVO.correo)
+    usuario.nacimiento = nacimiento
+    usuario.save()
+
+def actualizarUsuarioContrasegna(usuarioVO, contrasegna):
+    usuario = Usuario.objects.get(pk=usuarioVO.correo)
+    usuario.contrasegna = contrasegna
+    usuario.save()
+
+def actualizarUsuarioPais(usuarioVO, pais):
+    usuario = Usuario.objects.get(pk=usuarioVO.correo)
+    usuario.pais = pais
+    usuario.save()
+
+
 # COMPROBADO
 # EN LA API
 def eliminarUsuario(correo): #Se elimina el usuario y todas sus relaciones
@@ -207,9 +233,19 @@ def crearPlaylist(usuarioCorreo, nombre, publica): #Se crea sin colaboradores
 
 # COMPROBADO
 #EN LA API
-def actualizarPlaylist(playlistId, nombre, publica): # Solo se puede cambiar el nombre(TODO: se puede poner foto)
+def actualizarPlaylist(playlistId, nombre, publica):
     playlist = Playlist.objects.get(pk=playlistId)
     playlist.nombre = nombre
+    playlist.publica = publica
+    playlist.save()
+
+def actualizarPlaylistNombre(playlistVO, nombre):
+    playlist = Playlist.objects.get(pk=playlistVO.id)
+    playlist.nombre = nombre
+    playlist.save()
+
+def actualizarPlaylistPublica(playlistVO, publica):
+    playlist = Playlist.objects.get(pk=playlistVO.id)
     playlist.publica = publica
     playlist.save()
 
@@ -265,12 +301,18 @@ def listarCancionesPlaylist(playlistId): #Devuelve las canciones de una playlist
     return [Cancion.objects.get(pk=id).to_VO() for id in ids]'''
 
 # COMPROBADO
-def conseguirPlaylistPorNombre(playlistName): #Devuelve el playlist dado su nombre
+def conseguirPlaylistPorNombre(playlistName): #Devuelve la playlist dado su nombre
     try:
         return Playlist.objects.get(nombre=playlistName)
     except ObjectDoesNotExist:
         return None
     
+def conseguirPlaylistPorId(playlistId): #Devuelve la playlist dado su id
+    try:
+        return Playlist.objects.get(pk=playlistId)
+    except ObjectDoesNotExist:
+        return None
+
 def buscarPlaylist(playlistNombre):
     try:
         playlistNombre = playlistNombre.lower()
@@ -521,6 +563,16 @@ def actualizarAlbum(albumVO): #Se actualiza el album
     album.foto = albumVO.foto
     album.save()
 
+def actualizarAlbumNombre(albumVO, nombre):
+    album = Album.objects.get(pk=albumVO.id)
+    album.nombre = nombre
+    album.save()
+
+def actualizarAlbumFoto(albumVO, foto):
+    album = Album.objects.get(pk=albumVO.id)
+    album.foto = foto
+    album.save()
+
 # COMPROBADO
 #EN LA API
 def agnadirCancionAlbum(albumVO, cancionVO): #Se añade la cancion al album
@@ -575,6 +627,26 @@ def actualizarCapitulo(capituloId, nuevoNombre, nuevaDescripcion, nuevoPodcast):
     capitulo.nombre = nuevoNombre
     capitulo.descripcion = nuevaDescripcion
     capitulo.miPodcast = nuevoPodcast
+    capitulo.save()
+
+def actualizarCapituloNombre(capituloVO, nombre):
+    capitulo = Capitulo.objects.get(pk=capituloVO.id)
+    capitulo.nombre = nombre
+    capitulo.save()
+
+def actualizarCapituloDescripcion(capituloVO, descripcion):
+    capitulo = Capitulo.objects.get(pk=capituloVO.id)
+    capitulo.descripcion = descripcion
+    capitulo.save()
+
+def actualizarCapituloPodcast(capituloVO, podcast):
+    capitulo = Capitulo.objects.get(pk=capituloVO.id)
+    capitulo.miPodcast = podcast
+    capitulo.save()
+
+def actualizarCapituloArchivoMp3(capituloVO, archivoMp3):
+    capitulo = Capitulo.objects.get(pk=capituloVO.id)
+    capitulo.archivoMp3 = archivoMp3
     capitulo.save()
 
 # SIN COMPROBAR
@@ -648,7 +720,16 @@ def aumentarNumeroPuntuacionesPodcast(podcastId, numeroPuntuaciones): #Aumenta e
 def actualizarPodcast(podcastVO): #Se actualiza el podcast
     podcast = Podcast.objects.get(pk=podcastVO.id)
     podcast.nombre = podcastVO.nombre
-    podcast.presentadores = podcastVO.presentadores
+    podcast.save()
+
+def actualizarPodcastNombre(podcastVO, nombre):
+    podcast = Podcast.objects.get(pk=podcastVO.id)
+    podcast.nombre = nombre
+    podcast.save()
+
+def actualizarPodcastFoto(podcastVO, foto):
+    podcast = Podcast.objects.get(pk=podcastVO.id)
+    podcast.foto = foto
     podcast.save()
 
 # SIN COMPROBAR

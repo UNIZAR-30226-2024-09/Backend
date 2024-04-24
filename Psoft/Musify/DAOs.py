@@ -55,6 +55,13 @@ def conseguirUsuarioPorCorreo(correo): #Se busca el usuario por su correo
     except ObjectDoesNotExist:
         return None
 
+def buscarUsuario(nombre):
+    try:
+        nombre = nombre.lower()
+        return Usuario.objects.filter(nombre__istartswith=nombre)
+    except ObjectDoesNotExist:
+        return None
+
 # COMPROBAD0
 def comprobarContrasegna(correo, contrasegna): #se comprueba la contraseña del usuario (iniciar sesión)
     usuario = Usuario.objects.get(correo=correo)
@@ -559,10 +566,10 @@ def crearAlbum(albumVO): #Se crea el album sin canciones
 
 # EN LA API
 def actualizarAlbum(albumVO, nombre, foto): #Se actualiza el album
-    albumVO = Album.objects.get(pk=albumVO.id)
-    albumVO.nombre = nombre
-    albumVO.foto = foto
-    albumVO.save()
+    album = Album.objects.get(pk=albumVO.id)
+    album.nombre = nombre
+    album.foto = foto
+    album.save()
 
 '''def actualizarAlbumNombre(albumVO, nombre):
     album = Album.objects.get(pk=albumVO.id)

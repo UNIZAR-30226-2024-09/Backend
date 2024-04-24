@@ -1136,7 +1136,7 @@ class ListarPlaylistsUsuarioAPI(APIView): # funciona
 
 def convertirBinario(ruta):
     #entre las comillas y antes de las dos barras hay que poner la ruta del archivo, teniendo en cuenta que ruta tiene el nombre del archivo
-    with open(r"\\" + ruta, "rb") as archivo:
+    with open(r"C:\Users\nerea\Downloads\\" + ruta, "rb") as archivo:
         contenido_binario = archivo.read()
         contenido_base64 = base64.b64encode(contenido_binario)
     return contenido_base64
@@ -1372,14 +1372,14 @@ class CrearAlbumAPI(APIView): # funciona
 {
     "albumId": "1",
     "nombre": "album de Sarah",
-    "foto": "Homecoming_cover.jpg"
+    "nombreFoto": "Homecoming_cover.jpg"
 }'''
 class ActualizarAlbumAPI(APIView): # funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['albumId', 'nombre', 'foto'],
+            required=['albumId', 'nombre', 'nombreFoto'],
             properties={
                 'albumId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del álbum'),
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre del álbum'),
@@ -1394,14 +1394,15 @@ class ActualizarAlbumAPI(APIView): # funciona
     def post(self, request):
         albumId = request.data.get('albumId')
         nombre = request.data.get('nombre')
-        foto = request.data.get('foto')
+        nombreFoto = request.data.get('nombreFoto')
         album = DAOs.conseguirAlbumPorId(albumId)
+        contenidoBinarioFoto = convertirBinario(nombreFoto)
         if album is None:
             return Response({'error': 'El álbum no existe'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            DAOs.actualizarAlbum(album, nombre, foto)
+            DAOs.actualizarAlbum(album, nombre, contenidoBinarioFoto)
             return Response({'message': 'Álbum actualizado con éxito'}, status=status.HTTP_200_OK)
-
+        
 '''class ActualizarAlbumNombreAPI(APIView): # funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(
@@ -2312,6 +2313,10 @@ class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo 
         if objeto is not None:
             serializer = PresentadorSerializer(objeto, many=True)
             resultados.extend([{'presentador': data} for data in serializer.data])
+        objeto = DAOs.buscarUsuario(nombre_objeto)
+        if objeto is not None:
+            serializer = UsuarioSerializer(objeto, many=True)
+            resultados.extend([{'usuario': data} for data in serializer.data])
         if resultados:
             return Response(resultados, status=status.HTTP_200_OK)
         else:

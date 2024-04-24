@@ -155,6 +155,11 @@ urlpatterns = [
     path('devolverCancion/', views.DevolverCancionAPI.as_view(), name='devolverCancion'),
     path('devolverAlbum/', views.DevolverAlbumAPI.as_view(), name='devolverAlbum'),
     path('devolverPlaylist/', views.DevolverPlaylistAPI.as_view(), name='devolverPlaylist'),
+    path('devolverArtista/', views.DevolverArtistaAPI.as_view(), name='devolverArtista'),
+    path('devolverPodcast/', views.DevolverPodcastAPI.as_view(), name='devolverPodcast'),
+    path('devolverCapitulo/', views.DevolverCapituloAPI.as_view(), name='devolverCapitulo'),
+    path('devolverUsuario/', views.DevolverUsuarioAPI.as_view(), name='devolverUsuario'),
+    path('devolverPresentador/', views.DevolverPresentadorAPI.as_view(), name='devolverPresentador'),
     path('obtenerAudio/', views.getSongByIdAPI.as_view(), name='obtenerAudio'),
 
     ]

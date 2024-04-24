@@ -24,7 +24,7 @@ class UsuarioManager(BaseUserManager):
         usuario.save(using=self._db)
         return usuario
 
-    def create_superuser(self, correo, nombre, contrasegna, **extra_fields):
+    def create_superuser(self, correo, nombre, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -33,7 +33,7 @@ class UsuarioManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(correo, nombre, contrasegna, **extra_fields)
+        return self.create_user(correo, nombre, password, **extra_fields)
 
 class Usuario(AbstractBaseUser):
     correo = models.CharField(max_length=255, primary_key=True, unique=True)
@@ -48,6 +48,7 @@ class Usuario(AbstractBaseUser):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     # para el correo de verificación
     is_email_verified = models.BooleanField(default=False)

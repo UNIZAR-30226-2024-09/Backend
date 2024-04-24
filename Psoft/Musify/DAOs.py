@@ -84,16 +84,15 @@ def existeUsuario(correo): #Devuelve true si el usuario existe, false en caso co
 
 # COMPROBADO
 # EN LA API
-def actualizarUsuario(usuarioVO): #Se actualiza el usuario, cambiado para simplificado proceso API
-    usuario = Usuario.objects.get(pk=usuarioVO.correo)
-    usuario.nombre = usuarioVO.nombre
-    usuario.sexo = usuarioVO.sexo
-    usuario.nacimiento = usuarioVO.nacimiento
-    usuario.contrasegna = usuarioVO.contrasegna
-    usuario.pais = usuarioVO.pais
-    usuario.save()
+def actualizarUsuario(usuarioVO, usuarioNuevo): #Se actualiza el usuario
+    usuarioVO.nombre = usuarioNuevo.nombre
+    usuarioVO.contrasegna = usuarioNuevo.contrasegna
+    usuarioVO.nacimiento = usuarioNuevo.nacimiento
+    usuarioVO.sexo = usuarioNuevo.sexo
+    usuarioVO.pais = usuarioNuevo.pais
 
-def actualizarUsuarioNombre(usuarioVO, nombre):
+
+'''def actualizarUsuarioNombre(usuarioVO, nombre):
     usuario = Usuario.objects.get(pk=usuarioVO.correo)
     usuario.nombre = nombre
     usuario.save()
@@ -116,7 +115,7 @@ def actualizarUsuarioContrasegna(usuarioVO, contrasegna):
 def actualizarUsuarioPais(usuarioVO, pais):
     usuario = Usuario.objects.get(pk=usuarioVO.correo)
     usuario.pais = pais
-    usuario.save()
+    usuario.save()'''
 
 
 # COMPROBADO
@@ -233,13 +232,12 @@ def crearPlaylist(usuarioCorreo, nombre, publica): #Se crea sin colaboradores
 
 # COMPROBADO
 #EN LA API
-def actualizarPlaylist(playlistId, nombre, publica):
-    playlist = Playlist.objects.get(pk=playlistId)
+def actualizarPlaylist(playlist, nombre, publica):
     playlist.nombre = nombre
     playlist.publica = publica
     playlist.save()
 
-def actualizarPlaylistNombre(playlistVO, nombre):
+'''def actualizarPlaylistNombre(playlistVO, nombre):
     playlist = Playlist.objects.get(pk=playlistVO.id)
     playlist.nombre = nombre
     playlist.save()
@@ -249,7 +247,7 @@ def actualizarPlaylistPublica(playlistVO, publica):
     playlist.publica = publica
     playlist.save()
 
-'''def remove_playlist(playlist_id): # He intentado hacer que los colaboradores dejen de colaborar, pero NO SE SI ESTÁ BIEN
+    def remove_playlist(playlist_id): # He intentado hacer que los colaboradores dejen de colaborar, pero NO SE SI ESTÁ BIEN
     playlist = Playlist.objects.get(pk=playlist_id)
     ids = Colabora.objects.filter(miUsuario=user)
     #Colabora.objects.get(pk=id).delete() for id in ids
@@ -280,7 +278,10 @@ def eliminarCancionPlaylist(playlistId, cancionId): #Se elimina la cancion de la
 # COMPROBADO
 #EN LA API
 def listarCanciones(): #Devuelve todas las canciones
-    return Cancion.objects.all()
+    canciones = Cancion.objects.all()
+    for cancion in canciones:
+        cancion.archivoMp3 = None
+    return canciones
 
 # COMPROBADO
 #EN LA API
@@ -557,13 +558,13 @@ def crearAlbum(albumVO): #Se crea el album sin canciones
     )
 
 # EN LA API
-def actualizarAlbum(albumVO): #Se actualiza el album
-    album = Album.objects.get(pk=albumVO.id)
-    album.nombre = albumVO.nombre
-    album.foto = albumVO.foto
-    album.save()
+def actualizarAlbum(albumVO, nombre, foto): #Se actualiza el album
+    albumVO = Album.objects.get(pk=albumVO.id)
+    albumVO.nombre = nombre
+    albumVO.foto = foto
+    albumVO.save()
 
-def actualizarAlbumNombre(albumVO, nombre):
+'''def actualizarAlbumNombre(albumVO, nombre):
     album = Album.objects.get(pk=albumVO.id)
     album.nombre = nombre
     album.save()
@@ -571,7 +572,7 @@ def actualizarAlbumNombre(albumVO, nombre):
 def actualizarAlbumFoto(albumVO, foto):
     album = Album.objects.get(pk=albumVO.id)
     album.foto = foto
-    album.save()
+    album.save()'''
 
 # COMPROBADO
 #EN LA API
@@ -622,14 +623,13 @@ def crearCapitulo(capituloVO): #Se crea el capitulo
     )
 
 #EN LA API
-def actualizarCapitulo(capituloId, nuevoNombre, nuevaDescripcion, nuevoPodcast): #Se actualiza el capitulo
-    capitulo = Capitulo.objects.get(pk=capituloId)
-    capitulo.nombre = nuevoNombre
-    capitulo.descripcion = nuevaDescripcion
-    capitulo.miPodcast = nuevoPodcast
+def actualizarCapitulo(capitulo, nombre, descripcion, miPodcast): #Se actualiza el capitulo
+    capitulo.nombre = nombre
+    capitulo.descripcion = descripcion
+    capitulo.miPodcast = miPodcast
     capitulo.save()
 
-def actualizarCapituloNombre(capituloVO, nombre):
+'''def actualizarCapituloNombre(capituloVO, nombre):
     capitulo = Capitulo.objects.get(pk=capituloVO.id)
     capitulo.nombre = nombre
     capitulo.save()
@@ -647,7 +647,7 @@ def actualizarCapituloPodcast(capituloVO, podcast):
 def actualizarCapituloArchivoMp3(capituloVO, archivoMp3):
     capitulo = Capitulo.objects.get(pk=capituloVO.id)
     capitulo.archivoMp3 = archivoMp3
-    capitulo.save()
+    capitulo.save()'''
 
 # SIN COMPROBAR
 def conseguirCapituloPorId(capituloId): #Devuelve el capitulo dado su id

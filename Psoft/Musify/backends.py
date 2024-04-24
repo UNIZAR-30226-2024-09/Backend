@@ -3,7 +3,7 @@ from .models import Usuario
 from . import DAOs
 
 class CorreoBackend(ModelBackend):
-    def authenticate(self, request, correo=None, contrasegna=None, **kwargs):
+    def authenticate(correo=None, contrasegna=None, **kwargs):
         print(f"Intentando autenticar al usuario con correo: {correo}")  # Imprime el correo recibido
         try:
             user = Usuario.objects.get(correo=correo)

@@ -1218,6 +1218,174 @@ class DevolverCancionAPI(APIView):
         else:
             return Response({'message': 'La canción no existe'}, status=status.HTTP_404_NOT_FOUND)
 
+class DevolverAlbumAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['albumId'],
+            properties={
+                'albumId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del álbum')
+            },
+        ),
+        responses={
+            200: 'OK - Álbum devuelto con éxito',
+            404: 'NOT FOUND - El álbum no existe'
+        }
+    )
+    def post(self, request):
+        albumId = request.data.get('albumId')
+        album = DAOs.conseguirAlbumPorId(albumId)
+        if album:
+            serializer = AlbumSerializer(album)
+            return Response({'album': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'El álbum no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+class DevolverPlaylistAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['playlistId'],
+            properties={
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist')
+            },
+        ),
+        responses={
+            200: 'OK - Playlist devuelta con éxito',
+            404: 'NOT FOUND - La playlist no existe'
+        }
+    )
+    def post(self, request):
+        playlistId = request.data.get('playlistId')
+        playlist = DAOs.conseguirPlaylistPorId(playlistId)
+        if playlist:
+            serializer = PlaylistSerializer(playlist)
+            return Response({'playlist': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'La playlist no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+class DevolverPodcastAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['podcastId'],
+            properties={
+                'podcastId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del podcast')
+            },
+        ),
+        responses={
+            200: 'OK - Podcast devuelto con éxito',
+            404: 'NOT FOUND - El podcast no existe'
+        }
+    )
+    def post(self, request):
+        podcastId = request.data.get('podcastId')
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        if podcast:
+            serializer = PodcastSerializer(podcast)
+            return Response({'podcast': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'El podcast no existe'}, status=status.HTTP_404_NOT_FOUND)
+        
+class DevolverCapituloAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['capituloId'],
+            properties={
+                'capituloId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del capítulo')
+            },
+        ),
+        responses={
+            200: 'OK - Capítulo devuelto con éxito',
+            404: 'NOT FOUND - El capítulo no existe'
+        }
+    )
+    def post(self, request):
+        capituloId = request.data.get('capituloId')
+        capitulo = DAOs.conseguirCapituloPorId(capituloId)
+        if capitulo:
+            serializer = CapituloSerializer(capitulo)
+            return Response({'capitulo': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'El capítulo no existe'}, status=status.HTTP_404_NOT_FOUND)
+        
+class DevolverUsuarioAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - Usuario devuelto con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        if usuario:
+            serializer = UsuarioSerializer(usuario)
+            return Response({'usuario': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        
+class DevolverArtistaAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['artistaId'],
+            properties={
+                'artistaId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del artista')
+            },
+        ),
+        responses={
+            200: 'OK - Artista devuelto con éxito',
+            404: 'NOT FOUND - El artista no existe'
+        }
+    )
+    def post(self, request):
+        artistaId = request.data.get('artistaId')
+        artista = DAOs.conseguirArtistaPorId(artistaId)
+        if artista:
+            serializer = ArtistaSerializer(artista)
+            return Response({'artista': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'El artista no existe'}, status=status.HTTP_404_NOT_FOUND)
+        
+class DevolverPresentadorAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['presentadorId'],
+            properties={
+                'presentadorId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del presentador')
+            },
+        ),
+        responses={
+            200: 'OK - Presentador devuelto con éxito',
+            404: 'NOT FOUND - El presentador no existe'
+        }
+    )
+    def post(self, request):
+        presentadorId = request.data.get('presentadorId')
+        presentador = DAOs.conseguirPresentadorPorId(presentadorId)
+        if presentador:
+            serializer = PresentadorSerializer(presentador)
+            return Response({'presentador': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'El presentador no existe'}, status=status.HTTP_404_NOT_FOUND)
+        
 
 '''EJEMPLO DE FORMATO JSON PARA PUNTUAR UNA CANCIÓN
 {}

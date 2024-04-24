@@ -153,6 +153,8 @@ urlpatterns = [
     #path('actualizarPodcastNombre/', views.ActualizarPodcastNombreAPI.as_view(), name='actualizarPodcastNombre'),
     #path('actualizarPodcastFoto/', views.ActualizarPodcastFotoAPI.as_view(), name='actualizarPodcastFoto'),
     path('devolverCancion/', views.DevolverCancionAPI.as_view(), name='devolverCancion'),
+    path('devolverAlbum/', views.DevolverAlbumAPI.as_view(), name='devolverAlbum'),
+    path('devolverPlaylist/', views.DevolverPlaylistAPI.as_view(), name='devolverPlaylist'),
     path('obtenerAudio/', views.getSongByIdAPI.as_view(), name='obtenerAudio'),
 
     ]

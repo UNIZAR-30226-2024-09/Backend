@@ -984,7 +984,7 @@ class ListarCancionesAPI(APIView): # funciona
     )
     def post(self, request):
         canciones = DAOs.listarCanciones()
-        canciones[:3] #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
+        canciones #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
         # Verificar si se encontraron canciones en la playlist
         if canciones:
             serializer = CancionSerializer(canciones, many=True)
@@ -993,6 +993,27 @@ class ListarCancionesAPI(APIView): # funciona
         else:
             # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
             return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
+        
+class getSongByIdAPI(APIView): # No funciona ni para atras
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['cancionId'],
+        properties={
+            'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la cancion')
+        },
+        ),
+        responses={200: 'OK - Cancion listada con éxito'}
+    )
+    def post(self, request):
+        cancionId = request.data.get('cancionId')
+        audio = DAOs.audioDeCancion(cancionId)
+        
+        if audio is not None:
+            return Response(audio,content_type='text/plain', status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No existe'}, status=status.HTTP_200_OK)
         
 class ListarPodcastsAPI(APIView): # funciona
     permission_classes = [AllowAny]

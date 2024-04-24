@@ -122,11 +122,11 @@ WSGI_APPLICATION = 'Psoft.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'br6tsjqxtewbdtcbulo6',
+        'NAME': 'b7ecoqas1l4kgiakoqll',
         'USER': 'una8oawiedeu9izlrrz4',
-        'PASSWORD': '8h6AHKYhHPaIGHQelqTMFARJWBsWAd',
-        'HOST': 'br6tsjqxtewbdtcbulo6-postgresql.services.clever-cloud.com',
-        'PORT': '50013',
+        'PASSWORD': 'uaFoiUQnP29O14Apc20r',
+        'HOST': 'b7ecoqas1l4kgiakoqll-postgresql.services.clever-cloud.com',
+        'PORT': '6599',
         'CONN_MAX_AGE': 0,
     }
 }

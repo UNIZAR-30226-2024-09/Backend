@@ -414,9 +414,11 @@ def listarPresentadoresPodcast(podcastVO): #Devuelve los presentadores de un pod
     presentadores = [interpretanObject.miPresentador for interpretanObject in ids]
     return presentadores
 
-# SIN COMPROBAR (QUITAR QUIZÁS)
-def audioDeCancion(cancionId): #Devuelve el audio de una cancion dado su id(Con la api de spoty securamente no haga falta)
-    return Cancion.objects.get(pk=cancionId).audio
+#Funciona
+def audioDeCancion(cancionId):
+    cancion = Cancion.objects.get(pk=cancionId)
+    audio = cancion.archivoMp3
+    return audio
 
 # SIN COMPROBAR
 #EN LA API

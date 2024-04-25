@@ -97,6 +97,7 @@ def actualizarUsuario(usuarioVO, usuarioNuevo): #Se actualiza el usuario
     usuarioVO.nacimiento = usuarioNuevo.nacimiento
     usuarioVO.sexo = usuarioNuevo.sexo
     usuarioVO.pais = usuarioNuevo.pais
+    usuarioVO.save()
 
 
 '''def actualizarUsuarioNombre(usuarioVO, nombre):

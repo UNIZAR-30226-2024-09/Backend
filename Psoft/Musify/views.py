@@ -1011,7 +1011,7 @@ class getSongByIdAPI(APIView): # No funciona ni para atras
         audio = DAOs.audioDeCancion(cancionId)
         
         if audio is not None:
-            return Response(audio,content_type='text/plain', status=status.HTTP_200_OK)
+            return Response({'audio': audio}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No existe'}, status=status.HTTP_200_OK)
         

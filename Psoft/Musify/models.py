@@ -42,8 +42,8 @@ class Usuario(AbstractBaseUser):
     nacimiento = models.DateField(blank=True, null=True)
     contrasegna = models.CharField(max_length=255, null=False)
     pais = models.CharField(max_length=255, blank=True)
-    generos_favoritos = models.ManyToManyField('Genero', related_name='generos_favoritos')
-    artistas_favoritos = models.ManyToManyField('Artista', related_name='artistas_favoritos')
+    #generos_favoritos = models.ManyToManyField('Genero', related_name='generos_favoritos')
+    #artistas_favoritos = models.ManyToManyField('Artista', related_name='artistas_favoritos')
 
 
     is_active = models.BooleanField(default=True)

@@ -160,6 +160,5 @@ urlpatterns = [
     path('devolverCapitulo/', views.DevolverCapituloAPI.as_view(), name='devolverCapitulo'),
     path('devolverUsuario/', views.DevolverUsuarioAPI.as_view(), name='devolverUsuario'),
     path('devolverPresentador/', views.DevolverPresentadorAPI.as_view(), name='devolverPresentador'),
-    path('obtenerAudio/', views.getSongByIdAPI.as_view(), name='obtenerAudio'),
-
+    path('obtenerUsuarioSesionAPI/', views.ObtenerUsuarioSesionAPI.as_view(), name='ObtenerUsuarioSesionAPI'),
     ]

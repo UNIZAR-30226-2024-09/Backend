@@ -1,6 +1,6 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario, Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan, Presentador, Interpretan
+from .models import Usuario,UsuarioManager , Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan, Presentador, Interpretan
 from django.core.exceptions import ObjectDoesNotExist
 
 #DAOs DE ARTISTA
@@ -70,16 +70,16 @@ def comprobarContrasegna(correo, contrasegna): #se comprueba la contraseña del 
 # COMPROBADO
 # EN LA API
 def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
-    return Usuario.objects.create(
-        correo=(usuarioVO.correo).lower(), #Se guarda en minusculas ya que en el correo electronico no importa la capitalizacion
+    usuario = Usuario.objects.create_user(
+        correo=usuarioVO.correo.lower(),
         nombre=usuarioVO.nombre,
         contrasegna=usuarioVO.contrasegna,
         nacimiento=usuarioVO.nacimiento,
         sexo=usuarioVO.sexo,
-        pais=usuarioVO.pais,
-        generos_favoritos=usuarioVO.generos_favoritos,
-        artistas_favoritos=usuarioVO.artistas_favoritos
+        pais=usuarioVO.pais
     )
+    usuario.save()
+    return usuario
 
 # COMPROBADO
 def existeUsuario(correo): #Devuelve true si el usuario existe, false en caso contrario (?)
@@ -352,8 +352,7 @@ def favoritoUsuario(correo):
 def cancionFavorita(correo, cancionVO):
     usuario = Usuario.objects.get(pk=correo)
     playlist = Playlist.objects.get(colaboradores__miUsuario=usuario, nombre="Favoritos")
-    cancion = Cancion.objects.get(pk=cancionVO.id)
-    return Contiene.objects.filter(miAudio=cancion, miPlaylist=playlist).exists()
+    return Contiene.objects.filter(miAudio=cancionVO, miPlaylist=playlist).exists()
     
 
 '''# SIN COMPROBAR (QUITAR QUIZÁS)

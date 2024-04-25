@@ -7,7 +7,6 @@ from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSeria
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from rest_framework import status
 from .backends import CorreoBackend
 from django.contrib.auth import authenticate
@@ -401,11 +400,38 @@ class IniciarSesionAPI(APIView): #Utiliza formato json estandar(el de arriba) fu
         if usuario is not None:
             # El usuario ha sido autenticado, devolver respuesta de éxito
             token, created = CustomToken.objects.get_or_create(usuario=usuario)
+            if created:
+                token.save()
             return Response({'message': 'Inicio de sesión correcto',"token": token.key}, status=status.HTTP_200_OK)
         else:
             # El usuario no ha sido autenticado, devolver respuesta de error
             return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
 
+class CerrarSesionAPI(APIView): 
+    permission_classes = [AllowAny]
+    def post(self, request):
+        token = request.data.get('token')
+        token = CustomToken.objects.get(key=token)
+        token.delete()
+        return Response({'message': 'Cierre de sesión correcto'}, status=status.HTTP_200_OK)
+    
+class ObtenerUsuarioSesionAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['token'],
+            properties={
+                'token': openapi.Schema(type=openapi.TYPE_STRING, description='Token del usuario')
+            },
+        ),
+        responses={200: 'OK - Usuario obtenido con éxito'}
+    )
+    def post(self, request):
+        token = request.data.get('token')
+        token = CustomToken.objects.get(key=token)
+        usuario = token.usuario
+        return Response({'correo': usuario.correo, 'nombre': usuario.nombre, 'sexo': usuario.sexo, 'nacimiento': usuario.nacimiento, 'pais': usuario.pais}, status=status.HTTP_200_OK)
 '''
 class IniciarSesionConGoogleAPI(APIView):
     permission_classes = [AllowAny]
@@ -501,8 +527,8 @@ class RegistroAPI(APIView): # funciona
         nacimiento = request.data.get('nacimiento')
         contrasegna = request.data.get('contrasegna')
         pais = request.data.get('pais')
-        generos_seleccionados = request.POST.getlist('generos') # no se si es post o data
-        artistas_seleccionados = request.POST.getlist('artistas') # no se si es post o data
+        #generos_seleccionados = request.POST.getlist('generos') # no se si es post o data
+        #artistas_seleccionados = request.POST.getlist('artistas') # no se si es post o data
 
         if not nombre:
             return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
@@ -513,10 +539,11 @@ class RegistroAPI(APIView): # funciona
 
         if Usuario.objects.filter(correo=correo).exists():
             return Response({'error': 'El correo introducido ya tiene asociada una cuenta'}, status=status.HTTP_400_BAD_REQUEST)
-        send_activation_email(usuario, request)
+        #send_activation_email(usuario, request)
         DAOs.crearUsuario(usuario)
         DAOs.crearPlaylist(correo,"Favoritos",False)
         token = CustomToken.objects.create(usuario=usuario)
+        token.save()
         return Response({'message': 'Usuario registrado con éxito',"token": token.key}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO
@@ -1467,7 +1494,7 @@ class EsFavoritaAPI(APIView): # funciona
             },
         ),
         responses={200: 'OK - La canción está en favoritos',
-                   200: 'OK - La canción no está en favoritos'}
+                   200: 'NO OK - La canción no está en favoritos'}
     )
     def post(self, request):
         correo = request.data.get('correo')
@@ -1476,9 +1503,10 @@ class EsFavoritaAPI(APIView): # funciona
         if cancionVO is not None:
             if DAOs.cancionFavorita(correo, cancionVO):
                 return Response({'message': 'La canción está en favoritos'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'La canción no está en favoritos'}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'La canción no está en favoritos'}, status=status.HTTP_200_OK)
-        
+            return Response({'message': 'La canción no existe'}, status=status.HTTP_404_NOT_FOUND)
 
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A LA COLA DE REPRODUCCIÓN
 {

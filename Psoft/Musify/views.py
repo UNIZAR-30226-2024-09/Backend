@@ -23,7 +23,10 @@ from drf_yasg import openapi
 #from django.core.mail import EmailMessage
 #from django.conf import settings
 import threading
-
+#CORREOS
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 #Spotify
 from dotenv import load_dotenv
 import base64
@@ -60,8 +63,41 @@ def home(request):
 def lougout_view(request):
     logout(request)
     return redirect("/")
+#Enviar correo reporte
+class ReporteAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'mensaje'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'mensaje': openapi.Schema(type=openapi.TYPE_STRING, description='Mensaje del usuario')
+            },
+        ),
+        responses={200: 'OK - Reporte enviado con éxito'}
+    )
+    def post(self, request):
+        sender = os.getenv("CORREO")
+        password = os.getenv("PASSWD_CORREO")
+        print(sender)
+        print(password)
+        receiver = request.data.get('correo')
+        mensaje = request.data.get('mensaje')
+        # Configurar el servidor de correo
+        message = MIMEMultipart()
+        message['From'] = sender
+        message['To'] = receiver
+        message['Subject'] = 'Reporte de usuario: ' + receiver
+        message.attach(MIMEText(mensaje, 'plain'))
 
-
+        # Enviar el correo
+        smtplib.SMTP.debuglevel = 1
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()  # Start TLS encryption
+            server.login(sender, password)
+            server.sendmail(sender, receiver, message.as_string())
+        return Response({'message': 'Reporte enviado con éxito'}, status=status.HTTP_200_OK)
 # CORREO DE VERIFICACIÓN
 
 # thread para el evío de correo de verificación

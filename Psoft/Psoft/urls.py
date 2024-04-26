@@ -165,4 +165,5 @@ urlpatterns = [
     path('actualizarEstadoCancionesAPI/', views.ActualizarEstadoCancionesAPI.as_view(), name='actualizarEstadoCancionesAPI'),
     path('obtenerEstadoCancionesAPI/', views.ObtenerEstadoCancionesAPI.as_view(), name='obtenerEstadoCancionesAPI'),
     path('agnadirColaboradorAPI/', views.AñadirColaboradorAPI.as_view(), name='agnadirColaboradorAPI'),
+    path('reporteAPI/', views.ReporteAPI.as_view(), name='ReporteAPI'),
     ]

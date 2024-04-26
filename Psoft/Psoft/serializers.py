@@ -10,6 +10,10 @@ class UsuarioSerializer(serializers.ModelSerializer):
 #    class Meta:
 #        model = models.Amigo
 #        fields = ['micorreo1','micorreo2']
+class EstadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Usuario
+        fields = ['correo', 'ultima_cancion', 'ultima_minutos']
 
 class SeguidoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Seguido, Seguidor, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista, CustomToken, Presentador
 from . import DAOs
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer,EstadoSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -502,6 +502,48 @@ class GoogleCallbackAPI(APIView):
 import logging
 
 logger = logging.getLogger(__name__)
+#ESTADO CANCIONES
+class ObtenerEstadoCancionesAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario')
+            },
+        ),
+        responses={200: 'OK - Estado de canciones obtenido con éxito'}
+    )
+    def get(self, request):
+        correo = request.data.get('correo')
+        canciones = DAOs.conseguirEstado(correo)
+        serializer = EstadoSerializer(canciones, many=True)
+        return Response(serializer.data)
+
+class ActualizarEstadoCancionesAPI(APIView): #funciona
+    methods=['POST'],
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'cancionID', 'tiempo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'cancionID': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción'),
+                'tiempo': openapi.Schema(type=openapi.TYPE_INTEGER, description='Tiempo de la canción')
+            },
+        ),
+        responses={200: 'OK - Estado de canciones actualizado con éxito'}
+    )
+
+    def post(self, request):
+        correo = request.data.get('correo')
+        cancionID = request.data.get('cancionID')
+        tiempo = request.data.get('tiempo')
+        DAOs.guardarEstado(correo,cancionID,tiempo)
+        return Response({'message': 'Estado de canciones actualizado con éxito'}, status=status.HTTP_200_OK)
+
 class RegistroAPI(APIView): # funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(
@@ -583,14 +625,31 @@ class ActualizarUsuarioAPI(APIView): # funciona
         nacimiento = request.data.get('nacimiento')
         contrasegna = request.data.get('contrasegna')
         pais = request.data.get('pais')
-        usuarioNuevo = Usuario(correo=correo, nombre=nombre, sexo=sexo, nacimiento=nacimiento, contrasegna=contrasegna, pais=pais)
-        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
-        if not usuario:
+
+        # Get the existing user by correo
+        try:
+            usuario_actual = Usuario.objects.get(correo=correo)
+        except Usuario.DoesNotExist:
+            # Handle the case where the user does not exist
+            # You may choose to create a new user or return an error response
             return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            DAOs.actualizarUsuario(usuario, usuarioNuevo)
+            # Update fields only if they are not null
+            if nombre is not None:
+                usuario_actual.nombre = nombre
+            if sexo is not None:
+                usuario_actual.sexo = sexo
+            if nacimiento is not None:
+                usuario_actual.nacimiento = nacimiento
+            if contrasegna is not None:
+                usuario_actual.contrasegna = contrasegna
+            if pais is not None:
+                usuario_actual.pais = pais
+
+            # Save the updated user
+            usuario_actual.save()
             return Response({'message': 'Usuario actualizado con éxito'}, status=status.HTTP_200_OK)
-    
+
 '''class ActualizarUsuarioNombreAPI(APIView): # funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(

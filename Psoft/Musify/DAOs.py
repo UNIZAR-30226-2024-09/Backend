@@ -3,6 +3,19 @@ from django.db import connection  # Assuming you're using Django
 from .models import Usuario,UsuarioManager , Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan, Presentador, Interpretan
 from django.core.exceptions import ObjectDoesNotExist
 
+
+#DAOs DE ESTADO
+
+def guardarEstado(usuarioID,cancionID,tiempo): #Se guarda el estado
+    usuario = Usuario.objects.get(pk=usuarioID)
+    usuario.ultima_cancion = cancionID
+    usuario.ultima_minutos = tiempo
+    usuario.save()
+
+def conseguirEstado(usuarioID): #Devuelve el estado del usuario
+    usuario = Usuario.objects.get(pk=usuarioID)
+    return usuario.ultima_cancion, usuario.ultima_minutos
+
 #DAOs DE ARTISTA
 
 def crearArtista(artistaVO): #Se crea el artista

@@ -42,6 +42,8 @@ class Usuario(AbstractBaseUser):
     nacimiento = models.DateField(blank=True, null=True)
     contrasegna = models.CharField(max_length=255, null=False)
     pais = models.CharField(max_length=255, blank=True)
+    ultima_cancion = models.ForeignKey('Cancion', on_delete=models.SET_NULL, related_name='ultima_cancion', null=True)
+    ultima_minutos = models.IntegerField(default=0)
     #generos_favoritos = models.ManyToManyField('Genero', related_name='generos_favoritos')
     #artistas_favoritos = models.ManyToManyField('Artista', related_name='artistas_favoritos')
 

@@ -162,4 +162,6 @@ urlpatterns = [
     path('devolverPresentador/', views.DevolverPresentadorAPI.as_view(), name='devolverPresentador'),
     path('obtenerUsuarioSesionAPI/', views.ObtenerUsuarioSesionAPI.as_view(), name='ObtenerUsuarioSesionAPI'),
     path('cerrarSesionAPI/', views.CerrarSesionAPI.as_view(), name='CerrarSesionAPI'),
+    path('actualizarEstadoCancionesAPI/', views.ActualizarEstadoCancionesAPI.as_view(), name='actualizarEstadoCancionesAPI'),
+    path('obtenerEstadoCancionesAPI/', views.ObtenerEstadoCancionesAPI.as_view(), name='obtenerEstadoCancionesAPI'),
     ]

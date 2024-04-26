@@ -19,8 +19,7 @@ class UsuarioManager(BaseUserManager):
         if not correo:
             raise ValueError('El correo electrónico es obligatorio')
         email = self.normalize_email(correo)
-        usuario = self.model(correo=email, nombre=nombre, **extra_fields)
-        usuario.set_password(contrasegna)
+        usuario = self.model(correo=email, nombre=nombre,contrasegna = contrasegna, **extra_fields)
         usuario.save(using=self._db)
         return usuario
 

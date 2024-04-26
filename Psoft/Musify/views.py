@@ -582,7 +582,6 @@ class RegistroAPI(APIView): # funciona
             return Response({'error': 'El correo introducido ya tiene asociada una cuenta'}, status=status.HTTP_400_BAD_REQUEST)
         #send_activation_email(usuario, request)
         DAOs.crearUsuario(usuario)
-        DAOs.crearPlaylist(correo,"Favoritos",False)
         token = CustomToken.objects.create(usuario=usuario)
         token.save()
         return Response({'message': 'Usuario registrado con éxito',"token": token.key}, status=status.HTTP_200_OK)
@@ -1009,6 +1008,28 @@ class ActualizarPlaylistAPI(APIView): # funciona
             DAOs.actualizarPlaylist(playlist, nombre, publica)
             return Response({'message': 'La playlist ha sido actualizada con éxito'}, status=status.HTTP_200_OK)
     
+class AñadirColaboradorAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'playlistId'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist')
+            },
+        ),
+        responses={200: 'OK - Colaborador añadido con éxito'}
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        playlistId = request.data.get('playlistId')
+        playlist = DAOs.conseguirPlaylistPorId(playlistId)
+        if playlist is None:
+            return Response({'error': 'La playlist no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.agnadirColaborador(playlist, correo)
+            return Response({'message': 'Colaborador añadido con éxito'}, status=status.HTTP_200_OK)
 
 '''class ActualizarPlaylistNombreAPI(APIView): # funciona
     permission_classes = [AllowAny]

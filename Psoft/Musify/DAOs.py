@@ -89,6 +89,7 @@ def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
         pais=usuarioVO.pais
     )
     usuario.save()
+    crearPlaylist(usuario.correo,"Favoritos",False)
     return usuario
 
 # COMPROBADO
@@ -247,7 +248,12 @@ def crearPlaylist(usuarioCorreo, nombre, publica): #Se crea sin colaboradores
         miUsuario=usuario,
         miPlaylist=playlist
     )
-
+def agnadirColaborador(playlistVO, usuarioCorreo):
+    usuario = Usuario.objects.get(pk=usuarioCorreo)
+    Colabora.objects.create(
+        miUsuario=usuario,
+        miPlaylist=playlistVO
+    )
 # COMPROBADO
 #EN LA API
 def actualizarPlaylist(playlist, nombre, publica):

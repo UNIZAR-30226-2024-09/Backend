@@ -6,15 +6,12 @@ from django.core.exceptions import ObjectDoesNotExist
 
 #DAOs DE ESTADO
 
-def guardarEstado(usuarioID,cancionID,tiempo): #Se guarda el estado
+def guardarEstado(usuarioID,cancionVO,tiempo): #Se guarda el estado
     usuario = Usuario.objects.get(pk=usuarioID)
-    usuario.ultima_cancion = cancionID
+    usuario.ultima_cancion = cancionVO
     usuario.ultima_minutos = tiempo
     usuario.save()
 
-def conseguirEstado(usuarioID): #Devuelve el estado del usuario
-    usuario = Usuario.objects.get(pk=usuarioID)
-    return usuario.ultima_cancion, usuario.ultima_minutos
 
 #DAOs DE ARTISTA
 

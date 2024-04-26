@@ -515,14 +515,13 @@ class ObtenerEstadoCancionesAPI(APIView): #funciona
         ),
         responses={200: 'OK - Estado de canciones obtenido con éxito'}
     )
-    def get(self, request):
+    def post(self, request):
         correo = request.data.get('correo')
-        canciones = DAOs.conseguirEstado(correo)
-        serializer = EstadoSerializer(canciones, many=True)
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        serializer = EstadoSerializer(usuario)
         return Response(serializer.data)
 
 class ActualizarEstadoCancionesAPI(APIView): #funciona
-    methods=['POST'],
     permission_classes = [AllowAny]
     @swagger_auto_schema(
         request_body=openapi.Schema(
@@ -536,12 +535,12 @@ class ActualizarEstadoCancionesAPI(APIView): #funciona
         ),
         responses={200: 'OK - Estado de canciones actualizado con éxito'}
     )
-
     def post(self, request):
         correo = request.data.get('correo')
         cancionID = request.data.get('cancionID')
+        cancionVO = DAOs.conseguirCancionPorId(cancionID)
         tiempo = request.data.get('tiempo')
-        DAOs.guardarEstado(correo,cancionID,tiempo)
+        DAOs.guardarEstado(correo,cancionVO,tiempo)
         return Response({'message': 'Estado de canciones actualizado con éxito'}, status=status.HTTP_200_OK)
 
 class RegistroAPI(APIView): # funciona

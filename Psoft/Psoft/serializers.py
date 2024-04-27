@@ -6,6 +6,11 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = models.Usuario
         fields = ['correo', 'nombre', 'sexo', 'nacimiento', 'contrasegna', 'pais']
 
+class MensajeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Mensaje
+        fields = ['id', 'miSala', 'miUsuario', 'texto', 'fecha']
+
 #class AmigosSerializer(serializers.ModelSerializer):
 #    class Meta:
 #        model = models.Amigo

@@ -18,6 +18,9 @@ class Mensaje(models.Model):
     texto = models.CharField(max_length=10000, null=False)
     fecha = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        ordering = ['fecha']
+
 class CustomToken(models.Model):
     key = models.CharField(max_length=40, primary_key=True, default=uuid.uuid4)
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='custom_token', on_delete=models.CASCADE)

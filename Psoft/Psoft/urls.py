@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from Musify import views
+from Musify import views, viewsChat
 from django.urls import path, include
 from django.contrib.auth.models import User
 from rest_framework import routers, viewsets
@@ -167,4 +167,7 @@ urlpatterns = [
     path('agnadirColaboradorAPI/', views.AñadirColaboradorAPI.as_view(), name='agnadirColaboradorAPI'),
     path('reporteAPI/', views.ReporteAPI.as_view(), name='ReporteAPI'),
     path('eliminarPlaylistAPI/', views.EliminarPlaylistAPI.as_view(), name='EliminarPlaylistAPI'),
+    path('registrarMensajeAPI/', viewsChat.RegistrarMensajeAPI.as_view(), name='RegistrarMensajeAPI'),
+    path('cargarMensajesAPI/', viewsChat.CargarMensajesAPI.as_view(), name='CargarMensajesAPI'),
+    path('crearSalaAPI/', viewsChat.CrearSalaAPI.as_view(), name='CrearSalaAPI'),
     ]

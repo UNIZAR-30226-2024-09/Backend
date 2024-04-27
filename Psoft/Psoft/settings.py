@@ -51,6 +51,7 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'corsheaders',
@@ -117,7 +118,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Psoft.wsgi.application'
+#WSGI_APPLICATION = 'Psoft.wsgi.application'
+ASGI_APPLICATION = 'Psoft.asgi.application'
 
 
 # Database
@@ -182,6 +184,12 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     #"allauth.account.auth_backends.AuthenticationBackend"
 )
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 LOGIN_DIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/"

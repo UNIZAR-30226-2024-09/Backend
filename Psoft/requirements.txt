@@ -26,3 +26,6 @@ django-allauth
 setuptools
 drf-yasg
 channels
+django_admin_logs
+channels
+daphne

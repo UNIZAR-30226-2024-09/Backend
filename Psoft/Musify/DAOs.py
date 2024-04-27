@@ -345,7 +345,9 @@ def buscarPlaylist(playlistNombre):
     except ObjectDoesNotExist:
         return None
 
-
+def eliminarPlaylist(playlistId):
+    playlist = Playlist.objects.get(pk=playlistId)
+    playlist.delete()
 #DAOs DE CANCION
 
 # COMPROBADO
@@ -371,7 +373,6 @@ def cancionFavorita(correo, cancionVO):
     playlist = Playlist.objects.get(colaboradores__miUsuario=usuario, nombre="Favoritos")
     return Contiene.objects.filter(miAudio=cancionVO, miPlaylist=playlist).exists()
     
-
 '''# SIN COMPROBAR (QUITAR QUIZÁS)
 def get_user_favorites(usuarioCorreo): #Devuelve las canciones favoritas del usuario devueltas como VO
     user = Usuario.objects.get(pk=usuarioCorreo)

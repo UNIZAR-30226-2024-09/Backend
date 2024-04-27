@@ -25,3 +25,4 @@ python-dotenv
 django-allauth
 setuptools
 drf-yasg
+channels

@@ -4,6 +4,19 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 from django.conf import settings
 import uuid
+from django.contrib.admin.models import LogEntry as BaseLogEntry
+from django.contrib.admin.models import DELETION, LogEntry, ADDITION, CHANGE
+
+class Sala(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=255, null=False)
+
+class Mensaje(models.Model):
+    id = models.AutoField(primary_key=True)
+    miSala = models.ForeignKey(Sala, on_delete=models.CASCADE)
+    miUsuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    texto = models.CharField(max_length=10000, null=False)
+    fecha = models.DateTimeField(default=timezone.now)
 
 class CustomToken(models.Model):
     key = models.CharField(max_length=40, primary_key=True, default=uuid.uuid4)
@@ -20,13 +33,14 @@ class UsuarioManager(BaseUserManager):
             raise ValueError('El correo electrónico es obligatorio')
         email = self.normalize_email(correo)
         usuario = self.model(correo=email, nombre=nombre,contrasegna = contrasegna, **extra_fields)
+        usuario.set_password(contrasegna)
         usuario.save(using=self._db)
         return usuario
 
     def create_superuser(self, correo, nombre, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
+        
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:

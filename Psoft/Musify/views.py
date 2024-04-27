@@ -33,6 +33,8 @@ import base64
 import os
 from requests import get, post
 import json
+
+from django.contrib.auth.views import LoginView
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
@@ -55,7 +57,6 @@ client_secret = os.getenv("CLIENT_SECRET")
 #def get_auth_header(token):
 #    return {'Authorization': 'Bearer ' + token}
 # VISTAS DE PRUEBA
-
 # GOOGLE
 def home(request):
     return render(request, 'home.html')
@@ -101,7 +102,7 @@ class ReporteAPI(APIView):
 # CORREO DE VERIFICACIÓN
 
 # thread para el evío de correo de verificación
-class EmailThread(threading.Thread):
+'''class EmailThread(threading.Thread):
     def __init__(self, email):
         self.email = email
         threading.Thread.__init__(self)
@@ -121,7 +122,7 @@ def send_activation_email(user, request):
     #email=EmailMessage(subject=email_subject, body=email_body, from_email=settings.EMAIL_FROM_USER,
     #            to=[user.correo])
     #EmailThread(email).start()
-
+'''
 #def activate_user(request, uidb64, token):
 #    try:
 #       uid = force_text(urlsafe_base64_decode(uidb64))
@@ -1617,12 +1618,27 @@ class EsFavoritaAPI(APIView): # funciona
         cancionVO = DAOs.conseguirCancionPorId(cancionId)
         if cancionVO is not None:
             if DAOs.cancionFavorita(correo, cancionVO):
-                return Response({'message': 'La canción está en favoritos'}, status=status.HTTP_200_OK)
+                return Response({'message': 'True'}, status=status.HTTP_200_OK)
             else:
-                return Response({'message': 'La canción no está en favoritos'}, status=status.HTTP_200_OK)
+                return Response({'message': 'False'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'La canción no existe'}, status=status.HTTP_404_NOT_FOUND)
-
+class EliminarPlaylistAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['playlistId'],
+            properties={
+                'playlistId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist')
+            },
+        ),
+        responses={200: 'OK - Playlist eliminada con éxito'}
+    )
+    def post(self, request):
+        playlistId = request.data.get('playlistId')
+        DAOs.eliminarPlaylist(playlistId)
+        return Response({'message': 'Playlist eliminada con éxito'}, status=status.HTTP_200_OK)
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A LA COLA DE REPRODUCCIÓN
 {
     "correo": "sarah@gmail.com",

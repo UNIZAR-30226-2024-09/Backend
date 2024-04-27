@@ -61,11 +61,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     "Musify",
+    'django_admin_logs',
     'django.contrib.sites',
-    "allauth",
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    #"allauth",
+    #'allauth.account',
+    #'allauth.socialaccount',
+    #'allauth.socialaccount.providers.google',
     'drf_yasg'
 ]
 
@@ -88,7 +89,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    #'allauth.account.middleware.AccountMiddleware',
 ]
 #Para sesiones
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -165,7 +166,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
+DJANGO_ADMIN_LOGS_ENABLED = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -179,7 +180,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend"
+    #"allauth.account.auth_backends.AuthenticationBackend"
 )
 
 LOGIN_DIRECT_URL = "/"

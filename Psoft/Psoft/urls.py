@@ -24,7 +24,8 @@ from django.urls import re_path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
+from django.contrib.auth.views import LoginView
+from Musify.backends import CorreoBackend
 
 
 schema_view = get_schema_view(
@@ -130,7 +131,6 @@ urlpatterns = [
     path('agnadirCantante/', views.AgnadirCantanteAPI.as_view(), name='agnadirCantante'),
     path('editarCancionFavoritos/', views.EditarCancionFavoritosAPI.as_view(), name='editarCancionFavoritos'),
     path('esFavorita/', views.EsFavoritaAPI.as_view(), name='esFavorita'),
-    path('accounts/', include('allauth.urls')),
     #path('activate-user/<uidb64>/<token>', views.activate_user, name='activate'),
     path('listarArtistasCancion/', views.ListarArtistasCancionAPI.as_view(), name='listarArtistasCancion'),
     path('crearPresentador/', views.CrearPresentadorAPI.as_view(), name='crearPresentador'),
@@ -166,4 +166,5 @@ urlpatterns = [
     path('obtenerEstadoCancionesAPI/', views.ObtenerEstadoCancionesAPI.as_view(), name='obtenerEstadoCancionesAPI'),
     path('agnadirColaboradorAPI/', views.AñadirColaboradorAPI.as_view(), name='agnadirColaboradorAPI'),
     path('reporteAPI/', views.ReporteAPI.as_view(), name='ReporteAPI'),
+    path('eliminarPlaylistAPI/', views.EliminarPlaylistAPI.as_view(), name='EliminarPlaylistAPI'),
     ]

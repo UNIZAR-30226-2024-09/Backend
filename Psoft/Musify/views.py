@@ -565,14 +565,22 @@ class SeguirAPI(APIView): # sin comprobar
                 'seguido': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario a seguir')
             },
         ),
-        responses={200: 'OK - Usuario seguido con éxito'}
+        responses={
+            200: 'OK - Usuario seguido con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
     )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         seguido = request.data.get('seguido') # coger el correo del usuario a seguir
-        DAOs.agnadirSeguido(correo, seguido)
-        DAOs.seguidorSeguidor(seguido, correo)
-        return Response({'message': 'Usuario seguido con éxito'}, status=status.HTTP_200_OK)
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        usuarioSeguir = DAOs.conseguirUsuarioPorCorreo(seguido)
+        if not usuarioSeguir or not usuario:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            DAOs.agnadirSeguido(usuario, usuarioSeguir)
+            DAOs.agnadirSeguidor(usuarioSeguir, usuario)
+            return Response({'message': 'Usuario seguido con éxito'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA DEJAR DE SEGUIR A UN USUARIO
 {
@@ -591,27 +599,47 @@ class DejarDeSeguirAPI(APIView): # sin comprobar
                 'seguido': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario a dejar de seguir')
             },
         ),
-        responses={200: 'OK - Usuario dejado de seguir con éxito'}
+        responses={
+            200: 'OK - Usuario dejado de seguir con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
     )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
         seguido = request.data.get('seguido')
-        DAOs.eliminarSeguido(correo, seguido)
-        DAOs.eliminarSeguidor(seguido, correo)
-        return Response({'message': 'Usuario dejado de seguir con éxito'}, status=status.HTTP_200_OK)
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        usuarioSiguiendo = DAOs.conseguirUsuarioPorCorreo(seguido)
+        if not usuarioSiguiendo or not usuario:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            DAOs.eliminarSeguido(usuario, usuarioSiguiendo)
+            DAOs.eliminarSeguidor(usuarioSiguiendo, usuario)
+            return Response({'message': 'Usuario dejado de seguir con éxito'}, status=status.HTTP_200_OK)
 
 
 class ListarSeguidosAPI(APIView):
     permission_classes = [AllowAny]
     @swagger_auto_schema(
-        responses={200: 'OK - Seguidos listados con éxito'}
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - Seguidos listados con éxito'
+        }
     )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
-        seguidos = DAOs.listarSeguidos(correo)
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        seguidos = DAOs.listarSeguidos(usuario)
         if seguidos:
-            serializer = SeguidosSerializer(seguidos, many=True)
-            return Response({'seguidos': serializer.data}, status=status.HTTP_200_OK)
+            serializer = SeguidoSerializer(seguidos, many=True)
+            numSeguidos = DAOs.numeroSeguidos(usuario)
+            return Response({'seguidos': serializer.data, 'numSeguidos': numSeguidos}, status=status.HTTP_200_OK)
+        
         else:
             return Response({'message': 'No sigue a nadie'}, status=status.HTTP_200_OK)   
 
@@ -629,10 +657,12 @@ class ListarSeguidoresAPI(APIView):
     )
     def post(self, request):
         correo = request.data.get('correo') # coger el correo de la sesión
-        seguidores = DAOs.listarSeguidores(correo)
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        seguidores = DAOs.listarSeguidores(usuario)
         if seguidores:
-            serializer = SeguidoresSerializer(seguidores, many=True)
-            return Response({'seguidores': serializer.data}, status=status.HTTP_200_OK)
+            serializer = SeguidorSerializer(seguidores, many=True)
+            numSeguidores = DAOs.numeroSeguidores(usuario)
+            return Response({'seguidores': serializer.data, 'numSeguidores': numSeguidores}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene seguidores'}, status=status.HTTP_200_OK)
 

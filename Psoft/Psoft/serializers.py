@@ -23,12 +23,12 @@ class EstadoSerializer(serializers.ModelSerializer):
 class SeguidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Seguido
-        fields = ['miUsuario','seguido']
+        fields = ['miUsuarioSeguido','seguido']
 
 class SeguidorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Seguido
-        fields = ['seguidor','miUsuario']
+        model = models.Seguidor
+        fields = ['seguidor','miUsuarioSeguidor']
 
 class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:

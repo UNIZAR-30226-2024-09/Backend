@@ -154,56 +154,44 @@ def eliminarUsuario(correo): #Se elimina el usuario y todas sus relaciones
 #    return amigos
 
 # SIN COMPROBAR
-def listarSeguidos(correo): #Devuelve los usuarios a los que sigue
-    usuario = Usuario.objects.get(correo=correo)
-    seguidos = Seguidos.objects.filter(miUsuario=usuario)
+def listarSeguidos(usuarioVO): #Devuelve los usuarios a los que sigue
+    seguidos = Seguido.objects.filter(miUsuarioSeguido=usuarioVO)
     return seguidos
 
 # SIN COMPROBAR
-def numeroSeguidos(correo): #Devuelve el número de usuarios a los que sigue
-    usuario = Usuario.objects.get(correo=correo)
-    return Seguidos.objects.filter(miUsuario=usuario).count()
+def numeroSeguidos(usuarioVO): #Devuelve el número de usuarios a los que sigue
+    return Seguido.objects.filter(miUsuarioSeguido=usuarioVO).count()
 
 # SIN COMPROBAR
-def agnadirSeguido(correo, correoSeguido): #Se añade un seguido al usuario "correo"
-    usuario = Usuario.objects.get(correo=correo)
-    seguido = Usuario.objects.get(correo=correoSeguido)
+def agnadirSeguido(usuarioVO, usuarioSeguidoVO): #Se añade un seguido al usuario "correo"
     Seguido.objects.create(
-        miUsuario=usuario,
-        seguido=seguido
+        miUsuarioSeguido=usuarioVO,
+        seguido=usuarioSeguidoVO
     )
 
 # SIN COMPROBAR
-def eliminarSeguido(correo, correoSeguido): #Se elimina un seguido al usuario "correo"
-    usuario = Usuario.objects.get(correo=correo)
-    seguido = Usuario.objects.get(correo=correoSeguido)
-    Seguido.objects.filter(miUsuario=usuario, seguido=seguido).delete()
+def eliminarSeguido(usuarioVO, usuarioSeguidoVO): #Se elimina un seguido al usuario "correo"
+    Seguido.objects.filter(miUsuarioSeguido=usuarioVO, seguido=usuarioSeguidoVO).delete()
 
 # SIN COMPROBAR
-def listarSeguidores(correo): #Devuelve los seguidores del usuario
-    usuario = Usuario.objects.get(correo=correo)
-    seguidores = Seguidores.objects.filter(miUsuario=usuario)
+def listarSeguidores(usuarioVO): #Devuelve los seguidores del usuario
+    seguidores = Seguidor.objects.filter(miUsuarioSeguidor=usuarioVO)
     return seguidores
 
 # SIN COMPROBAR
-def numeroSeguidores(correo): #Devuelve el número de seguidores del usuario
-    usuario = Usuario.objects.get(correo=correo)
-    return Seguidores.objects.filter(miUsuario=usuario).count()
+def numeroSeguidores(usuarioVO): #Devuelve el número de seguidores del usuario
+    return Seguidor.objects.filter(miUsuarioSeguidor=usuarioVO).count()
 
 # SIN COMPROBAR
-def agnadirSeguidor(correo, correoSeguidor): #Se añade un seguidor al usuario "correo"
-    usuario = Usuario.objects.get(correo=correo)
-    seguidor = Usuario.objects.get(correo=correoSeguidor)
+def agnadirSeguidor(usuarioVO, usuarioSeguidorVO): #Se añade un seguidor al usuario "correo"
     Seguidor.objects.create(
-        miUsuario=usuario,
-        seguidor=seguidor
+        miUsuarioSeguidor=usuarioVO,
+        seguidor=usuarioSeguidorVO
     )
 
 # SIN COMPROBAR
-def eliminarSeguidor(correo, correoSeguidor): #Se elimina un seguidor al usuario "correo"
-    usuario = Usuario.objects.get(correo=correo)
-    seguidor = Usuario.objects.get(correo=correoSeguidor)
-    Seguidor.objects.filter(miUsuario=usuario, seguidor=seguidor).delete()
+def eliminarSeguidor(usuarioVO, usuarioSeguidorVO): #Se elimina un seguidor al usuario "correo"
+    Seguidor.objects.filter(miUsuarioSeguidor=usuarioVO, seguidor=usuarioSeguidorVO).delete()
 
 # COMPROBADO
 # EN LA API

@@ -93,16 +93,16 @@ class Usuario(AbstractBaseUser):
 #        unique_together = ('micorreo1', 'micorreo2',)
 
 class Seguido(models.Model):
-    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='miUsuario')
+    miUsuarioSeguido = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='miUsuarioSeguido')
     seguido = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='seguido')
     class Meta:
-        unique_together = ('miUsuario', 'seguido')
+        unique_together = ('miUsuarioSeguido', 'seguido')
 
 class Seguidor(models.Model):
-    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='miUsuario2')
+    miUsuarioSeguidor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='miUsuarioSeguidor')
     seguidor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='seguidor')
     class Meta:
-        unique_together = ('miUsuario', 'seguidor')
+        unique_together = ('miUsuarioSeguidor', 'seguidor')
 
 class Playlist(models.Model):
     id = models.AutoField(primary_key=True)

@@ -170,4 +170,5 @@ urlpatterns = [
     path('registrarMensajeAPI/', viewsChat.RegistrarMensajeAPI.as_view(), name='RegistrarMensajeAPI'),
     path('cargarMensajesAPI/', viewsChat.CargarMensajesAPI.as_view(), name='CargarMensajesAPI'),
     path('crearSalaAPI/', viewsChat.CrearSalaAPI.as_view(), name='CrearSalaAPI'),
+    path('siguiendo/', views.SiguiendoAPI.as_view(), name='Siguiendo'),
     ]

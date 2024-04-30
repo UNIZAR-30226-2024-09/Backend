@@ -216,6 +216,9 @@ def eliminarSeguidor(usuarioVO, usuarioSeguidorVO): #Se elimina un seguidor al u
 #def sonAmigos(usuarioCorreo, amigoCorreo): #Devuelve si dos usuarios son amigos
 #    return Amigo.objects.filter(micorreo1=usuarioCorreo, micorreo2=amigoCorreo).exists() or Amigo.objects.filter(micorreo1=amigoCorreo, micorreo2=usuarioCorreo).exists()
 
+def siguiendo(usuarioVO, amigoVO): #Devuelve si un usuario sigue a otro
+    return Seguido.objects.filter(miUsuarioSeguido=usuarioVO, seguido=amigoVO).exists()
+
 #DAOs DE PLAYLIST
 
 '''# SIN COMPROBAR

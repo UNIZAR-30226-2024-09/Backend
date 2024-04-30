@@ -698,18 +698,34 @@ class ListarSeguidoresAPI(APIView):
 '''EJEMPLO DE FORMATO JSON PARA COMPROBAR SI DOS USUARIOS SON AMIGOS
 {
     "correo": "john.doe@example.com",
-    "amigo": "sarah@gmail.com"
+    "esSeguido": "sarah@gmail.com"
 }
 '''
-#class SonAmigosAPI(APIView): # funciona
-#    permission_classes = [AllowAny]
-#    def post(self, request):
-#        correo = request.data.get('correo') # coger el correo de la sesión
-#        amigo = request.data.get('amigo')
-#        if DAOs.sonAmigos(correo, amigo) == True:
-#            return Response({'message': 'Son amigos'}, status=status.HTTP_200_OK)
-#        else:
-#            return Response({'message': 'No son amigos'}, status=status.HTTP_200_OK)
+class SiguiendoAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'esSeguido'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'esSeguido': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario a comprobar si es amigo')
+            },
+        ),
+        responses={
+            200: 'OK - Comprobación de amistad realizada con éxito',
+            404: 'NOT FOUND - El usuario no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo') # coger el correo de la sesión
+        correoAmigo = request.data.get('esSeguido')
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        amigo = DAOs.conseguirUsuarioPorCorreo(correoAmigo)
+        if DAOs.siguiendo(usuario, amigo) == True:
+            return Response({'message': 'Está siguiendo al usuario'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No está siguiendo al usuario '}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR UNA PLAYLIST        
 {

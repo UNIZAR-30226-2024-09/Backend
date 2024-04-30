@@ -26,6 +26,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.contrib.auth.views import LoginView
 from Musify.backends import CorreoBackend
+from Musify import consumers
 
 
 schema_view = get_schema_view(
@@ -63,7 +64,9 @@ router.register(r'createAlbum', views.CrearAlbumAPI,basename='createAlbum' )
 router.register(r'addSongToAlbum', views.AgnadirCancionAlbumAPI,basename='addSongToAlbum' )
 router.register(r'getHistory', views.ListarHistorialAPI,basename='getHistory' )
 
-
+websocket_urlpatterns = [
+    path('ws/chatroom/<str:room_name>/', consumers.ChatConsumer.as_asgi()),
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),

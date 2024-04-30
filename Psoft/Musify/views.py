@@ -722,10 +722,12 @@ class SiguiendoAPI(APIView): # funciona
         correoAmigo = request.data.get('esSeguido')
         usuario = DAOs.conseguirUsuarioPorCorreo(correo)
         amigo = DAOs.conseguirUsuarioPorCorreo(correoAmigo)
+        if not usuario or not amigo:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
         if DAOs.siguiendo(usuario, amigo) == True:
-            return Response({'message': 'Está siguiendo al usuario'}, status=status.HTTP_200_OK)
+            return Response({'siguiendo': True, 'message': 'Está siguiendo al usuario'}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'No está siguiendo al usuario '}, status=status.HTTP_200_OK)
+            return Response({'siguiendo': False, 'message': 'No está siguiendo al usuario'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR UNA PLAYLIST        
 {

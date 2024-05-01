@@ -394,10 +394,14 @@ def remove_song_from_favorites(user_email, song_id): #Se elimina la cancion de f
 
 # SIN COMPROBAR
 def listarGenerosCancion(cancion): #Devuelve los generos de una cancion dado su id¡
-    ids = Pertenecen.objects.filter(miAudio=cancion.id) #añadir q tipo sea cancion
+    ids = Pertenecen.objects.filter(miAudio=cancion.id, tipo="Cancion")
     generos = [pertenecenObject.miGenero for pertenecenObject in ids]
     return generos
-#hacer listarGenerosPodcast
+
+def listarGenerosPodcast(podcast): #Devuelve los generos de un podcast dado su id
+    ids = Pertenecen.objects.filter(miAudio=podcast.id, tipo="Podcast")
+    generos = [pertenecenObject.miGenero for pertenecenObject in ids]
+    return generos
 
 #COMPROBADO
 def buscarCancion(cancionNombre):
@@ -811,19 +815,19 @@ def presentadoresPodcast(podcastId): #Devuelve los presentadores de un podcast d
 
 # SIN COMPROBAR
 # EN LA API
-#def crearPertenecenCancion(miGeneroVO, miAudioVO):
-#    return Pertenecen.objects.create(
-#        miGenero=miGeneroVO,
-#        miAudio=miAudioVO,
-#        tipo="Cancion"
-#    )
-#
-#def crearPertenecenPodcast(miGeneroVO, miAudioVO):
-#    return Pertenecen.objects.create(
-#        miGenero=miGeneroVO,
-#        miAudio=miAudioVO,
-#        tipo="Podcast"
-#    )
+def crearPertenecenCancion(miGeneroVO, miAudioVO):
+    return Pertenecen.objects.create(
+        miGenero=miGeneroVO,
+        miAudio=miAudioVO,
+        tipo="Cancion"
+    )
+
+def crearPertenecenPodcast(miGeneroVO, miAudioVO):
+    return Pertenecen.objects.create(
+        miGenero=miGeneroVO,
+        miAudio=miAudioVO,
+        tipo="Podcast"
+    )
 
 def crearCantan(cancionVO, artistaVO):
     return Cantan.objects.create(

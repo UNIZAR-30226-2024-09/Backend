@@ -2074,57 +2074,57 @@ class CrearGeneroAPI(APIView): # funciona
     "genero": "pop",
     "cancionId": "15"
 }'''
-#class AgnadirGeneroCancionAPI(APIView): # funciona
-#    permission_classes = [AllowAny]
-#    @swagger_auto_schema(
-#        request_body=openapi.Schema(
-#            type=openapi.TYPE_OBJECT,
-#            required=['genero', 'cancionId'],
-#            properties={
-#                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género'),
-#                'cancionId': openapi.Schema(type=openapi.TYPE_STRING, description='ID de la canción')
-#            },
-#        ),
-#        responses={
-#            200: 'OK - Género añadido con éxito',
-#            400: 'Bad Request - La canción o el género no existen'}
-#    )
-#    def post(self, request):
-#        generoNombre = request.data.get('genero')
-#        cancionId = request.data.get('cancionId')
-#        cancion = DAOs.conseguirCancionPorId(cancionId)
-#        genero = DAOs.conseguirGeneroPorNombre(generoNombre)
-#        if cancion is None or genero is None:
-#            return Response({'error': 'La canción o el género no existen'}, status=status.HTTP_400_BAD_REQUEST)
-#        else:
-#            DAOs.crearPertenecenCancion(genero, cancion)
-#            return Response({'message': 'Género añadido con éxito'}, status=status.HTTP_200_OK)
+class AgnadirGeneroCancionAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['genero', 'cancionId'],
+            properties={
+                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género'),
+                'cancionId': openapi.Schema(type=openapi.TYPE_STRING, description='ID de la canción')
+            },
+        ),
+        responses={
+            200: 'OK - Género añadido con éxito',
+            400: 'Bad Request - La canción o el género no existen'}
+    )
+    def post(self, request):
+        generoNombre = request.data.get('genero')
+        cancionId = request.data.get('cancionId')
+        cancion = DAOs.conseguirCancionPorId(cancionId)
+        genero = DAOs.conseguirGeneroPorNombre(generoNombre)
+        if cancion is None or genero is None:
+            return Response({'error': 'La canción o el género no existen'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.crearPertenecenCancion(genero, cancion)
+            return Response({'message': 'Género añadido con éxito'}, status=status.HTTP_200_OK)
         
-#class AgnadirGeneroPodcastAPI(APIView): # funciona
-#    permission_classes = [AllowAny]
-#    @swagger_auto_schema(
-#        request_body=openapi.Schema(
-#            type=openapi.TYPE_OBJECT,
-#            required=['genero', 'podcastId'],
-#            properties={
-#                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género'),
-#                'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast')
-#            },
-#        ),
-#        responses={
-#            200: 'OK - Género añadido con éxito',
-#            400: 'Bad Request - El podcast o el género no existen'}
-#    )
-#    def post(self, request):
-#        generoNombre = request.data.get('genero')
-#        podcastId = request.data.get('podcastId')
-#        podcast = DAOs.conseguirPodcastPorId(podcastId)
-#        genero = DAOs.conseguirGeneroPorNombre(generoNombre)
-#        if podcast is None or genero is None:
-#            return Response({'error': 'El podcast o el género no existen'}, status=status.HTTP_400_BAD_REQUEST)
-#        else:
-#            DAOs.crearPertenecenPodcast(genero, podcast)
-#            return Response({'message': 'Género añadido con éxito'}, status=status.HTTP_200_OK)
+class AgnadirGeneroPodcastAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['genero', 'podcastId'],
+            properties={
+                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género'),
+                'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast')
+            },
+        ),
+        responses={
+            200: 'OK - Género añadido con éxito',
+            400: 'Bad Request - El podcast o el género no existen'}
+    )
+    def post(self, request):
+        generoNombre = request.data.get('genero')
+        podcastId = request.data.get('podcastId')
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        genero = DAOs.conseguirGeneroPorNombre(generoNombre)
+        if podcast is None or genero is None:
+            return Response({'error': 'El podcast o el género no existen'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.crearPertenecenPodcast(genero, podcast)
+            return Response({'message': 'Género añadido con éxito'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR CANTANTE A UNA CANCIÓN
 {
@@ -2248,33 +2248,33 @@ class ListarGenerosCancionAPI(APIView): #funciona
             else:
                 return Response({'message': 'La canción no tiene géneros'}, status=status.HTTP_200_OK)
 
-#class ListarGenerosPodcastAPI(APIView): #funciona
-#    permission_classes = [AllowAny]
-#    @swagger_auto_schema(
-#        request_body=openapi.Schema(
-#            type=openapi.TYPE_OBJECT,
-#            required=['podcastId'],
-#            properties={
-#                'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast')
-#            },
-#        ),
-#        responses={
-#            200: 'OK - Géneros listados con éxito',
-#            400: 'Bad Request - No hay géneros en el podcast'
-#        }
-#    )
-#    def post(self, request):
-#        podcastId = request.data.get('podcastId')
-#        podcast = DAOs.conseguirPodcastPorId(podcastId)
-#        if podcast is None:
-#            return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
-#        else:
-#            generos = DAOs.listarGenerosPodcast(podcast)
-#            if generos:
-#                serializer = GeneroSerializer(generos, many=True)
-#                return Response({'generos': serializer.data}, status=status.HTTP_200_OK)
-#            else:
-#                return Response({'message': 'El podcast no tiene géneros'}, status=status.HTTP_200_OK)
+class ListarGenerosPodcastAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['podcastId'],
+            properties={
+                'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast')
+            },
+        ),
+        responses={
+            200: 'OK - Géneros listados con éxito',
+            400: 'Bad Request - No hay géneros en el podcast'
+        }
+    )
+    def post(self, request):
+        podcastId = request.data.get('podcastId')
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        if podcast is None:
+            return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            generos = DAOs.listarGenerosPodcast(podcast)
+            if generos:
+                serializer = GeneroSerializer(generos, many=True)
+                return Response({'generos': serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'El podcast no tiene géneros'}, status=status.HTTP_200_OK)
             
 '''EJEMPLO DE FORMATO JSON PARA LISTAR LOS PRESENTADORES DE UN PODCAST
 {

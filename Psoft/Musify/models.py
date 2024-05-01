@@ -173,9 +173,10 @@ class Pertenecen(models.Model):
     id = models.AutoField(primary_key=True)
     miGenero = models.ForeignKey(Genero, on_delete=models.CASCADE)
     miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE)
+#    tipo = models.CharField(max_length=255, null=False)
 
     class Meta:
-        unique_together = ('miGenero', 'miAudio',)
+        unique_together = ('miGenero', 'miAudio')#, 'tipo',)
 
 class Podcast(models.Model):
     id = models.AutoField(primary_key=True)

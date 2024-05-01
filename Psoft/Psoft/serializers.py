@@ -77,4 +77,9 @@ class PresentadorSerializer(serializers.ModelSerializer):
         model = models.Artista
         fields = ['id', 'nombre', 'descripcion', 'foto']
 
+class GeneroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Genero
+        fields = ['nombre']
+
 

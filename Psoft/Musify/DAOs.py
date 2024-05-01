@@ -354,6 +354,13 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         archivoMp3=cancionVO.archivoMp3,
         foto=cancionVO.foto
     )
+def actualizarCancion(cancionVO, nombre, miAlbum, archivoMp3, foto): #Se actualiza la cancion
+    cancionVO.nombre = nombre
+    cancionVO.miAlbum = miAlbum
+    cancionVO.archivoMp3 = archivoMp3
+    cancionVO.foto = foto
+    cancionVO.save()
+
 # devuelve el id de la playlist favoritos del usuario
 def favoritoUsuario(correo):
     usuario = Usuario.objects.get(pk=correo)
@@ -386,10 +393,11 @@ def remove_song_from_favorites(user_email, song_id): #Se elimina la cancion de f
     Favorito.objects.filter(miUsuario=user, miAudio=song).delete()'''
 
 # SIN COMPROBAR
-def listarGenerosCancion(cancionId): #Devuelve los generos de una cancion dado su id
-    cancion = Cancion.objects.get(pk=cancionId)
-    ids = Pertenecen.objects.filter(miAudio=cancion)
-    return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
+def listarGenerosCancion(cancion): #Devuelve los generos de una cancion dado su id¡
+    ids = Pertenecen.objects.filter(miAudio=cancion.id) #añadir q tipo sea cancion
+    generos = [pertenecenObject.miGenero for pertenecenObject in ids]
+    return generos
+#hacer listarGenerosPodcast
 
 #COMPROBADO
 def buscarCancion(cancionNombre):
@@ -803,11 +811,19 @@ def presentadoresPodcast(podcastId): #Devuelve los presentadores de un podcast d
 
 # SIN COMPROBAR
 # EN LA API
-def crearPertenecen(miGeneroVO, miAudioVO):
-    return Pertenecen.objects.create(
-        miGenero=miGeneroVO,
-        miAudio=miAudioVO
-    )
+#def crearPertenecenCancion(miGeneroVO, miAudioVO):
+#    return Pertenecen.objects.create(
+#        miGenero=miGeneroVO,
+#        miAudio=miAudioVO,
+#        tipo="Cancion"
+#    )
+#
+#def crearPertenecenPodcast(miGeneroVO, miAudioVO):
+#    return Pertenecen.objects.create(
+#        miGenero=miGeneroVO,
+#        miAudio=miAudioVO,
+#        tipo="Podcast"
+#    )
 
 def crearCantan(cancionVO, artistaVO):
     return Cantan.objects.create(

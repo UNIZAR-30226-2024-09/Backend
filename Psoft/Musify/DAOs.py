@@ -110,6 +110,24 @@ def actualizarUsuario(usuarioVO, usuarioNuevo): #Se actualiza el usuario
     usuarioVO.pais = usuarioNuevo.pais
     usuarioVO.save()
 
+def agnadirGeneroFavorito(correo, generoVO): #Se añade un genero favorito al usuario
+    usuario = Usuario.objects.get(pk=correo)
+    if generoVO.tipo == "Cancion":
+        usuario.generoFavoritoCancion = generoVO
+    else:
+        usuario.generoFavoritoPodcast = generoVO
+    usuario.save()
+
+def agnadirArtistaFavorito(correo, artistaVO): #Se añade un artista favorito al usuario
+    usuario = Usuario.objects.get(pk=correo)
+    usuario.artistaFavorito = artistaVO
+    usuario.save()
+
+def agnadirPresentadorFavorito(correo, presentadorVO): #Se añade un presentador favorito al usuario
+    usuario = Usuario.objects.get(pk=correo)
+    usuario.presentadorFavorito = presentadorVO
+    usuario.save()
+
 
 '''def actualizarUsuarioNombre(usuarioVO, nombre):
     usuario = Usuario.objects.get(pk=usuarioVO.correo)
@@ -563,8 +581,19 @@ def conseguirGeneroPorNombre(nombre):
         return None
     
 # SIN COMPROBAR
-def listarGeneros(): #Devuelve todos los generos
-    return Genero.objects.all()
+def listarGenerosCanciones(): #Devuelve todos los generos de las canciones
+    generos = Genero.objects.filter(tipo="Cancion")
+    return generos
+
+def listarGenerosPodcasts(): #Devuelve todos los generos de los podcasts
+    generos = Genero.objects.filter(tipo="Podcast")
+    return generos
+
+def listarPresentadores(): #Devuelve todos los presentadores
+    return Presentador.objects.all()
+
+def listarArtistas(): #Devuelve todos los artistas
+    return Artista.objects.all()
 
 # SIN COMPROBAR, no se si esta bien el hecho de q haya puesto print aqui ?
 def listarCancionesGenero(generoNombre): #Devuelve todas las canciones de un genero dado su nombre
@@ -705,6 +734,11 @@ def buscarCapitulo(capituloNombre):
         return Capitulo.objects.filter(nombre__istartswith=capituloNombre)
     except ObjectDoesNotExist:
         return None
+
+def editarTipoGenero(generoVO, tipo):
+    genero = Genero.objects.get(pk=generoVO.nombre)
+    genero.tipo = tipo
+    genero.save()
 
 # SIN COMPROBAR
 def podcastCapitulo(capituloId): #Devuelve el podcast de un episodio dado su id

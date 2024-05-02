@@ -570,7 +570,7 @@ def listarGeneros(): #Devuelve todos los generos
 def listarCancionesGenero(generoNombre): #Devuelve todas las canciones de un genero dado su nombre
     genero = Genero.objects.get(nombre=generoNombre)
     ids = PertenecenCancion.objects.filter(miGenero=genero)
-    canciones = [pertenecen_object.miAudio for pertenecen_object in ids]
+    canciones = [pertenecen_object.miCancion for pertenecen_object in ids]
     return canciones
 
 def listarPodcastsGenero(generoNombre): #Devuelve todos los podcasts de un genero dado su nombre

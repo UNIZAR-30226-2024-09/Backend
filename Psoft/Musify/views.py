@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.http import HttpResponse
-from .models import Usuario, Seguido, Seguidor, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Pertenecen, Album, Artista, CustomToken, Presentador
+from .models import Usuario, Seguido, Seguidor, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, PertenecenPodcast, PertenecenCancion, Album, Artista, CustomToken, Presentador
 from . import DAOs
 from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer,EstadoSerializer, GeneroSerializer
 from rest_framework import viewsets
@@ -867,22 +867,22 @@ class ActualizarPlaylistPublicaAPI(APIView):
             DAOs.actualizarPlaylistPublica(playlist, publica)
             return Response({'message': 'Privacidad de la playlist actualizada con éxito'}, status=status.HTTP_200_OK)'''
 
-class ListarCancionesAPI(APIView): # funciona
-    permission_classes = [AllowAny]
-    @swagger_auto_schema(
-        responses={200: 'OK - Canciones listadas con éxito'}
-    )
-    def post(self, request):
-        canciones = DAOs.listarCanciones()
-        canciones #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
-        # Verificar si se encontraron canciones en la playlist
-        if canciones:
-            serializer = CancionSerializer(canciones, many=True)
-            # Devolver la lista de canciones serializadas en formato JSON
-            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
-        else:
-            # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
-            return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
+#class ListarCancionesAPI(APIView): # funciona
+#    permission_classes = [AllowAny]
+#    @swagger_auto_schema(
+#        responses={200: 'OK - Canciones listadas con éxito'}
+#    )
+#    def post(self, request):
+#        canciones = DAOs.listarCanciones()
+#        canciones #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
+#        # Verificar si se encontraron canciones en la playlist
+#        if canciones:
+#            serializer = CancionSerializer(canciones, many=True)
+#            # Devolver la lista de canciones serializadas en formato JSON
+#            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
+#        else:
+#            # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
+#            return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
         
 class getSongByIdAPI(APIView): # No funciona ni para atras
     permission_classes = [AllowAny]
@@ -2332,6 +2332,27 @@ class FiltrarCancionesPorGeneroAPI(APIView): # funciona #quizás aprovechar para
             return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No hay canciones en ese género'}, status=status.HTTP_200_OK)
+        
+class FiltrarPodcastsPorGeneroAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['genero'],
+            properties={
+                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Género de los podcasts a listar')
+            },
+        ),
+        responses={200: 'OK - Podcasts listados con éxito'}
+    )
+    def post(self, request):
+        genero = request.data.get('genero')
+        podcasts = DAOs.listarPodcastsGenero(genero)
+        if podcasts:
+            serializer = PodcastSerializer(podcasts, many=True)
+            return Response({'podcasts': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay podcasts en ese género'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA CREAR PODCAST
 {

@@ -1,6 +1,6 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario,UsuarioManager , Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, Pertenecen, Album, Artista, Cantan, Presentador, Interpretan
+from .models import Usuario,UsuarioManager , Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, PertenecenCancion, PertenecenPodcast, Album, Artista, Cantan, Presentador, Interpretan
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -394,12 +394,12 @@ def remove_song_from_favorites(user_email, song_id): #Se elimina la cancion de f
 
 # SIN COMPROBAR
 def listarGenerosCancion(cancion): #Devuelve los generos de una cancion dado su id¡
-    ids = Pertenecen.objects.filter(miAudio=cancion.id, tipo="Cancion")
+    ids = PertenecenCancion.objects.filter(miCancion=cancion.id)
     generos = [pertenecenObject.miGenero for pertenecenObject in ids]
     return generos
 
 def listarGenerosPodcast(podcast): #Devuelve los generos de un podcast dado su id
-    ids = Pertenecen.objects.filter(miAudio=podcast.id, tipo="Podcast")
+    ids = PertenecenPodcast.objects.filter(miPodcast=podcast.id)
     generos = [pertenecenObject.miGenero for pertenecenObject in ids]
     return generos
 
@@ -569,9 +569,16 @@ def listarGeneros(): #Devuelve todos los generos
 # SIN COMPROBAR, no se si esta bien el hecho de q haya puesto print aqui ?
 def listarCancionesGenero(generoNombre): #Devuelve todas las canciones de un genero dado su nombre
     genero = Genero.objects.get(nombre=generoNombre)
-    ids = Pertenecen.objects.filter(miGenero=genero)
+    ids = PertenecenCancion.objects.filter(miGenero=genero)
     canciones = [pertenecen_object.miAudio for pertenecen_object in ids]
     return canciones
+
+def listarPodcastsGenero(generoNombre): #Devuelve todos los podcasts de un genero dado su nombre
+    genero = Genero.objects.get(nombre=generoNombre)
+    ids = PertenecenPodcast.objects.filter(miGenero=genero)
+    podcasts = [pertenecen_object.miPodcast for pertenecen_object in ids]
+    return podcasts
+
 
 def listarGenerosFavoritos(correo): #Devuelve los generos favoritos del usuario
     return Usuario.objects.get(pk=correo).generos_favoritos.all()
@@ -791,13 +798,6 @@ def buscarPodcast(podcastNombre):
     except ObjectDoesNotExist:
         return None
 
-
-# SIN COMPROBAR
-def listarGenerosPodcast(podcastId): #Devuelve los generos de un podcast dado su id
-    podcast = Podcast.object.get(pk=podcastId)
-    ids = Pertenecen.objects.filter(miAudio=podcast)
-    return [Pertenecen.objects.get(pk=id).miGenero for id in ids]
-
 # SIN COMPROBAR
 # MIRAR SI ESTÁ BIEN
 def presentadoresPodcast(podcastId): #Devuelve los presentadores de un podcast dado su id
@@ -816,17 +816,15 @@ def presentadoresPodcast(podcastId): #Devuelve los presentadores de un podcast d
 # SIN COMPROBAR
 # EN LA API
 def crearPertenecenCancion(miGeneroVO, miAudioVO):
-    return Pertenecen.objects.create(
+    return PertenecenCancion.objects.create(
         miGenero=miGeneroVO,
-        miAudio=miAudioVO,
-        tipo="Cancion"
+        miCancion=miAudioVO
     )
 
 def crearPertenecenPodcast(miGeneroVO, miAudioVO):
-    return Pertenecen.objects.create(
+    return PertenecenPodcast.objects.create(
         miGenero=miGeneroVO,
-        miAudio=miAudioVO,
-        tipo="Podcast"
+        miPodcast=miAudioVO
     )
 
 def crearCantan(cancionVO, artistaVO):

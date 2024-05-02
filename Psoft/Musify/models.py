@@ -168,21 +168,26 @@ class Cola(models.Model):
 class Genero(models.Model):
     nombre = models.CharField(max_length=255, primary_key=True)
 
-
-class Pertenecen(models.Model):
-    miGenero = models.ForeignKey(Genero, on_delete=models.CASCADE)
-    miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE)
-    tipo = models.CharField(max_length=255, null=False)
-
-    class Meta:
-        unique_together = ('miGenero', 'miAudio', 'tipo',)
-
 class Podcast(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
     puntuacion = models.IntegerField(blank=True, null=True)
     numPuntuaciones = models.IntegerField(blank=True, null=True)
     foto = models.BinaryField(default=b'\x00')
+
+class PertenecenCancion(models.Model):
+    miGenero = models.ForeignKey(Genero, on_delete=models.CASCADE)
+    miCancion = models.ForeignKey(Cancion, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('miGenero', 'miCancion',)
+
+class PertenecenPodcast(models.Model):
+    miGenero = models.ForeignKey(Genero, on_delete=models.CASCADE)
+    miPodcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('miGenero', 'miPodcast',)
 
 class Capitulo(models.Model):
     id = models.AutoField(primary_key=True)

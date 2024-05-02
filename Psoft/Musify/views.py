@@ -18,6 +18,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+import random
 #CORREOS
 import smtplib
 from email.mime.text import MIMEText
@@ -2455,7 +2456,8 @@ class FiltrarCancionesPorGeneroAPI(APIView): # funciona #quizás aprovechar para
         responses={200: 'OK - Canciones listadas con éxito'}
     )
     def post(self, request):
-        genero = request.data.get('genero')
+        generoNombre = request.data.get('genero')
+        genero = DAOs.conseguirGeneroPorNombre(generoNombre)
         canciones = DAOs.listarCancionesGenero(genero)
         if canciones:
             serializer = CancionSerializer(canciones, many=True)
@@ -2476,7 +2478,8 @@ class FiltrarPodcastsPorGeneroAPI(APIView): # funciona
         responses={200: 'OK - Podcasts listados con éxito'}
     )
     def post(self, request):
-        genero = request.data.get('genero')
+        generoNombre = request.data.get('genero')
+        genero = DAOs.conseguirGeneroPorNombre(generoNombre)
         podcasts = DAOs.listarPodcastsGenero(genero)
         if podcasts:
             serializer = PodcastSerializer(podcasts, many=True)
@@ -2691,32 +2694,59 @@ class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo 
 
 
 class RecomendarAPI(APIView): #comprobar
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario')
+            },
+        ),
+        responses={
+            200: 'OK - Recomendaciones listadas con éxito',
+            400: 'Bad Request - El usuario no existe'
+        }
+    )
     def post(self, request):
         correo = request.data.get('correo')
-        #genero_id = request.data.get('genero_id') # esto sería que recomiende por género
-        #artista_id = request.data.get('artista_id') # y por artista
-        resultados = []
-
-        generos_favoritos = DAOs.listarGenerosFavoritos(correo) # por hacer
-
-        for genero in generos_favoritos:
-            # obtener todas las canciones de ese género
-            canciones_del_genero = Pertenecen.objects.filter(miGenero=genero).distinct()
-            canciones_recomendadas = random.sample(list(canciones_del_genero), 3)
-            for cancion in canciones_recomendadas:
-                resultados.append(cancion)
-
-        artistas_favoritos = DAOs.listarArtistasFavoritos(correo) # por hacer
-
-        for artista in artistas_favoritos:
-            # obtener todas las canciones de ese artista
-            canciones_del_artista = Cantan.objects.filter(miArtista=artista).distinct()
-            canciones_recomendadas = random.sample(list(canciones_del_artista), 3)
-            for cancion in canciones_recomendadas:
-                resultados.append(cancion)
-
-        return resultados
-        
+        usuario = DAOs.conseguirUsuarioPorCorreo(correo)
+        if usuario is None:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            artistaFavorito = DAOs.devolverArtistaFavorito(correo)
+            presentadorFavorito = DAOs.devolverPresentadorFavorito(correo)
+            generoFavoritoCancion = DAOs.devolverGeneroFavoritoCancion(correo)
+            generoFavoritoPodcast = DAOs.devolverGeneroFavoritoPodcast(correo)
+            canciones = DAOs.listarCanciones()
+            podcasts = DAOs.listarPodcasts()
+            if artistaFavorito is None and presentadorFavorito is None and generoFavoritoCancion is None and generoFavoritoPodcast is None:
+                
+                cancion1 = random.sample(list(canciones), 1)
+                canciones = [cancion for cancion in canciones if cancion not in cancion1]
+                cancion2 = random.sample(canciones, 1)
+                podcast1 = random.sample(list(podcasts), 1)
+                podcasts = [podcast for podcast in podcasts if podcast not in podcast1]
+                podcast2 = random.sample(podcasts, 1)
+                resultadosCanciones = cancion1 + cancion2
+                resultadosPodcasts = podcast1 + podcast2
+            else:
+                cancionArtista = random.sample(DAOs.listarCancionesArtista(artistaFavorito), 1)
+                canciones = [cancion for cancion in canciones if cancion not in cancionArtista]
+                cancionGeneroCancion = random.sample(DAOs.listarCancionesGenero(generoFavoritoCancion), 1)
+                while cancionGeneroCancion in cancionArtista:
+                    cancionGeneroCancion = random.sample(DAOs.listarCancionesGenero(generoFavoritoCancion), 1)
+                podcastPresentador = random.sample(DAOs.listarPodcastsPresentador(presentadorFavorito), 1)
+                podcasts = [podcast for podcast in podcasts if podcast not in podcastPresentador]
+                podcastGeneroPodcast = random.sample(DAOs.listarPodcastsGenero(generoFavoritoPodcast), 1)
+                while podcastGeneroPodcast in podcastPresentador:
+                    podcastGeneroPodcast = random.sample(DAOs.listarPodcastsGenero(generoFavoritoPodcast), 1)
+                resultadosCanciones = cancionArtista + cancionGeneroCancion
+                resultadosPodcasts = podcastPresentador + podcastGeneroPodcast
+            serializerCanciones = CancionSerializer(resultadosCanciones, many=True)
+            serializerPodcasts = PodcastSerializer(resultadosPodcasts, many=True)
+            return Response({'recomendaciones': {'canciones': serializerCanciones.data, 'podcasts': serializerPodcasts.data}}, status=status.HTTP_200_OK)
+               
 class AgnadirGeneroFavoritoAPI(APIView): #funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(

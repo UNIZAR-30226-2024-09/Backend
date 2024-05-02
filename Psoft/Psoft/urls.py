@@ -177,4 +177,5 @@ urlpatterns = [
     path('presentadores/', views.PresentadoresAPI.as_view(), name='Presentadores'),
     path('artistas/', views.ArtistasAPI.as_view(), name='Artistas'),
     #path('editarTipoGenero/', views.EditarTipoGeneroAPI.as_view(), name='EditarTipoGenero'),
+    path('recomendar/', views.RecomendarAPI.as_view(), name='Recomendar'),
     ]

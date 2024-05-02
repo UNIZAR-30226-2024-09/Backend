@@ -128,6 +128,21 @@ def agnadirPresentadorFavorito(correo, presentadorVO): #Se añade un presentador
     usuario.presentadorFavorito = presentadorVO
     usuario.save()
 
+def devolverArtistaFavorito(correo):
+    usuario = Usuario.objects.get(pk=correo)
+    return usuario.artistaFavorito
+
+def devolverPresentadorFavorito(correo):
+    usuario = Usuario.objects.get(pk=correo)
+    return usuario.presentadorFavorito
+
+def devolverGeneroFavoritoCancion(correo):
+    usuario = Usuario.objects.get(pk=correo)
+    return usuario.generoFavoritoCancion
+
+def devolverGeneroFavoritoPodcast(correo):
+    usuario = Usuario.objects.get(pk=correo)
+    return usuario.generoFavoritoPodcast
 
 '''def actualizarUsuarioNombre(usuarioVO, nombre):
     usuario = Usuario.objects.get(pk=usuarioVO.correo)
@@ -595,15 +610,23 @@ def listarPresentadores(): #Devuelve todos los presentadores
 def listarArtistas(): #Devuelve todos los artistas
     return Artista.objects.all()
 
+def listarCancionesArtista(artistaVO): #Devuelve todas las canciones de un artista dado su id
+    ids = Cantan.objects.filter(miArtista=artistaVO.id)
+    canciones = [canta_object.miCancion for canta_object in ids]
+    return canciones
+
+def listarPodcastsPresentador(presentadorVO): #Devuelve todos los podcasts de un presentador dado su id
+    ids = Interpretan.objects.filter(miPresentador=presentadorVO.id)
+    podcasts = [interpretan_object.miPodcast for interpretan_object in ids]
+    return podcasts
+
 # SIN COMPROBAR, no se si esta bien el hecho de q haya puesto print aqui ?
-def listarCancionesGenero(generoNombre): #Devuelve todas las canciones de un genero dado su nombre
-    genero = Genero.objects.get(nombre=generoNombre)
+def listarCancionesGenero(genero): #Devuelve todas las canciones de un genero dado su nombre
     ids = PertenecenCancion.objects.filter(miGenero=genero)
     canciones = [pertenecen_object.miCancion for pertenecen_object in ids]
     return canciones
 
-def listarPodcastsGenero(generoNombre): #Devuelve todos los podcasts de un genero dado su nombre
-    genero = Genero.objects.get(nombre=generoNombre)
+def listarPodcastsGenero(genero): #Devuelve todos los podcasts de un genero dado su nombre
     ids = PertenecenPodcast.objects.filter(miGenero=genero)
     podcasts = [pertenecen_object.miPodcast for pertenecen_object in ids]
     return podcasts

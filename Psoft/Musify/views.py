@@ -997,22 +997,22 @@ class ActualizarPlaylistPublicaAPI(APIView):
             DAOs.actualizarPlaylistPublica(playlist, publica)
             return Response({'message': 'Privacidad de la playlist actualizada con éxito'}, status=status.HTTP_200_OK)'''
 
-#class ListarCancionesAPI(APIView): # funciona
-#    permission_classes = [AllowAny]
-#    @swagger_auto_schema(
-#        responses={200: 'OK - Canciones listadas con éxito'}
-#    )
-#    def post(self, request):
-#        canciones = DAOs.listarCanciones()
-#        canciones #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
-#        # Verificar si se encontraron canciones en la playlist
-#        if canciones:
-#            serializer = CancionSerializer(canciones, many=True)
-#            # Devolver la lista de canciones serializadas en formato JSON
-#            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
-#        else:
-#            # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
-#            return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
+class ListarCancionesAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Canciones listadas con éxito'}
+    )
+    def post(self, request):
+        canciones = DAOs.listarCanciones()
+        canciones #QUITAR EN VERSION FUNCIONAL, HECHO PARA TESTEAR HOY YA QUE NO ESTA DEL TODO TERMINADO
+        # Verificar si se encontraron canciones en la playlist
+        if canciones:
+            serializer = CancionSerializer(canciones, many=True)
+            # Devolver la lista de canciones serializadas en formato JSON
+            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
+            return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
         
 class getSongByIdAPI(APIView): # No funciona ni para atras
     permission_classes = [AllowAny]
@@ -2717,3 +2717,150 @@ class RecomendarAPI(APIView): #comprobar
 
         return resultados
         
+class AgnadirGeneroFavoritoAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'genero'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género')
+            },
+        ),
+        responses={
+            200: 'OK - Género favorito añadido con éxito',
+            400: 'Bad Request - El género no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        nombreGenero = request.data.get('genero')
+        genero = DAOs.conseguirGeneroPorNombre(nombreGenero)
+        if genero is None:
+            return Response({'error': 'El género no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.agnadirGeneroFavorito(correo, genero)
+            return Response({'message': 'Género favorito añadido con éxito'}, status=status.HTTP_200_OK)
+        
+class AgnadirArtistaFavoritoAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'artista'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'artistaId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del artista')
+            },
+        ),
+        responses={
+            200: 'OK - Artista favorito añadido con éxito',
+            400: 'Bad Request - El artista no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        artistaId = request.data.get('artistaId')
+        artista = DAOs.conseguirArtistaPorId(artistaId)
+        if artista is None:
+            return Response({'error': 'El artista no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.agnadirArtistaFavorito(correo, artista)
+            return Response({'message': 'Artista favorito añadido con éxito'}, status=status.HTTP_200_OK)
+
+class AgnadirPresentadorFavoritoAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['correo', 'presentador'],
+            properties={
+                'correo': openapi.Schema(type=openapi.TYPE_STRING, description='Correo del usuario'),
+                'presentadorId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del presentador')
+            },
+        ),
+        responses={
+            200: 'OK - Presentador favorito añadido con éxito',
+            400: 'Bad Request - El presentador no existe'
+        }
+    )
+    def post(self, request):
+        correo = request.data.get('correo')
+        presentadorId = request.data.get('presentadorId')
+        presentador = DAOs.conseguirPresentadorPorId(presentadorId)
+        if presentador is None:
+            return Response({'error': 'El presentador no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.agnadirPresentadorFavorito(correo, presentador)
+            return Response({'message': 'Presentador favorito añadido con éxito'}, status=status.HTTP_200_OK)
+        
+class GenerosCancionesAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Géneros listados con éxito'}
+    )
+    def get(self, request):
+        generos = DAOs.listarGenerosCanciones()
+        serializer = GeneroSerializer(generos, many=True)
+        return Response({'generos': serializer.data}, status=status.HTTP_200_OK)
+    
+class GenerosPodcastsAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Géneros listados con éxito'}
+    )
+    def get(self, request):
+        generos = DAOs.listarGenerosPodcasts()
+        serializer = GeneroSerializer(generos, many=True)
+        return Response({'generos': serializer.data}, status=status.HTTP_200_OK)
+    
+class PresentadoresAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Presentadores listados con éxito'}
+    )
+    def get(self, request):
+        presentadores = DAOs.listarPresentadores()
+        serializer = PresentadorSerializer(presentadores, many=True)
+        return Response({'presentadores': serializer.data}, status=status.HTTP_200_OK)
+    
+class ArtistasAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Artistas listados con éxito'}
+    )
+    def get(self, request):
+        artistas = DAOs.listarArtistas()
+        serializer = ArtistaSerializer(artistas, many=True)
+        return Response({'artistas': serializer.data}, status=status.HTTP_200_OK)
+
+class EditarTipoGeneroAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['nombre', 'esDeCancion'],
+            properties={
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género'),
+                'esDeCancion': openapi.Schema(type=openapi.TYPE_INTEGER, description='El género es de canción (1) o de podcast (0)')
+            },
+        ),
+        responses={
+            200: 'OK - Tipo de género editado con éxito',
+            400: 'Bad Request - El género no existe'
+        }
+    )
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        esDeCancion = request.data.get('esDeCancion')
+        genero = DAOs.conseguirGeneroPorNombre(nombre)
+        if genero is None:
+            return Response({'error': 'El género no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if esDeCancion == 1:
+                DAOs.editarTipoGenero(genero, "Cancion")
+            else:
+                DAOs.editarTipoGenero(genero, "Podcast")
+                return Response({'message': 'Tipo de género editado con éxito'}, status=status.HTTP_200_OK)
+           

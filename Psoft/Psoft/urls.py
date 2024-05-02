@@ -169,4 +169,12 @@ urlpatterns = [
     path('listarGenerosCancion/', views.ListarGenerosCancionAPI.as_view(), name='ListarGenerosCancion'),
     path('listarGenerosPodcast/', views.ListarGenerosPodcastAPI.as_view(), name='ListarGenerosPodcast'),
     path('filtrarPodcastsPorGenero/', views.FiltrarPodcastsPorGeneroAPI.as_view(), name='FiltrarPodcastsPorGenero'),
+    path('agnadirGeneroFavorito/', views.AgnadirGeneroFavoritoAPI.as_view(), name='AgnadirGeneroFavorito'),
+    path('agnadirArtistaFavorito/', views.AgnadirArtistaFavoritoAPI.as_view(), name='AgnadirArtistaFavorito'),
+    path('agnadirPresentadorFavorito/', views.AgnadirPresentadorFavoritoAPI.as_view(), name='AgnadirPresentadorFavorito'),
+    path('generosCanciones/', views.GenerosCancionesAPI.as_view(), name='GenerosCanciones'),
+    path('generosPodcasts/', views.GenerosPodcastsAPI.as_view(), name='GenerosPodcasts'),
+    path('presentadores/', views.PresentadoresAPI.as_view(), name='Presentadores'),
+    path('artistas/', views.ArtistasAPI.as_view(), name='Artistas'),
+    #path('editarTipoGenero/', views.EditarTipoGeneroAPI.as_view(), name='EditarTipoGenero'),
     ]

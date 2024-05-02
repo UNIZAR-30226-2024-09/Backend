@@ -116,8 +116,8 @@ urlpatterns = [
     path('crearCapitulo/', views.CrearCapituloAPI.as_view(), name='crearCapitulo'),
     path('actualizarCapitulo/', views.ActualizarCapituloAPI.as_view(), name='actualizarCapitulo'),
     path('crearGenero/', views.CrearGeneroAPI.as_view(), name='crearGenero'),
-    #path('agnadirGeneroCancion/', views.AgnadirGeneroCancionAPI.as_view(), name='agnadirGeneroCancion'),
-    #path('agnadirGeneroPodcast/', views.AgnadirGeneroPodcastAPI.as_view(), name='agnadirGeneroPodcast'),
+    path('agnadirGeneroCancion/', views.AgnadirGeneroCancionAPI.as_view(), name='agnadirGeneroCancion'),
+    path('agnadirGeneroPodcast/', views.AgnadirGeneroPodcastAPI.as_view(), name='agnadirGeneroPodcast'),
     path('crearPodcast/', views.CrearPodcastAPI.as_view(), name='crearPodcast'),
     path('actualizarPodcast/', views.ActualizarPodcastAPI.as_view(), name='actualizarPodcast'),
     path('listarCancionesPlaylist/', views.ListarCancionesPlaylistAPI.as_view(), name='listarCancionesPlaylist'),
@@ -176,4 +176,5 @@ urlpatterns = [
     path('crearSalaAPI/', viewsChat.CrearSalaAPI.as_view(), name='CrearSalaAPI'),
     path('siguiendo/', views.SiguiendoAPI.as_view(), name='Siguiendo'),
     path('listarGenerosCancion/', views.ListarGenerosCancionAPI.as_view(), name='ListarGenerosCancion'),
+    path('listarGenerosPodcast/', views.ListarGenerosPodcastAPI.as_view(), name='ListarGenerosPodcast'),
     ]

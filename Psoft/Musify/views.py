@@ -93,8 +93,138 @@ class ReporteAPI(APIView):
             server.sendmail(sender, receiver, message.as_string())
         return Response({'message': 'Reporte enviado con éxito'}, status=status.HTTP_200_OK)
 # CORREO DE VERIFICACIÓN
+class image_cancion(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, filename):
+        # Path to the directory where images are stored
+        images_dir = 'image_cancion/'
 
-#API
+        # Construct the path to the requested image file
+        filename += '.jpg'
+        image_path = os.path.join(os.path.dirname(__file__),images_dir, filename)
+        print(image_path)
+
+        # Check if the file exists
+        if os.path.exists(image_path):
+            with open(image_path, 'rb') as f:
+                # Read the image content
+                image_data = f.read()
+
+                # Determine the content type based on the file extension
+                content_type = 'image/jpeg' if filename.endswith('.jpg') else 'image/png'
+
+                # Return the image as an HTTP response
+                return HttpResponse(image_data, content_type=content_type)
+        else:
+            # Return a 404 response if the file does not exist
+            return HttpResponse('Image not found', status=404)
+        
+class image_album(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, filename):
+        # Path to the directory where images are stored
+        images_dir = 'image_album/'
+
+        # Construct the path to the requested image file
+        filename += '.jpg'
+        image_path = os.path.join(os.path.dirname(__file__),images_dir, filename)
+        print(image_path)
+
+        # Check if the file exists
+        if os.path.exists(image_path):
+            with open(image_path, 'rb') as f:
+                # Read the image content
+                image_data = f.read()
+
+                # Determine the content type based on the file extension
+                content_type = 'image/jpeg' if filename.endswith('.jpg') else 'image/png'
+
+                # Return the image as an HTTP response
+                return HttpResponse(image_data, content_type=content_type)
+        else:
+            # Return a 404 response if the file does not exist
+            return HttpResponse('Image not found', status=404)
+
+class image_artista(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, filename):
+        # Path to the directory where images are stored
+        images_dir = 'image_artista/'
+
+        # Construct the path to the requested image file
+        filename += '.jpg'
+        image_path = os.path.join(os.path.dirname(__file__),images_dir, filename)
+        print(image_path)
+
+        # Check if the file exists
+        if os.path.exists(image_path):
+            with open(image_path, 'rb') as f:
+                # Read the image content
+                image_data = f.read()
+
+                # Determine the content type based on the file extension
+                content_type = 'image/jpeg' if filename.endswith('.jpg') else 'image/png'
+
+                # Return the image as an HTTP response
+                return HttpResponse(image_data, content_type=content_type)
+        else:
+            # Return a 404 response if the file does not exist
+            return HttpResponse('Image not found', status=404)
+        
+class image_podcast(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, filename):
+        # Path to the directory where images are stored
+        images_dir = 'image_podcast/'
+
+        # Construct the path to the requested image file
+        filename += '.jpg'
+        image_path = os.path.join(os.path.dirname(__file__),images_dir, filename)
+        print(image_path)
+
+        # Check if the file exists
+        if os.path.exists(image_path):
+            with open(image_path, 'rb') as f:
+                # Read the image content
+                image_data = f.read()
+
+                # Determine the content type based on the file extension
+                content_type = 'image/jpeg' if filename.endswith('.jpg') else 'image/png'
+
+                # Return the image as an HTTP response
+                return HttpResponse(image_data, content_type=content_type)
+        else:
+            # Return a 404 response if the file does not exist
+            return HttpResponse('Image not found', status=404)
+
+class image_presentador(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, filename):
+        # Path to the directory where images are stored
+        images_dir = 'image_presentador/'
+
+        # Construct the path to the requested image file
+        filename += '.jpg'
+        image_path = os.path.join(os.path.dirname(__file__),images_dir, filename)
+        print(image_path)
+
+        # Check if the file exists
+        if os.path.exists(image_path):
+            with open(image_path, 'rb') as f:
+                # Read the image content
+                image_data = f.read()
+
+                # Determine the content type based on the file extension
+                content_type = 'image/jpeg' if filename.endswith('.jpg') else 'image/png'
+
+                # Return the image as an HTTP response
+                return HttpResponse(image_data, content_type=content_type)
+        else:
+            # Return a 404 response if the file does not exist
+            return HttpResponse('Image not found', status=404)
+
+
+
 class UserViewSet(viewsets.ModelViewSet): #funciona
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer

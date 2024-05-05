@@ -2720,7 +2720,7 @@ class RecomendarAPI(APIView): #comprobar
             generoFavoritoPodcast = DAOs.devolverGeneroFavoritoPodcast(correo)
             canciones = DAOs.listarCanciones()
             podcasts = DAOs.listarPodcasts()
-            if artistaFavorito is None and presentadorFavorito is None and generoFavoritoCancion is None and generoFavoritoPodcast is None:
+            if artistaFavorito is None or presentadorFavorito is None or generoFavoritoCancion is None or generoFavoritoPodcast is None:
                 
                 cancion1 = random.sample(list(canciones), 1)
                 canciones = [cancion for cancion in canciones if cancion not in cancion1]

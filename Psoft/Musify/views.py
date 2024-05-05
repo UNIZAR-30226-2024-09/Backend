@@ -2187,16 +2187,25 @@ class CrearGeneroAPI(APIView): # funciona
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['genero'],
+            required=['genero', 'tipo'],
             properties={
-                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género')
+                'genero': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del género'),
+                'tipo': openapi.Schema(type=openapi.TYPE_STRING, description='Tipo del género (canción o podcast)')
             },
         ),
-        responses={200: 'OK - Género creado con éxito'}
+        responses={
+            200: 'OK - Género creado con éxito',
+            400: 'Bad Request - Tipo de género no válido'
+        }
     )
     def post(self, request):
         nombre = request.data.get('genero')
-        genero = Genero(nombre=nombre)
+        tipo = request.data.get('tipo')
+        if tipo == 'Cancion' or tipo == 'Podcast':
+            generoTipo = tipo
+        else:
+            return Response({'error': 'Tipo de género no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        genero = Genero(nombre=nombre, tipo=generoTipo)
         DAOs.crearGenero(genero)
         return Response({'message': 'Género creado con éxito'}, status=status.HTTP_200_OK)
 
@@ -2894,3 +2903,74 @@ class EditarTipoGeneroAPI(APIView): #funciona
                 DAOs.editarTipoGenero(genero, "Podcast")
                 return Response({'message': 'Tipo de género editado con éxito'}, status=status.HTTP_200_OK)
            
+class EliminarCancionAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['cancionId'],
+            properties={
+                'cancionId': openapi.Schema(type=openapi.TYPE_STRING, description='ID de la canción')
+            },
+        ),
+        responses={
+            200: 'OK - Canción eliminada con éxito',
+            400: 'Bad Request - La canción no existe'
+        }
+    )
+    def post(self, request):
+        cancionId = request.data.get('cancionId')
+        cancion = DAOs.conseguirCancionPorId(cancionId)
+        if cancion is None:
+            return Response({'error': 'La canción no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.eliminarCancion(cancion)
+            return Response({'message': 'Canción eliminada con éxito'}, status=status.HTTP_200_OK)
+        
+class EliminarPodcastAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['podcastId'],
+            properties={
+                'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast')
+            },
+        ),
+        responses={
+            200: 'OK - Podcast eliminado con éxito',
+            400: 'Bad Request - El podcast no existe'
+        }
+    )
+    def post(self, request):
+        podcastId = request.data.get('podcastId')
+        podcast = DAOs.conseguirPodcastPorId(podcastId)
+        if podcast is None:
+            return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.eliminarPodcast(podcast)
+            return Response({'message': 'Podcast eliminado con éxito'}, status=status.HTTP_200_OK)
+        
+class EliminarCapituloAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['capituloId'],
+            properties={
+                'capituloId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del capítulo')
+            },
+        ),
+        responses={
+            200: 'OK - Capítulo eliminado con éxito',
+            400: 'Bad Request - El capítulo no existe'
+        }
+    )
+    def post(self, request):
+        capituloId = request.data.get('capituloId')
+        capitulo = DAOs.conseguirCapituloPorId(capituloId)
+        if capitulo is None:
+            return Response({'error': 'El capítulo no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            DAOs.eliminarCapitulo(capitulo)
+            return Response({'message': 'Capítulo eliminado con éxito'}, status=status.HTTP_200_OK)

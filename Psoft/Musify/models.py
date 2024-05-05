@@ -163,7 +163,7 @@ class Cola(models.Model):
     id = models.AutoField(primary_key=True)
     miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE)
-
+    
 
 class Genero(models.Model):
     nombre = models.CharField(max_length=255, primary_key=True)

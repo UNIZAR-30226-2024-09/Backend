@@ -176,6 +176,9 @@ urlpatterns = [
     path('generosPodcasts/', views.GenerosPodcastsAPI.as_view(), name='GenerosPodcasts'),
     path('presentadores/', views.PresentadoresAPI.as_view(), name='Presentadores'),
     path('artistas/', views.ArtistasAPI.as_view(), name='Artistas'),
+    path('eliminarCancion/', views.EliminarCancionAPI.as_view(), name='EliminarCancion'),
+    path('eliminarPodcast/', views.EliminarPodcastAPI.as_view(), name='EliminarPodcast'),
+    path('eliminarCapitulo/', views.EliminarCapituloAPI.as_view(), name='EliminarCapitulo'),
     #path('editarTipoGenero/', views.EditarTipoGeneroAPI.as_view(), name='EditarTipoGenero'),
     path('recomendar/', views.RecomendarAPI.as_view(), name='Recomendar'),
     ]

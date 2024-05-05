@@ -387,12 +387,54 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         archivoMp3=cancionVO.archivoMp3,
         foto=cancionVO.foto
     )
+
 def actualizarCancion(cancionVO, nombre, miAlbum, archivoMp3, foto): #Se actualiza la cancion
     cancionVO.nombre = nombre
     cancionVO.miAlbum = miAlbum
     cancionVO.archivoMp3 = archivoMp3
     cancionVO.foto = foto
     cancionVO.save()
+
+def eliminarCancion(cancionVO):
+    if cancionVO.miAlbum:
+        cancionVO.miAlbum = None
+    if PertenecenCancion.objects.filter(miCancion=cancionVO).exists():
+        PertenecenCancion.objects.filter(miCancion=cancionVO).delete()
+    if Cantan.objects.filter(miCancion=cancionVO).exists():
+        Cantan.objects.filter(miCancion=cancionVO).delete()
+    if Contiene.objects.filter(miAudio=cancionVO).exists():
+        Contiene.objects.filter(miAudio=cancionVO).delete()
+    if Historial.objects.filter(miAudio=cancionVO).exists():
+        Historial.objects.filter(miAudio=cancionVO).delete()
+    if Cola.objects.filter(miAudio=cancionVO).exists():
+        Cola.objects.filter(miAudio=cancionVO).delete()
+    if Usuario.objects.filter(ultima_cancion=cancionVO).exists():
+        Usuario.objects.filter(ultima_cancion=cancionVO).update(ultima_cancion=None)
+    cancionVO.delete()
+
+def eliminarCapitulo(capituloVO):
+    if Cola.objects.filter(miAudio=capituloVO).exists():
+        Cola.objects.filter(miAudio=capituloVO).delete()
+    if Contiene.objects.filter(miAudio=capituloVO).exists():
+        Contiene.objects.filter(miAudio=capituloVO).delete()
+    if Historial.objects.filter(miAudio=capituloVO).exists():
+        Historial.objects.filter(miAudio=capituloVO).delete()
+    if Usuario.objects.filter(ultima_cancion=capituloVO).exists():
+        Usuario.objects.filter(ultima_cancion=capituloVO).update(ultima_cancion=None)
+    capituloVO.delete()
+
+def eliminarPodcast(podcastVO):
+    if PertenecenPodcast.objects.filter(miPodcast=podcastVO).exists():
+        PertenecenPodcast.objects.filter(miPodcast=podcastVO).delete()
+    if Interpretan.objects.filter(miPodcast=podcastVO).exists():
+        Interpretan.objects.filter(miPodcast=podcastVO).delete()
+    podcastVO.delete()
+
+def eliminarCapitulo(capituloVO):
+    capituloVO.delete()
+
+def eliminarPodcast(podcastVO):
+    podcastVO.delete()
 
 # devuelve el id de la playlist favoritos del usuario
 def favoritoUsuario(correo):
@@ -585,7 +627,8 @@ def listarCola(usuarioCorreo): #Devuelve la cola de reproduccion del usuario dev
 # EN LA API
 def crearGenero(generoVO): #Crea y devuelve el genero como vo
     return Genero.objects.create(
-        nombre=generoVO.nombre
+        nombre=generoVO.nombre,
+        tipo=generoVO.tipo
     )
 
 # EN PROCESO

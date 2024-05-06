@@ -1183,6 +1183,27 @@ def convertirBinario(ruta):
         contenido_base64 = base64.b64encode(contenido_binario)
     return contenido_base64
 
+
+import base64
+from PIL import Image
+from io import BytesIO
+
+def save_base64_image(base64_string, output_path):
+    try:
+        # Decode the Base64 string into bytes
+        image_data = base64.b64decode(base64_string)
+        
+        # Open the image using PIL
+        image = Image.open(BytesIO(image_data))
+        
+        # Save the image as JPG
+        image.save(output_path, format='JPEG')
+        
+        print(f"Image saved successfully to {output_path}")
+    except Exception as e:
+        print(f"Error saving image: {e}")
+
+
 class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(
@@ -1191,7 +1212,7 @@ class CrearCancionAPI(APIView): # funciona
             required=['nombre', 'nombreFoto', 'miAlbum', 'nombreArchivoMp3'],
             properties={
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la canción'),
-                'nombreFoto': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la foto'),
+                'imagen': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Imagen de la canción'),
                 'miAlbum': openapi.Schema(type=openapi.TYPE_STRING, description='ID del álbum'),
                 'nombreArchivoMp3': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del archivo mp3')
             },
@@ -1200,8 +1221,10 @@ class CrearCancionAPI(APIView): # funciona
     )
     def post(self, request):
         nombre = request.data.get('nombre')
-        nombreFoto = request.data.get('nombreFoto')
+        imagen = request.data.get('imagen')
         miAlbum = request.data.get('miAlbum')
+        current_dir = os.getcwd()
+        directorio = os.path.join(current_dir, 'Musify/image_cancion/')
         puntuacion = 0 # cuando se crea la canción en nuestra app, se crea con puntuación 0
         numeroPuntuaciones = 0
         nombreMp3 = request.data.get('nombreArchivoMp3')
@@ -1211,8 +1234,10 @@ class CrearCancionAPI(APIView): # funciona
             miAlbum = None
         #contenidoBinarioMp3 = convertirBinario(nombreMp3)
         #contenidoBinarioFoto = convertirBinario(nombreFoto)
-        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivoMp3=nombreFoto, foto=nombreMp3)
-        DAOs.crearCancion(cancion)
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivoMp3=None, foto=nombreMp3)
+        cancion2 = DAOs.crearCancion(cancion)
+        path = directorio + str(cancion2.id) + ".jpg"
+        save_base64_image(imagen, path)
         return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 
 class DevolverCancionAPI(APIView):

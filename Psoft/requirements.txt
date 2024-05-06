@@ -29,3 +29,4 @@ channels
 django_admin_logs
 channels
 daphne
+pillow

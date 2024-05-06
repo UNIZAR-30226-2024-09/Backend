@@ -1209,9 +1209,9 @@ class CrearCancionAPI(APIView): # funciona
             miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
         else:
             miAlbum = None
-        contenidoBinarioMp3 = convertirBinario(nombreMp3)
-        contenidoBinarioFoto = convertirBinario(nombreFoto)
-        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivoMp3=contenidoBinarioMp3, foto=contenidoBinarioFoto)
+        #contenidoBinarioMp3 = convertirBinario(nombreMp3)
+        #contenidoBinarioFoto = convertirBinario(nombreFoto)
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivoMp3=nombreFoto, foto=nombreMp3)
         DAOs.crearCancion(cancion)
         return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 
@@ -1685,7 +1685,7 @@ class ActualizarAlbumFotoAPI(APIView): #funciona
 '''EJEMPLO DE FORMATO JSON PARA CREAR AÑADIR CANCIÓN A UN ÁLBUM
 {
     "albumNombre": "album de Sarah",
-    "cancionNombre": "Buenas tardes"
+    "cancionId": "Buenas tardes"
 }'''
 
 class AgnadirCancionAlbumAPI(APIView): # funciona
@@ -1693,10 +1693,10 @@ class AgnadirCancionAlbumAPI(APIView): # funciona
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['albumNombre', 'cancionNombre'],
+            required=['albumNombre', 'cancionId'],
             properties={
                 'albumNombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del álbum'),
-                'cancionNombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la canción')
+                'cancionId': openapi.Schema(type=openapi.TYPE_STRING, description='ID de la canción')
             },
         ),
         responses={200: 'OK - Canción añadida al álbum con éxito',
@@ -1705,12 +1705,15 @@ class AgnadirCancionAlbumAPI(APIView): # funciona
     def post(self, request):
         albumNombre = request.data.get('albumNombre')
         album = DAOs.conseguirAlbumPorNombre(albumNombre)
-        cancionNombre = request.data.get('cancionNombre')
-        cancion = DAOs.conseguirCancionPorNombre(cancionNombre)
-        if Cancion.objects.filter(nombre=cancionNombre, miAlbum=album).exists():
-            return Response({'message': 'La cancion ya existe está en el álbum'}, status=status.HTTP_400_BAD_REQUEST)
-        DAOs.agnadirCancionAlbum(album, cancion)
-        return Response({'message': 'Canción añadida al álbum con éxito'}, status=status.HTTP_200_OK)
+        cancionId = request.data.get('cancionId')
+        cancion = DAOs.conseguirCancionPorId(cancionId)
+        if album is None or cancion is None:
+            return Response({'error': 'El álbum o la canción no existen'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if Cancion.objects.filter(nombre=cancionId, miAlbum=album).exists():
+                return Response({'message': 'La cancion ya existe está en el álbum'}, status=status.HTTP_400_BAD_REQUEST)
+            DAOs.agnadirCancionAlbum(album, cancion)
+            return Response({'message': 'Canción añadida al álbum con éxito'}, status=status.HTTP_200_OK)
 
 class PuntuarPodcastAPI(APIView): #comprobar
     permission_classes = [AllowAny]
@@ -1768,8 +1771,8 @@ class CrearCapituloAPI(APIView): #funciona
         if podcastId != '':
             miPodcast = DAOs.conseguirPodcastPorId(podcastId)
             if miPodcast is not None:
-                contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
-                capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast, archivoMp3=contenidoBinarioMp3)
+                #contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
+                capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast, archivoMp3=nombreArchivoMp3)
                 DAOs.crearCapitulo(capitulo)
                 return Response({'message': 'Capítulo almacenado correctamente'}, status=status.HTTP_200_OK)
             else:
@@ -2276,7 +2279,7 @@ class AgnadirCantanteAPI(APIView): # funciona
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['artista', 'cancionId'],
+            required=['artistaId', 'cancionId'],
             properties={
                 'artista': openapi.Schema(type=openapi.TYPE_STRING, description='ID del artista'),
                 'cancionId': openapi.Schema(type=openapi.TYPE_STRING, description='ID de la canción')
@@ -2288,7 +2291,7 @@ class AgnadirCantanteAPI(APIView): # funciona
         }
     )
     def post(self, request):
-        artistaId = request.data.get('artista')
+        artistaId = request.data.get('artistaId')
         cancionId = request.data.get('cancionId')
         artista = DAOs.conseguirArtistaPorId(artistaId)
         cancion = DAOs.conseguirCancionPorId(cancionId)
@@ -2518,8 +2521,8 @@ class CrearPodcastAPI(APIView): # funciona
     def post(self, request):
         nombre = request.data.get('nombre')
         nombreFoto = request.data.get('nombreFoto')
-        contenidoBinarioFoto = convertirBinario(nombreFoto)
-        podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0, foto=contenidoBinarioFoto)
+        #contenidoBinarioFoto = convertirBinario(nombreFoto)
+        podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0, foto=nombreFoto)
         DAOs.crearPodcast(podcast)
         return Response({'message': 'Podcast creado con éxito'}, status=status.HTTP_200_OK)
 

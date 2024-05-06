@@ -384,8 +384,8 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         miAlbum=cancionVO.miAlbum,
         puntuacion=cancionVO.puntuacion,
         numPuntuaciones=cancionVO.numPuntuaciones,
-        archivoMp3=cancionVO.archivoMp3,
-        foto=cancionVO.foto
+        #archivoMp3=cancionVO.archivoMp3,
+        #foto=cancionVO.foto
     )
 
 def actualizarCancion(cancionVO, nombre, miAlbum, archivoMp3, foto): #Se actualiza la cancion
@@ -424,6 +424,8 @@ def eliminarCapitulo(capituloVO):
     capituloVO.delete()
 
 def eliminarPodcast(podcastVO):
+    if Capitulo.objects.filter(miPodcast=podcastVO).exists():
+        Capitulo.objects.filter(miPodcast=podcastVO).delete()
     if PertenecenPodcast.objects.filter(miPodcast=podcastVO).exists():
         PertenecenPodcast.objects.filter(miPodcast=podcastVO).delete()
     if Interpretan.objects.filter(miPodcast=podcastVO).exists():
@@ -750,7 +752,7 @@ def crearCapitulo(capituloVO): #Se crea el capitulo
         nombre=capituloVO.nombre,
         descripcion=capituloVO.descripcion,
         miPodcast=capituloVO.miPodcast,
-        archivoMp3=capituloVO.archivoMp3
+        #archivoMp3=capituloVO.archivoMp3
     )
 
 #EN LA API
@@ -820,7 +822,7 @@ def crearPodcast(podcastVO): #Se crea el podcast
         nombre=podcastVO.nombre,
         puntuacion=podcastVO.puntuacion,
         numPuntuaciones=podcastVO.numPuntuaciones,
-        foto=podcastVO.foto
+        #foto=podcastVO.foto
     )
 
 # SIN COMPROBAR

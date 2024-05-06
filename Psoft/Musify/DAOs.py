@@ -592,6 +592,10 @@ def agnadirCancionCola(usuarioCorreo, cancionVO): #Se añade la cancion a la col
         miAudio=cancion
     )
 
+def comprobarCancionCola(usuarioCorreo, cancion):
+    usuario = Usuario.objects.get(pk=usuarioCorreo)
+    return Cola.objects.filter(miUsuario=usuario, miAudio=cancion).exists()
+
 # COMPROBADO
 #EN LA API
 def eliminarCancionCola(usuarioCorreo, cancionId): #Se elimina la cancion de la cola de reproduccion

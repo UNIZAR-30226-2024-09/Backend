@@ -1546,8 +1546,11 @@ class AgnadirCancionColaAPI(APIView): # funciona
         if cancion is None:
             return Response({'error': 'La canción no existe'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            DAOs.agnadirCancionCola(correo, cancion)
-            return Response({'message': 'Canción añadida a la cola de reproducción con éxito'}, status=status.HTTP_200_OK)
+            if DAOs.comprobarCancionCola(correo, cancion) == False:
+                DAOs.agnadirCancionCola(correo, cancion)
+                return Response({'message': 'Canción añadida a la cola de reproducción con éxito'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'La canción ya está en la cola de reproducción'}, status=status.HTTP_200_OK)
 
 class EliminarCancionColaAPI(APIView): # funciona
     permission_classes = [AllowAny]

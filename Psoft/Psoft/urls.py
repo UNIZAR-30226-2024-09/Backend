@@ -181,4 +181,6 @@ urlpatterns = [
     path('eliminarCapitulo/', views.EliminarCapituloAPI.as_view(), name='EliminarCapitulo'),
     #path('editarTipoGenero/', views.EditarTipoGeneroAPI.as_view(), name='EditarTipoGenero'),
     path('recomendar/', views.RecomendarAPI.as_view(), name='Recomendar'),
+    path('listarPocasCanciones/', views.ListarPocasCancionesAPI.as_view(), name='ListarPocasCanciones'),
+    path('listarPocosPodcasts/', views.ListarPocosPodcastsAPI.as_view(), name='ListarPocosPodcasts'),
     ]

@@ -331,6 +331,18 @@ def listarCanciones(): #Devuelve todas las canciones
         cancion.archivoMp3 = None
     return canciones
 
+def listarPocasCanciones(): #Devuelve 5 canciones aleatorias
+    canciones = Cancion.objects.all().order_by('?')[:5]
+    for cancion in canciones:
+        cancion.archivoMp3 = None
+    return canciones
+
+def listarPocosPodcasts(): #Devuelve 5 podcasts aleatorios
+    podcasts = Podcast.objects.all().order_by('?')[:5]
+    for podcast in podcasts:
+        podcast.archivoMp3 = None
+    return podcasts
+
 # COMPROBADO
 #EN LA API
 def listarCancionesPlaylist(playlistId): #Devuelve las canciones de una playlist dado su id

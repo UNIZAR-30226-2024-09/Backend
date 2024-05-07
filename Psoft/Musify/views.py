@@ -1015,6 +1015,38 @@ class ListarCancionesAPI(APIView): # funciona
             # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
             return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
         
+class ListarPocasCancionesAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Canciones listadas con éxito'}
+    )
+    def post(self, request):
+        canciones = DAOs.listarPocasCanciones()
+        # Verificar si se encontraron canciones en la playlist
+        if canciones:
+            serializer = CancionSerializer(canciones, many=True)
+            # Devolver la lista de canciones serializadas en formato JSON
+            return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
+            return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
+        
+class ListarPocosPodcastsAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Podcasts listados con éxito'}
+    )
+    def post(self, request):
+        podcasts = DAOs.listarPocosPodcasts()
+        # Verificar si se encontraron podcasts en la playlist
+        if podcasts:
+            serializer = PodcastSerializer(podcasts, many=True)
+            # Devolver la lista de podcasts serializados en formato JSON
+            return Response({'podcasts': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            # Si no se encontraron podcasts, devolver un mensaje indicando lo mismo
+            return Response({'message': 'No hay podcasts'}, status=status.HTTP_200_OK)
+        
 class getSongByIdAPI(APIView): # No funciona ni para atras
     permission_classes = [AllowAny]
     @swagger_auto_schema(

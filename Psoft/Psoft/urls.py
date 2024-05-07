@@ -183,4 +183,5 @@ urlpatterns = [
     path('recomendar/', views.RecomendarAPI.as_view(), name='Recomendar'),
     path('listarPocasCanciones/', views.ListarPocasCancionesAPI.as_view(), name='ListarPocasCanciones'),
     path('listarPocosPodcasts/', views.ListarPocosPodcastsAPI.as_view(), name='ListarPocosPodcasts'),
+    path('listarSalas/', viewsChat.ListarSalasAPI.as_view(), name='ListarSalas'),
     ]

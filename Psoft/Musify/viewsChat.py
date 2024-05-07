@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Seguido, Seguidor, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, Album, Artista, CustomToken, Presentador
 from . import DAOs, DAOsChat
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer,EstadoSerializer, MensajeSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer,EstadoSerializer, MensajeSerializer, SalaSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -84,3 +84,13 @@ class CrearSalaAPI(APIView):
         nombre = request.data['nombre']
         DAOsChat.crearSala(nombre)
         return Response("Sala creada", status=status.HTTP_200_OK)
+    
+class ListarSalasAPI(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        salas = DAOsChat.obtenerSalas()
+        if salas is None:
+            return Response("No hay salas", status=status.HTTP_200_OK)
+        else:
+            serializer = SalaSerializer(salas, many=True)
+            return Response({'salas': serializer.data}, status=status.HTTP_200_OK)

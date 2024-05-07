@@ -82,4 +82,8 @@ class GeneroSerializer(serializers.ModelSerializer):
         model = models.Genero
         fields = ['nombre']
 
+class SalaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Sala
+        fields = ['id', 'nombre']
 

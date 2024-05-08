@@ -67,6 +67,7 @@ class RegistrarMensajeAPI(APIView):
             emisor = DAOs.conseguirUsuarioPorCorreo(emisorid)
             if emisor is not None:
                 mensaje = request.data['mensaje']
+                print(sala.id, emisor.correo, mensaje)
                 DAOsChat.registrarMensaje(sala, emisor, mensaje)
                 return Response("Mensaje registrado", status=status.HTTP_200_OK)
             return Response("No existe el emisor", status=status.HTTP_404_NOT_FOUND)

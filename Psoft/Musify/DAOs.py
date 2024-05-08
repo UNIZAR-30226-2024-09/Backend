@@ -272,6 +272,13 @@ def crearPlaylist(usuarioCorreo, nombre, publica): #Se crea sin colaboradores
         miUsuario=usuario,
         miPlaylist=playlist
     )
+
+def crearPlaylistGeneral(nombre):
+    return Playlist.objects.create(
+        nombre=nombre,
+        publica=True
+    )
+
 def agnadirColaborador(playlistVO, usuarioCorreo):
     usuario = Usuario.objects.get(pk=usuarioCorreo)
     Colabora.objects.create(

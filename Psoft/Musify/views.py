@@ -900,6 +900,23 @@ class CrearPlaylistAPI(APIView): # funciona
             DAOs.crearPlaylist(correo, nombre, publica)
             return Response({'message': 'La playlist se ha creado con éxito'}, status=status.HTTP_200_OK)
 
+class CrearPlaylistGeneralAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['nombre'],
+            properties={
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la playlist')
+            },
+        ),
+        responses={200: 'OK - Playlist creada con éxito'}
+    )
+    def post(self, request):
+        nombre = request.data.get('nombre')
+        DAOs.crearPlaylistGeneral(nombre)
+        return Response({'message': 'La playlist se ha creado con éxito'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR UNA PLAYLIST
 {
     "playlistId": "2",
@@ -1123,6 +1140,24 @@ class ListarCancionesPlaylistAPI(APIView): # funciona
             # Si no se encontraron canciones, devolver un mensaje indicando lo mismo
             return Response({'message': 'La playlist no tiene canciones'}, status=status.HTTP_200_OK)
         
+
+class ListarPlaylistsPredefinidasAPI(APIView): # funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Playlists predefinidas listadas con éxito'}
+    )
+    def post(self, request):
+        cancionesCoche = DAOs.listarCancionesPlaylist(62)
+        cancionesGym = DAOs.listarCancionesPlaylist(63)
+        cancionesRelax = DAOs.listarCancionesPlaylist(64)
+        if cancionesCoche and cancionesGym and cancionesRelax:
+            serializerCoche = CancionSerializer(cancionesCoche, many=True)
+            serializerGym = CancionSerializer(cancionesGym, many=True)
+            serializerRelax = CancionSerializer(cancionesRelax, many=True)
+            return Response({'cancionesCoche': serializerCoche.data, 'cancionesGym': serializerGym.data, 'cancionesRelax': serializerRelax.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay canciones en las playlists predefinidas'}, status=status.HTTP_200_OK)
+
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A UNA PLAYLIST
 {
     "playlistId": "2",

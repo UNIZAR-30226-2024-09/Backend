@@ -58,7 +58,27 @@ def home(request):
 def lougout_view(request):
     logout(request)
     return redirect("/")
+
 #Enviar correo reporte
+def MandarCorreo(receiver,mensaje,subject=""):
+    sender = os.getenv("CORREO")
+    password = os.getenv("PASSWD_CORREO")
+    print(sender)
+    print(password)
+    # Configurar el servidor de correo
+    message = MIMEMultipart()
+    message['From'] = sender
+    message['To'] = receiver
+    message['Subject'] = subject
+    message.attach(MIMEText(mensaje, 'plain'))
+
+    # Enviar el correo
+    smtplib.SMTP.debuglevel = 1
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()  # Start TLS encryption
+        server.login(sender, password)
+        server.sendmail(sender, receiver, message.as_string())
+        
 class ReporteAPI(APIView):
     permission_classes = [AllowAny]
     @swagger_auto_schema(
@@ -73,26 +93,14 @@ class ReporteAPI(APIView):
         responses={200: 'OK - Reporte enviado con éxito'}
     )
     def post(self, request):
-        sender = os.getenv("CORREO")
-        password = os.getenv("PASSWD_CORREO")
-        print(sender)
-        print(password)
-        receiver = request.data.get('correo')
+        correo = request.data.get('correo')
         mensaje = request.data.get('mensaje')
-        # Configurar el servidor de correo
-        message = MIMEMultipart()
-        message['From'] = sender
-        message['To'] = receiver
-        message['Subject'] = 'Reporte de usuario: ' + receiver
-        message.attach(MIMEText(mensaje, 'plain'))
-
-        # Enviar el correo
-        smtplib.SMTP.debuglevel = 1
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()  # Start TLS encryption
-            server.login(sender, password)
-            server.sendmail(sender, receiver, message.as_string())
+        MandarCorreo(correo,mensaje,subject="Copia de Reporte Musify")
         return Response({'message': 'Reporte enviado con éxito'}, status=status.HTTP_200_OK)
+    
+def CorreoRegistro(correo):
+    mensaje = "Su registro se ha efectuado con exito, gracias por unirse a Musify"
+    MandarCorreo(correo,mensaje,subject="Registro Musify")   
 # CORREO DE VERIFICACIÓN
 class image_cancion(APIView):
     permission_classes = [AllowAny]
@@ -451,6 +459,7 @@ class RegistroAPI(APIView): # funciona
         DAOs.crearUsuario(usuario)
         token = CustomToken.objects.create(usuario=usuario)
         token.save()
+        CorreoRegistro(correo)
         return Response({'message': 'Usuario registrado con éxito',"token": token.key}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR USUARIO

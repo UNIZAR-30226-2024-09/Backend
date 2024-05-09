@@ -113,19 +113,19 @@ class Playlist(models.Model):
 class Album(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
-    foto = models.BinaryField(default=b'\x00')
+    #foto = models.BinaryField(default=b'\x00')
 
 
 class Presentador(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
-    foto = models.BinaryField(default=b'\x00')
+    #foto = models.BinaryField(default=b'\x00')
     descripcion = models.CharField(max_length=500, null=True)
 
 class Artista(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
-    foto = models.BinaryField(default=b'\x00')
+    #foto = models.BinaryField(default=b'\x00')
     descripcion = models.CharField(max_length=500, null=True)
 
 class Cancion(models.Model):
@@ -135,7 +135,7 @@ class Cancion(models.Model):
     numPuntuaciones = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)
     archivoMp3 = models.BinaryField(default=b'\x00')
-    foto = models.BinaryField(default=b'\x00')
+    #foto = models.BinaryField(default=b'\x00')
 
 
 class Colabora(models.Model):
@@ -174,7 +174,7 @@ class Podcast(models.Model):
     nombre = models.CharField(max_length=255, null=False)
     puntuacion = models.IntegerField(blank=True, null=True)
     numPuntuaciones = models.IntegerField(blank=True, null=True)
-    foto = models.BinaryField(default=b'\x00')
+    #foto = models.BinaryField(default=b'\x00')
 
 class PertenecenCancion(models.Model):
     miGenero = models.ForeignKey(Genero, on_delete=models.CASCADE)

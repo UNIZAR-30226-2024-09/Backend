@@ -128,6 +128,29 @@ class image_cancion(APIView):
             # Return a 404 response if the file does not exist
             return HttpResponse('Image not found', status=404)
         
+class audio_cancion(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, filename):
+        # Path to the directory where audio files are stored
+        audio_dir = 'audio_cancion/'
+
+        # Construct the path to the requested audio file
+        filename += '.mp3'
+        audio_path = os.path.join(os.path.dirname(__file__),audio_dir, filename)
+        print(audio_path)
+
+        # Check if the file exists
+        if os.path.exists(audio_path):
+            with open(audio_path, 'rb') as f:
+                # Read the audio content
+                audio_data = f.read()
+
+                # Return the audio as an HTTP response
+                return HttpResponse(audio_data, content_type='audio/mpeg')
+        else:
+            # Return a 404 response if the file does not exist
+            return HttpResponse('Audio not found', status=404)
+        
 class image_album(APIView):
     permission_classes = [AllowAny]
     def get(self, request, filename):
@@ -1301,6 +1324,19 @@ def save_base64_image(base64_string, output_path):
     except Exception as e:
         print(f"Error saving image: {e}")
 
+def save_base64_audio(audio_b64, path_audio):
+    try:
+        # Extract the audio data from the base64 string
+        audio_data = base64.b64decode(audio_b64)
+        
+        # Write the audio data to a file
+        with open(path_audio, 'wb') as audio_file:
+            audio_file.write(audio_data)
+        
+        return True
+    except Exception as e:
+        print("Error saving base64 audio:", e)
+        return False
 
 class CrearCancionAPI(APIView): # funciona
     permission_classes = [AllowAny]
@@ -1312,7 +1348,7 @@ class CrearCancionAPI(APIView): # funciona
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la canción'),
                 'imagen_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Imagen de la canción'),
                 'miAlbum': openapi.Schema(type=openapi.TYPE_STRING, description='ID del álbum'),
-                'audiofile': openapi.Schema(type=openapi.TYPE_FILE, description='Archivo de audio de la canción')
+                'audio_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Audio de la canción')
             },
         ),
         responses={200: 'OK - Canción creada con éxito'}
@@ -1321,22 +1357,23 @@ class CrearCancionAPI(APIView): # funciona
         nombre = request.data.get('nombre')
         imagen_b64 = request.data.get('imagen_b64')
         miAlbum = request.data.get('miAlbum')
-        audiofile = request.data.get('audiofile')
-
+        audio_b64 = request.data.get('audio_b64')
         current_dir = os.getcwd()
         directorio = os.path.join(current_dir, 'Musify/image_cancion/')
+        directorioAudio = os.path.join(current_dir, 'Musify/audio_cancion/')
         puntuacion = 0 # cuando se crea la canción en nuestra app, se crea con puntuación 0
         numeroPuntuaciones = 0
-        audiofile = base64.b64encode(audiofile.read())
         if miAlbum != '':
             miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
         else:
             miAlbum = None
         
-        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones, archivoMp3=audiofile)
+        cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones)
         cancion2 = DAOs.crearCancion(cancion)
         path = directorio + str(cancion2.id) + ".jpg"
+        pathAudio = directorioAudio + str(cancion2.id) + ".mp3"
         save_base64_image(imagen_b64, path)
+        save_base64_audio(audio_b64, pathAudio)
         return Response({'message': 'Canción creada con éxito'}, status=status.HTTP_200_OK)
 
 class DevolverCancionAPI(APIView):

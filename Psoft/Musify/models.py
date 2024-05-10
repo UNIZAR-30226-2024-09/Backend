@@ -10,26 +10,6 @@ from django.contrib.admin.models import DELETION, LogEntry, ADDITION, CHANGE
 class Sala(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255, null=False)
-
-class Mensaje(models.Model):
-    id = models.AutoField(primary_key=True)
-    miSala = models.ForeignKey(Sala, on_delete=models.CASCADE)
-    miUsuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    texto = models.CharField(max_length=10000, null=False)
-    fecha = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        ordering = ['fecha']
-
-class CustomToken(models.Model):
-    key = models.CharField(max_length=40, primary_key=True, default=uuid.uuid4)
-    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='custom_token', on_delete=models.CASCADE)
-    created = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return self.key
-
-
 class UsuarioManager(BaseUserManager):
     def create_user(self, correo, nombre, contrasegna, **extra_fields):
         if not correo:
@@ -84,6 +64,26 @@ class Usuario(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_staff
+
+class Mensaje(models.Model):
+    id = models.AutoField(primary_key=True)
+    miSala = models.ForeignKey(Sala, on_delete=models.CASCADE)
+    miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    texto = models.CharField(max_length=10000, null=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['fecha']
+
+class CustomToken(models.Model):
+    key = models.CharField(max_length=40, primary_key=True, default=uuid.uuid4)
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='custom_token', on_delete=models.CASCADE)
+    created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.key
+
+
 
 
 #class Amigo(models.Model):

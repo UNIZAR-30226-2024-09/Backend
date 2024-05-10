@@ -2242,7 +2242,12 @@ class AgnadirCancionHistorialAPI(APIView): # funciona
         if cancion is None:
             return Response({'error': 'La canción no existe'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            DAOs.agnadirCancionHistorial(correo, cancion)
+            if(DAOs.numeroCancionesHistorial(correo) >= 15): #Modificar buffer historial
+                DAOs.eliminarUltimaCancionHistorial(correo)
+                DAOs.agnadirCancionHistorial(correo, cancion)
+                return Response({'message': 'Canción añadida al historial con éxito'}, status=status.HTTP_200_OK)
+            else:
+                DAOs.agnadirCancionHistorial(correo, cancion) #Todavia no hay 15 canciones
             return Response({'message': 'Canción añadida al historial con éxito'}, status=status.HTTP_200_OK)
     
 # lo hacemos???

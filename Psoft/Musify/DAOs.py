@@ -593,7 +593,16 @@ def eliminarCancionHistorial(usuarioCorreo, cancionId): #Se elimina la cancion d
     usuario = Usuario.objects.get(pk=usuarioCorreo)
     cancion = Cancion.objects.get(pk=cancionId)
     Historial.objects.get(miUsuario=usuario, miAudio=cancion).delete()
+    
+def eliminarUltimaCancionHistorial(usuarioCorreo):
+    usuario = Usuario.objects.get(pk=usuarioCorreo)
+    historial = Historial.objects.filter(miUsuario=usuario)
+    historial.order_by('id')
+    historial[0].delete()
 
+def numeroCancionesHistorial(usuarioCorreo): #Devuelve el número de canciones en el historial
+    usuario = Usuario.objects.get(pk=usuarioCorreo)
+    return Historial.objects.filter(miUsuario=usuario).count()
 #DAOs DE COLA
 
 '''def get_user_queue(user_email): #Devuelve la cola de reproduccion del usuario devuelta como VO

@@ -1141,22 +1141,44 @@ class ListarCancionesPlaylistAPI(APIView): # funciona
             return Response({'message': 'La playlist no tiene canciones'}, status=status.HTTP_200_OK)
         
 
-class ListarPlaylistsPredefinidasAPI(APIView): # funciona
+class ListarPlaylistEnElCocheAPI(APIView): # funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(
-        responses={200: 'OK - Playlists predefinidas listadas con éxito'}
+        responses={200: 'OK - Playlists en el coche listada con éxito'}
     )
     def post(self, request):
         cancionesCoche = DAOs.listarCancionesPlaylist(62)
-        cancionesGym = DAOs.listarCancionesPlaylist(63)
-        cancionesRelax = DAOs.listarCancionesPlaylist(64)
-        if cancionesCoche and cancionesGym and cancionesRelax:
+        if cancionesCoche:
             serializerCoche = CancionSerializer(cancionesCoche, many=True)
-            serializerGym = CancionSerializer(cancionesGym, many=True)
-            serializerRelax = CancionSerializer(cancionesRelax, many=True)
-            return Response({'cancionesCoche': serializerCoche.data, 'cancionesGym': serializerGym.data, 'cancionesRelax': serializerRelax.data}, status=status.HTTP_200_OK)
+            return Response({'canciones': serializerCoche.data}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'No hay canciones en las playlists predefinidas'}, status=status.HTTP_200_OK)
+            return Response({'message': 'No hay canciones en la playlist en el coche'}, status=status.HTTP_200_OK)
+        
+class ListarPlaylistEjercicioAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Playlist de ejercicio listada con éxito'}
+    )
+    def post(self, request):
+        cancionesGym = DAOs.listarCancionesPlaylist(63)
+        if cancionesGym:
+            serializerGym = CancionSerializer(cancionesGym, many=True)
+            return Response({'canciones': serializerGym.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay canciones en la playlist de ejercicio'}, status=status.HTTP_200_OK)
+        
+class ListarPlaylistRelaxAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        responses={200: 'OK - Playlist de relax listada con éxito'}
+    )
+    def post(self, request):
+        cancionesRelax = DAOs.listarCancionesPlaylist(64)
+        if cancionesRelax:
+            serializerRelax = CancionSerializer(cancionesRelax, many=True)
+            return Response({'canciones': serializerRelax.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay canciones en la playlist de relax'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA AÑADIR UNA CANCIÓN A UNA PLAYLIST
 {

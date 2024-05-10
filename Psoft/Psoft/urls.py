@@ -184,6 +184,8 @@ urlpatterns = [
     path('listarPocasCanciones/', views.ListarPocasCancionesAPI.as_view(), name='ListarPocasCanciones'),
     path('listarPocosPodcasts/', views.ListarPocosPodcastsAPI.as_view(), name='ListarPocosPodcasts'),
     path('listarSalas/', viewsChat.ListarSalasAPI.as_view(), name='ListarSalas'),
-    path('listarPlaylistsPredefinidas/', views.ListarPlaylistsPredefinidasAPI.as_view(), name='ListarPlaylistsPredefinidas'),
     path('crearPlaylistGeneral/', views.CrearPlaylistGeneralAPI.as_view(), name='CrearPlaylistGeneral'),
+    path('listarPlaylistEnElCoche/', views.ListarPlaylistEnElCocheAPI.as_view(), name='ListarPlaylistEnElCoche'),
+    path('listarPlaylistEjercicio/', views.ListarPlaylistEjercicioAPI.as_view(), name='ListarPlaylistEjercicio'),
+    path('listarPlaylistRelax/', views.ListarPlaylistRelaxAPI.as_view(), name='ListarPlaylistRelax'),
     ]

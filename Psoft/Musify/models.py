@@ -157,6 +157,7 @@ class Historial(models.Model):
     id = models.AutoField(primary_key=True)
     miUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='historial_escucha')
     miAudio = models.ForeignKey(Cancion, on_delete=models.CASCADE, related_name='veces_escuchado')
+    fecha = models.DateTimeField(auto_now_add=True)
 
 
 class Cola(models.Model):

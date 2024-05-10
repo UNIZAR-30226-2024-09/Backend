@@ -597,8 +597,9 @@ def eliminarCancionHistorial(usuarioCorreo, cancionId): #Se elimina la cancion d
 def eliminarUltimaCancionHistorial(usuarioCorreo):
     usuario = Usuario.objects.get(pk=usuarioCorreo)
     historial = Historial.objects.filter(miUsuario=usuario)
-    historial.order_by('id')
-    historial[0].delete()
+    masVieja = historial.order_by('fecha').first()
+    if masVieja:
+        masVieja.delete()
 
 def numeroCancionesHistorial(usuarioCorreo): #Devuelve el número de canciones en el historial
     usuario = Usuario.objects.get(pk=usuarioCorreo)

@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from .models import Usuario, Seguido, Seguidor, Cancion, Podcast, Capitulo, Playlist, Colabora, Contiene, Historial, Cola, Genero, PertenecenPodcast, PertenecenCancion, Album, Artista, CustomToken, Presentador
 from . import DAOs
-from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer,EstadoSerializer, GeneroSerializer
+from Psoft.serializers import UsuarioSerializer, CancionSerializer, SeguidoSerializer, SeguidorSerializer, PlaylistSerializer, HistorialSerializer, ColaSerializer, CapituloSerializer, PodcastSerializer, AlbumSerializer, ArtistaSerializer, PresentadorSerializer,EstadoSerializer, GeneroSerializer, CancionSinAudioSerializer
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -2209,7 +2209,7 @@ class ListarHistorialAPI(APIView): #funciona
         correo = request.data.get('correo') # coger el correo de la sesión
         historial = DAOs.listarHistorial(correo)
         if historial is not None:
-            serializer = CancionSerializer(historial, many=True)
+            serializer = CancionSinAudioSerializer(historial, many=True)
             return Response({'historial': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tiene historial'}, status=status.HTTP_400_BAD_REQUEST)

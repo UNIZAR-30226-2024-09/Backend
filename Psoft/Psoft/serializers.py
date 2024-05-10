@@ -35,6 +35,11 @@ class PlaylistSerializer(serializers.ModelSerializer):
         model = models.Playlist
         fields = ['id', 'nombre', 'publica']
 
+class CancionSinAudioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Cancion
+        fields = ['id', 'nombre', 'miAlbum', 'puntuacion']
+
 class CancionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cancion

@@ -710,7 +710,6 @@ def listarGenerosFavoritos(correo): #Devuelve los generos favoritos del usuario
 def crearAlbum(albumVO): #Se crea el album sin canciones
     return Album.objects.create(
         nombre=albumVO.nombre,
-        foto=albumVO.foto
     )
 
 # EN LA API

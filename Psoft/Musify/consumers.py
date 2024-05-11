@@ -22,6 +22,7 @@ class ChatConsumer(WebsocketConsumer):
             self.room_name,
             self.channel_name
         )
+
     def chat_message(self, event):
         cuerpo = event['cuerpo']
         autor = event['autor']
@@ -30,11 +31,10 @@ class ChatConsumer(WebsocketConsumer):
             'cuerpo': cuerpo,
             'autor': autor
         }))
+
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         cuerpo = text_data_json['cuerpo']
-        self.send(text_data=text_data)
-
         async_to_sync(self.channel_layer.group_send)(
             self.room_name,
             {

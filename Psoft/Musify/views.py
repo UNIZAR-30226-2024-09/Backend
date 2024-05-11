@@ -2599,7 +2599,7 @@ class FiltrarCancionesPorGeneroAPI(APIView): # funciona #quizás aprovechar para
         genero = DAOs.conseguirGeneroPorNombre(generoNombre)
         canciones = DAOs.listarCancionesGenero(genero)
         if canciones:
-            serializer = CancionSerializer(canciones, many=True)
+            serializer = CancionSinAudioSerializer(canciones, many=True)
             return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No hay canciones en ese género'}, status=status.HTTP_200_OK)

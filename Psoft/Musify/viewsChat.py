@@ -85,6 +85,22 @@ class CrearSalaAPI(APIView):
         DAOsChat.crearSala(nombre)
         return Response("Sala creada", status=status.HTTP_200_OK)
     
+class BorrarSalaAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'salaid': openapi.Schema(type=openapi.TYPE_INTEGER, description='Id de la sala'),
+        }
+    ))
+    def post(self, request):
+        salaid = request.data['salaid']
+        sala = DAOsChat.obtenerSala(salaid)
+        if sala is not None:
+            sala.delete()
+            return Response("Sala eliminada", status=status.HTTP_200_OK)
+        return Response("No existe la sala", status=status.HTTP_404_NOT_FOUND)
+    
 class ListarSalasAPI(APIView):
     permission_classes = [AllowAny]
     def get(self, request):

@@ -2836,35 +2836,35 @@ class BuscarAPI(APIView): #funciona, hay que conseguir que busque entre todo lo 
     def post(self, request):
         nombre_objeto = request.data.get('nombre')
         resultados = []
-        objeto = DAOs.buscarCancion(nombre_objeto)
+        objeto = DAOs.buscarCancion(nombre_objeto) #Parcheado de mala manera, quitar audios de DB
         if objeto is not None:
             serializer = CancionSerializer(objeto, many=True)
             resultados.extend([{'cancion': data} for data in serializer.data])
-        objeto = DAOs.buscarCapitulo(nombre_objeto)
+        objeto = DAOs.buscarCapitulo(nombre_objeto)#Parcheado de mala manera, quitar audios de DB
         if objeto is not None:
             serializer = CapituloSerializer(objeto, many=True)
             resultados.extend([{'capitulo': data} for data in serializer.data])
-        objeto = DAOs.buscarPodcast(nombre_objeto)
+        objeto = DAOs.buscarPodcast(nombre_objeto)#Funciona aunque se busque en lowercase
         if objeto is not None:
             serializer = PodcastSerializer(objeto, many=True)
             resultados.extend([{'podcast': data} for data in serializer.data])
-        objeto = DAOs.buscarArtista(nombre_objeto)
+        objeto = DAOs.buscarArtista(nombre_objeto)#Funciona aunque se busque en lowercase
         if objeto is not None:
             serializer = ArtistaSerializer(objeto, many=True)
             resultados.extend([{'artista': data} for data in serializer.data])
-        objeto = DAOs.buscarAlbum(nombre_objeto)
+        objeto = DAOs.buscarAlbum(nombre_objeto)#Funciona aunque se busque en lowercase
         if objeto is not None:
             serializer = AlbumSerializer(objeto, many=True)
             resultados.extend([{'album': data} for data in serializer.data])
-        objeto = DAOs.buscarPlaylist(nombre_objeto)
+        objeto = DAOs.buscarPlaylist(nombre_objeto)#Cambiado para que no muestre playlists privadas
         if objeto is not None:
             serializer = PlaylistSerializer(objeto, many=True)
             resultados.extend([{'playlist': data} for data in serializer.data])
-        objeto = DAOs.buscarPresentador(nombre_objeto)
+        objeto = DAOs.buscarPresentador(nombre_objeto)#Funciona aunque se busque en lowercase
         if objeto is not None:
             serializer = PresentadorSerializer(objeto, many=True)
             resultados.extend([{'presentador': data} for data in serializer.data])
-        objeto = DAOs.buscarUsuario(nombre_objeto)
+        objeto = DAOs.buscarUsuario(nombre_objeto) #Busca mediante correo
         if objeto is not None:
             serializer = UsuarioSerializer(objeto, many=True)
             resultados.extend([{'usuario': data} for data in serializer.data])

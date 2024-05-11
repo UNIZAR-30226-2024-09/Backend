@@ -3,6 +3,7 @@ from django.db import connection  # Assuming you're using Django
 from .models import Usuario,UsuarioManager , Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, PertenecenCancion, PertenecenPodcast, Album, Artista, Cantan, Presentador, Interpretan
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.db.models import Q
 
 #DAOs DE ESTADO
 
@@ -65,10 +66,10 @@ def conseguirUsuarioPorCorreo(correo): #Se busca el usuario por su correo
     except ObjectDoesNotExist:
         return None
 
-def buscarUsuario(nombre):
+def buscarUsuario(correo):
     try:
-        nombre = nombre.lower()
-        return Usuario.objects.filter(nombre__istartswith=nombre)
+        correo = correo.lower()
+        return Usuario.objects.filter(correo__istartswith=correo)
     except ObjectDoesNotExist:
         return None
 
@@ -384,7 +385,7 @@ def conseguirPlaylistPorId(playlistId): #Devuelve la playlist dado su id
 def buscarPlaylist(playlistNombre):
     try:
         playlistNombre = playlistNombre.lower()
-        return Playlist.objects.filter(nombre__istartswith=playlistNombre)
+        return Playlist.objects.filter(Q(nombre__istartswith=playlistNombre) & Q(publica=True))
     except ObjectDoesNotExist:
         return None
 
@@ -503,7 +504,10 @@ def listarGenerosPodcast(podcast): #Devuelve los generos de un podcast dado su i
 def buscarCancion(cancionNombre):
     try:
         cancionNombre = cancionNombre.lower()
-        return Cancion.objects.filter(nombre__istartswith=cancionNombre)
+        canciones =  Cancion.objects.filter(nombre__istartswith=cancionNombre)
+        for cancion in canciones:
+            cancion.archivoMp3 = None
+        return canciones
     except ObjectDoesNotExist:
         return None
 
@@ -831,7 +835,10 @@ def conseguirCapituloPorNombre(capituloNombre): #Devuelve el capitulo dado su no
 def buscarCapitulo(capituloNombre):
     try:
         capituloNombre = capituloNombre.lower()
-        return Capitulo.objects.filter(nombre__istartswith=capituloNombre)
+        capitulos = Capitulo.objects.filter(nombre__istartswith=capituloNombre)
+        for capitulo in capitulos:
+            capitulo.archivoMp3 = None
+        return capitulos
     except ObjectDoesNotExist:
         return None
 

@@ -18,4 +18,5 @@ def cargarMensajes(sala):
     return models.Mensaje.objects.filter(miSala=sala)
 
 def registrarMensaje(sala, usuario, mensaje):
+    print(sala, usuario, mensaje)
     models.Mensaje.objects.create(miSala=sala, miUsuario=usuario, texto=mensaje)

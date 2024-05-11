@@ -76,6 +76,7 @@ urlpatterns = [
     path('imagenPodcast/<str:filename>/', views.image_podcast.as_view(), name='image_view'),
     path('imagenPresentador/<str:filename>/', views.image_presentador.as_view(), name='image_view'),
     path('audioCancion/<str:filename>/', views.audio_cancion.as_view(), name='audio_view'),
+    path('conseguirCancionAleatoria/', views.DevolverCancionAleatoriaAPI.as_view(), name='conseguirCancionAleatoria'),
 
     path('iniciarSesion/', views.IniciarSesionAPI.as_view(), name='iniciarSesion'),
     path('registro/', views.RegistroAPI.as_view(), name='registro'),

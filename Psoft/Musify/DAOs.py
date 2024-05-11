@@ -510,8 +510,16 @@ def buscarCancion(cancionNombre):
         return canciones
     except ObjectDoesNotExist:
         return None
-
-
+    
+def conseguirCancionAleatoria(playlistid):
+    if playlistid == 0:
+        canciones = Cancion.objects.all().order_by('?')[:1]
+        return canciones[0]
+    playlist = Playlist.objects.get(pk=playlistid)
+    canciones = Contiene.objects.filter(miPlaylist=playlist).order_by('?')[:1]
+    if canciones:
+        return canciones[0].miAudio
+    return None
 # COMPROBADO
 def conseguirCancionPorId(cancionId): #Devuelve la cancion dado su id
     try:

@@ -1399,6 +1399,27 @@ class DevolverCancionAPI(APIView):
             return Response({'cancion': serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'La canción no existe'}, status=status.HTTP_404_NOT_FOUND)
+        
+class DevolverCancionAleatoriaAPI(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+            request_body=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                required=['playlistid'],
+                properties={
+                    'playlistid': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la playlist')
+                },
+        responses={200: 'OK - Canción devuelta con éxito'}
+    )
+    )
+    def post(self, request):
+        PlaylistId = request.data.get('playlistid')
+        cancion = DAOs.conseguirCancionAleatoria(PlaylistId)
+        if cancion:
+            serializer = CancionSerializer(cancion)
+            return Response({'cancion': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No hay canciones'}, status=status.HTTP_200_OK)
 
 class DevolverAlbumAPI(APIView):
     permission_classes = [AllowAny]
@@ -3146,3 +3167,4 @@ class EliminarCapituloAPI(APIView):
         else:
             DAOs.eliminarCapitulo(capitulo)
             return Response({'message': 'Capítulo eliminado con éxito'}, status=status.HTTP_200_OK)
+        

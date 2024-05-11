@@ -335,14 +335,10 @@ def eliminarCancionPlaylist(playlistId, cancionId): #Se elimina la cancion de la
 #EN LA API
 def listarCanciones(): #Devuelve todas las canciones
     canciones = Cancion.objects.all()
-    for cancion in canciones:
-        cancion.archivoMp3 = None
     return canciones
 
 def listarPocasCanciones(): #Devuelve 5 canciones aleatorias
     canciones = Cancion.objects.all().order_by('?')[:5]
-    for cancion in canciones:
-        cancion.archivoMp3 = None
     return canciones
 
 def listarPocosPodcasts(): #Devuelve 5 podcasts aleatorios
@@ -408,11 +404,9 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         #foto=cancionVO.foto
     )
 
-def actualizarCancion(cancionVO, nombre, miAlbum, archivoMp3, foto): #Se actualiza la cancion
+def actualizarCancion(cancionVO, nombre, miAlbum): #Se actualiza la cancion
     cancionVO.nombre = nombre
     cancionVO.miAlbum = miAlbum
-    cancionVO.archivoMp3 = archivoMp3
-    cancionVO.foto = foto
     cancionVO.save()
 
 def eliminarCancion(cancionVO):
@@ -505,8 +499,6 @@ def buscarCancion(cancionNombre):
     try:
         cancionNombre = cancionNombre.lower()
         canciones =  Cancion.objects.filter(nombre__istartswith=cancionNombre)
-        for cancion in canciones:
-            cancion.archivoMp3 = None
         return canciones
     except ObjectDoesNotExist:
         return None
@@ -541,12 +533,6 @@ def listarPresentadoresPodcast(podcastVO): #Devuelve los presentadores de un pod
     ids = Interpretan.objects.filter(miPodcast=podcastVO.id)
     presentadores = [interpretanObject.miPresentador for interpretanObject in ids]
     return presentadores
-
-#Funciona
-def audioDeCancion(cancionId):
-    cancion = Cancion.objects.get(pk=cancionId)
-    audio = cancion.archivoMp3
-    return audio
 
 # SIN COMPROBAR
 #EN LA API

@@ -134,7 +134,7 @@ class Cancion(models.Model):
     puntuacion = models.IntegerField(blank=True, null=True)
     numPuntuaciones = models.IntegerField(blank=True, null=True)
     nombre = models.CharField(max_length=255, null=False)
-    archivoMp3 = models.BinaryField(default=b'\x00')
+    #archivoMp3 = models.BinaryField(default=b'\x00')
     #foto = models.BinaryField(default=b'\x00')
 
 

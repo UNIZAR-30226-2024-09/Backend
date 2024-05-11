@@ -1968,13 +1968,13 @@ class ActualizarCancionAPI(APIView):
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['cancionId', 'nombre', 'nombreFoto', 'miAlbum', 'nombreArchivoMp3'],
+            required=['cancionId', 'nombre', 'imagen_b64', 'miAlbum', 'audio_b64'],
             properties={
                 'cancionId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID de la canción'),
-                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre de la canción'),
-                'nombreFoto': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la foto'),
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la canción'),
+                'imagen_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Imagen de la canción'),
                 'miAlbum': openapi.Schema(type=openapi.TYPE_STRING, description='ID del álbum'),
-                'nombreArchivoMp3': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del archivo mp3')
+                'audio_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Audio de la canción')
             },
         ),
         responses={
@@ -1986,19 +1986,24 @@ class ActualizarCancionAPI(APIView):
     def post(self, request):
         cancionId = request.data.get('cancionId')
         nombre = request.data.get('nombre')
-        nombreFoto = request.data.get('nombreFoto')
+        imagen_b64 = request.data.get('imagen_b64')
         miAlbum = request.data.get('miAlbum')
-        nombreMp3 = request.data.get('nombreArchivoMp3')
+        audio_b64 = request.data.get('audio_b64')
         miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
         cancion = DAOs.conseguirCancionPorId(cancionId)
-        contenidoBinarioMp3 = convertirBinario(nombreMp3)
-        contenidoBinarioFoto = convertirBinario(nombreFoto)
         if cancion is None:
             return Response({'error': 'La canción no existe'}, status=status.HTTP_400_BAD_REQUEST)
         elif miAlbum is None:
             return Response({'error': 'El álbum no existe'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            DAOs.actualizarCancion(cancion, nombre, contenidoBinarioFoto, miAlbum, contenidoBinarioMp3)
+            DAOs.actualizarCancion(cancion, nombre, miAlbum)
+            current_dir = os.getcwd()
+            directorio = os.path.join(current_dir, 'Musify/image_cancion/')
+            directorioAudio = os.path.join(current_dir, 'Musify/audio_cancion/')
+            if audio_b64 != '':
+                save_base64_audio(audio_b64, directorioAudio)
+            if imagen_b64 != '':
+                save_base64_image(imagen_b64, directorio)
             return Response({'message': 'Canción actualizada con éxito'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR CAPITULO

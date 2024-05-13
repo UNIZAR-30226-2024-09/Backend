@@ -43,7 +43,7 @@ class CancionSinAudioSerializer(serializers.ModelSerializer):
 class CancionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cancion
-        fields = ['id', 'nombre', 'miAlbum', 'puntuacion', 'archivoMp3']
+        fields = ['id', 'nombre', 'miAlbum', 'puntuacion']
 
 # este, de momento, no se usa así que igual se podrá quitar
 class HistorialSerializer(serializers.ModelSerializer):

@@ -469,8 +469,12 @@ class RegistroAPI(APIView): # funciona
         #generos_seleccionados = request.POST.getlist('generos') # no se si es post o data
         #artistas_seleccionados = request.POST.getlist('artistas') # no se si es post o data
 
+        if not correo:
+            return Response({'error': 'Correo es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
         if not nombre:
             return Response({'error': 'Nombre es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
+        if not contrasegna:
+            return Response({'error': 'Contraseña es un campo obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
 
         logger.debug(f'Nombre recibido: {nombre}')
 

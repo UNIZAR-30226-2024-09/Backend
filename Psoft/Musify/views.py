@@ -151,6 +151,28 @@ class audio_cancion(APIView):
             # Return a 404 response if the file does not exist
             return HttpResponse('Audio not found', status=404)
         
+class audio_podcast(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, filename):
+        # Path to the directory where audio files are stored
+        audio_dir = 'audio_podcast/'
+
+        # Construct the path to the requested audio file
+        filename += '.mp3'
+        audio_path = os.path.join(os.path.dirname(__file__),audio_dir, filename)
+        print(audio_path)
+
+        # Check if the file exists
+        if os.path.exists(audio_path):
+            with open(audio_path, 'rb') as f:
+                # Read the audio content
+                audio_data = f.read()
+
+                # Return the audio as an HTTP response
+                return HttpResponse(audio_data, content_type='audio/mpeg')
+        else:
+            # Return a 404 response if the file does not exist
+            return HttpResponse('Audio not found', status=404)
 class image_album(APIView):
     permission_classes = [AllowAny]
     def get(self, request, filename):

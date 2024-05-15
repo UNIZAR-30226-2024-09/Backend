@@ -41,18 +41,14 @@ class ChatConsumer(WebsocketConsumer):
         cuerpo = text_data_json.get('cuerpo', '')
         
         # Check if the user is authenticated
-        if self.user.is_authenticated:
-            autor = self.user.correo
-        else:
-            autor = 'Anonymous'
-        
-        if cuerpo.strip():
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_name,
-                {
-                    'type': 'chat_message',
-                    'cuerpo': cuerpo,
-                    'autor': autor
-                }
-            )
+        autor = self.user.correo
+        print (autor)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_name,
+            {
+                'type': 'chat_message',
+                'cuerpo': cuerpo,
+                'autor': autor
+            }
+        )
 

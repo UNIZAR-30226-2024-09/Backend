@@ -483,7 +483,8 @@ class RegistroAPI(APIView): # funciona
         if Usuario.objects.filter(correo=correo).exists():
             return Response({'error': 'El correo introducido ya tiene asociada una cuenta'}, status=status.HTTP_400_BAD_REQUEST)
         #send_activation_email(usuario, request)
-        DAOs.crearUsuario(usuario)
+        usuario = DAOs.crearUsuario(usuario)
+        print(usuario)
         token = CustomToken.objects.create(usuario=usuario)
         token.save()
         CorreoRegistro(correo)

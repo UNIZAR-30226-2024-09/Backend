@@ -81,7 +81,7 @@ def comprobarContrasegna(correo, contrasegna): #se comprueba la contraseña del 
 # COMPROBADO
 # EN LA API
 def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
-    usuario = Usuario.objects.create_user(
+    usuario = Usuario.objects.create(
         correo=usuarioVO.correo.lower(),
         nombre=usuarioVO.nombre,
         contrasegna=usuarioVO.contrasegna,
@@ -89,6 +89,7 @@ def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
         sexo=usuarioVO.sexo,
         pais=usuarioVO.pais
     )
+    print(usuario.correo)
     usuario.save()
     crearPlaylist(usuario.correo,"Favoritos",False)
     return usuario

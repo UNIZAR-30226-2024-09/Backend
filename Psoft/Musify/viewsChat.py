@@ -46,7 +46,7 @@ class CargarMensajesAPI(APIView):
             if mensajes is None:
                 return Response("No hay mensajes en la sala", status=status.HTTP_200_OK)
             serializer = MensajeSerializer(mensajes, many=True)
-            return Response({"mensajes": serializer.data}, status=status.HTTP_200_OK)
+            return Response({serializer.data}, status=status.HTTP_200_OK)
         return Response("No existe la sala", status=status.HTTP_404_NOT_FOUND)
     
 class RegistrarMensajeAPI(APIView):

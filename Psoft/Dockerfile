@@ -2,7 +2,7 @@ FROM python:3.12.2
 
 # Install GCC compiler and related build tools
 RUN apt-get update \
-    && apt-get install -y gcc libc-dev nano net-tools \
+    && apt-get install -y gcc libc-dev nano net-tools coreutils \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the Docker container

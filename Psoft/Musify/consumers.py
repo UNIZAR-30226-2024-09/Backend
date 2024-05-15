@@ -3,11 +3,13 @@ from django.shortcuts import get_object_or_404
 from asgiref.sync import async_to_sync
 from . import models
 import json
+from Musify import DAOs
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.user = self.scope['user']
+        self.token = self.scope['url_route']['kwargs']['token']
+        self.user = DAOs.getUsuarioWithToken(self.token)
         print(self.user)
         self.chat = get_object_or_404(models.Sala, pk=self.room_name)
 

@@ -191,6 +191,7 @@ CHANNEL_LAYERS = {
     }
 }
 
+
 LOGIN_DIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/"
 

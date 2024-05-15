@@ -64,10 +64,6 @@ router.register(r'createAlbum', views.CrearAlbumAPI,basename='createAlbum' )
 router.register(r'addSongToAlbum', views.AgnadirCancionAlbumAPI,basename='addSongToAlbum' )
 router.register(r'getHistory', views.ListarHistorialAPI,basename='getHistory' )
 
-websocket_urlpatterns = [
-    path('ws/chatroom/<str:room_name>/', consumers.ChatConsumer.as_asgi()),
-]
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('imagenCancion/<str:filename>/', views.image_cancion.as_view(), name='image_view'),

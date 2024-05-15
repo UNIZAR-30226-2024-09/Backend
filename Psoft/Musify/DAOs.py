@@ -1,6 +1,6 @@
 from django.db import connection  # Assuming you're using Django
 
-from .models import Usuario,UsuarioManager , Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, PertenecenCancion, PertenecenPodcast, Album, Artista, Cantan, Presentador, Interpretan
+from .models import Usuario,UsuarioManager,CustomToken , Seguido, Seguidor, Playlist, Colabora, Contiene, Historial, Cancion, Podcast, Capitulo ,Cola, Genero, PertenecenCancion, PertenecenPodcast, Album, Artista, Cantan, Presentador, Interpretan
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Q
@@ -94,6 +94,10 @@ def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
     crearPlaylist(usuario.correo,"Favoritos",False)
     return usuario
 
+def getUsuarioWithToken(token):
+        token = CustomToken.objects.get(key=token)
+        usuario = token.usuario
+        return usuario
 # COMPROBADO
 def existeUsuario(correo): #Devuelve true si el usuario existe, false en caso contrario (?)
     try:

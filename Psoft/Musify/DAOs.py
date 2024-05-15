@@ -95,9 +95,11 @@ def crearUsuario(usuarioVO): #Se crea el usuario sin amigos
     return usuario
 
 def getUsuarioWithToken(token):
-        token = CustomToken.objects.get(key=token)
-        usuario = token.usuario
-        return usuario
+        if CustomToken.objects.filter(key=token).exists():
+            token = CustomToken.objects.get(key=token)
+            usuario = token.usuario
+            return usuario
+        return None
 # COMPROBADO
 def existeUsuario(correo): #Devuelve true si el usuario existe, false en caso contrario (?)
     try:

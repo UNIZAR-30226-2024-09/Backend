@@ -74,6 +74,7 @@ urlpatterns = [
     path('audioCancion/<str:filename>/', views.audio_cancion.as_view(), name='audio_view'),
     path('audioPodcast/<str:filename>/', views.audio_podcast.as_view(), name='audio_view'),
     path('conseguirCancionAleatoria/', views.DevolverCancionAleatoriaAPI.as_view(), name='conseguirCancionAleatoria'),
+    path('esAdmin/', views.esAdmin.as_view(), name='esAdmin'),
 
     path('iniciarSesion/', views.IniciarSesionAPI.as_view(), name='iniciarSesion'),
     path('registro/', views.RegistroAPI.as_view(), name='registro'),

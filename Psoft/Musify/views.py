@@ -78,7 +78,26 @@ def MandarCorreo(receiver,mensaje,subject=""):
         server.starttls()  # Start TLS encryption
         server.login(sender, password)
         server.sendmail(sender, receiver, message.as_string())
-        
+
+class esAdmin(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['token'],
+            properties={
+                'token': openapi.Schema(type=openapi.TYPE_STRING, description='Token del usuario')
+            },
+        ),
+        responses={200: 'OK - Usuario obtenido con éxito'}
+    )
+    def post(self, request):
+        token = request.data.get('token')
+        usuario = DAOs.getUsuarioWithToken(token)
+        if usuario != None and usuario.is_superuser:
+            return Response({'message': 'Es admin'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No es admin'}, status=status.HTTP_400_BAD_REQUEST)
 class ReporteAPI(APIView):
     permission_classes = [AllowAny]
     @swagger_auto_schema(

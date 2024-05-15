@@ -2957,7 +2957,65 @@ class RecomendarAPI(APIView): #comprobar
             serializerCanciones = CancionSerializer(resultadosCanciones, many=True)
             serializerPodcasts = PodcastSerializer(resultadosPodcasts, many=True)
             return Response({'recomendaciones': {'canciones': serializerCanciones.data, 'podcasts': serializerPodcasts.data}}, status=status.HTTP_200_OK)
-               
+
+class ListarCancionesArtistaAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['artistaId'],
+            properties={
+                'artistaId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del artista')
+            },
+        ),
+        responses={
+            200: 'OK - Canciones listadas con éxito',
+            400: 'Bad Request - No hay canciones del artista',
+            404: 'Not Found - El artista no existe'
+        }
+    )
+    def post(self, request):
+        artistaId = request.data.get('artistaId')
+        artista = DAOs.conseguirArtistaPorId(artistaId)
+        if artista is None:
+            return Response({'error': 'El artista no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            canciones = DAOs.listarCancionesArtista(artista)
+            if canciones:
+                serializer = CancionSerializer(canciones, many=True)
+                return Response({'canciones': serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'No hay canciones del artista'}, status=status.HTTP_200_OK)
+
+class ListarPodcastsPresentadorAPI(APIView): #funciona
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['presentadorId'],
+            properties={
+                'presentadorId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del presentador')
+            },
+        ),
+        responses={
+            200: 'OK - Podcasts listados con éxito',
+            400: 'Bad Request - No hay podcasts del presentador',
+            404: 'Not Found - El presentador no existe'
+        }
+    )
+    def post(self, request):
+        presentadorId = request.data.get('presentadorId')
+        presentador = DAOs.conseguirPresentadorPorId(presentadorId)
+        if presentador is None:
+            return Response({'error': 'El presentador no existe'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            podcasts = DAOs.listarPodcastsPresentador(presentador)
+            if podcasts:
+                serializer = PodcastSerializer(podcasts, many=True)
+                return Response({'podcasts': serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'No hay podcasts del presentador'}, status=status.HTTP_200_OK)
+
 class AgnadirGeneroFavoritoAPI(APIView): #funciona
     permission_classes = [AllowAny]
     @swagger_auto_schema(

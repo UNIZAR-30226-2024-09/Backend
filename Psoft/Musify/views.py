@@ -2813,7 +2813,10 @@ class ActualizarPodcastAPI(APIView): # funciona
             required=['podcastId', 'nombre'],
             properties={
                 'podcastId': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del podcast'),
-                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre del podcast')
+                'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nuevo nombre del podcast'),
+                'imagen_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Imagen del podcast en base64'),
+                'presentadores': openapi.Schema(type=openapi.TYPE_STRING, description='Presentador del podcast'),
+                'generos': openapi.Schema(type=openapi.TYPE_STRING, description='Géneros del podcast')
             },
         ),
         responses={
@@ -2824,11 +2827,21 @@ class ActualizarPodcastAPI(APIView): # funciona
     def post(self, request):
         podcastId = request.data.get('podcastId')
         nombre = request.data.get('nombre')
+        presentadores = request.data.get('presentadores')
+        genero = request.data.get('generos')
+        imagen_b64 = request.data.get('imagen_b64')
         podcast = DAOs.conseguirPodcastPorId(podcastId)
         if podcast is None:
             return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            DAOs.actualizarPodcast(podcast, nombre)
+            DAOs.actualizarPodcast(podcast, nombre, presentadores, genero)
+            if imagen_b64 is not None:
+                current_dir = os.path.dirname(__file__)
+                directorio = os.path.join(current_dir, 'Musify/image_podcast/')
+                nombreFoto = str(podcast.id) + '.jpg'
+                path = os.path.join(directorio, nombreFoto)
+                save_base64_image(imagen_b64, path)
+            
             return Response({'message': 'Podcast actualizado con éxito'}, status=status.HTTP_200_OK)
     
 '''class ActualizarPodcastNombreAPI(APIView): # funciona

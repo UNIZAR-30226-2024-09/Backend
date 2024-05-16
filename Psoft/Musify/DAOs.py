@@ -918,9 +918,26 @@ def aumentarNumeroPuntuacionesPodcast(podcastId, numeroPuntuaciones): #Aumenta e
 
 # COMPROBADO
 # EN LA API
-def actualizarPodcast(podcastVO): #Se actualiza el podcast
+def actualizarPodcast(podcastVO,nombre,presentadores,genero): #Se actualiza el podcast
     podcast = Podcast.objects.get(pk=podcastVO.id)
-    podcast.nombre = podcastVO.nombre
+    if nombre:
+        podcast.nombre = nombre
+    if presentadores:
+        presentadores = presentadores.split(",")
+        Interpretan.objects.filter(miPodcast=podcast).delete()
+        for presentador in presentadores:
+            presentadorVO = Presentador.objects.get(nombre=presentador)
+            Interpretan.objects.create(
+                miPodcast=podcast,
+                miPresentador=presentadorVO
+            )
+    if genero:
+        generoVO = Genero.objects.get(nombre=genero)
+        PertenecenPodcast.objects.filter(miPodcast=podcast).delete()
+        PertenecenPodcast.objects.create(
+            miPodcast=podcast,
+            miGenero=generoVO
+        )
     podcast.save()
 
 def actualizarPodcastNombre(podcastVO, nombre):

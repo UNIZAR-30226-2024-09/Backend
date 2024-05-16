@@ -2781,7 +2781,7 @@ class CrearPodcastAPI(APIView): # funciona
         #contenidoBinarioFoto = convertirBinario(nombreFoto)
         podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0)
         podcast2 = DAOs.crearPodcast(podcast)
-        nombreFoto = podcast2.id + '.jpg'
+        nombreFoto = str(podcast2.id) + '.jpg'
         path = os.path.join(directorio, nombreFoto)
         save_base64_image(imagen_b64, path)
         return Response({'message': 'Podcast creado con éxito'}, status=status.HTTP_200_OK)

@@ -2768,7 +2768,7 @@ class CrearPodcastAPI(APIView): # funciona
             required=['nombre', 'nombreFoto'],
             properties={
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del podcast'),
-                'imagen_b64' : openapi.Schema(type=openapi.TYPE_STRING, description='Imagen del podcast en base64'),
+                'imagen_b64' : openapi.Schema(type=openapi.TYPE_STRING,format=openapi.FORMAT_BASE64, description='Imagen del podcast en base64'),
             },
         ),
         responses={200: 'OK - Podcast creado con éxito'}

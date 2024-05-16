@@ -1394,7 +1394,9 @@ class CrearCancionAPI(APIView): # funciona
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la canción'),
                 'imagen_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Imagen de la canción'),
                 'miAlbum': openapi.Schema(type=openapi.TYPE_STRING, description='ID del álbum'),
-                'audio_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Audio de la canción')
+                'audio_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Audio de la canción'),
+                'generos': openapi.Schema(type=openapi.TYPE_STRING, description='Géneros de la canción'),
+                'artistas': openapi.Schema(type=openapi.TYPE_STRING, description='Artistas de la canción')
             },
         ),
         responses={200: 'OK - Canción creada con éxito'}
@@ -1404,6 +1406,10 @@ class CrearCancionAPI(APIView): # funciona
         imagen_b64 = request.data.get('imagen_b64')
         miAlbum = request.data.get('miAlbum')
         audio_b64 = request.data.get('audio_b64')
+        genero = request.data.get('genero')
+        generoVO = DAOs.conseguirGeneroPorNombre(genero)
+        artista = request.data.get('artistas')
+        artistas = artista.split(',') 
         current_dir = os.getcwd()
         directorio = os.path.join(current_dir, 'Musify/image_cancion/')
         directorioAudio = os.path.join(current_dir, 'Musify/audio_cancion/')
@@ -1415,7 +1421,12 @@ class CrearCancionAPI(APIView): # funciona
             miAlbum = None
         
         cancion = Cancion(nombre=nombre, miAlbum=miAlbum, puntuacion=puntuacion, numPuntuaciones=numeroPuntuaciones)
+        
         cancion2 = DAOs.crearCancion(cancion)
+        for artista in artistas:
+            artistaVO = DAOs.conseguirArtistaPorNombre(artista)
+            DAOs.crearCantan(artistaVO, cancion2)
+        DAOs.crearPertenecenCancion(generoVO, cancion2)
         path = directorio + str(cancion2.id) + ".jpg"
         pathAudio = directorioAudio + str(cancion2.id) + ".mp3"
         save_base64_image(imagen_b64, path)

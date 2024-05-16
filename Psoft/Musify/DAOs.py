@@ -407,6 +407,7 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         miAlbum=cancionVO.miAlbum,
         puntuacion=cancionVO.puntuacion,
         numPuntuaciones=cancionVO.numPuntuaciones,
+
         #archivoMp3=cancionVO.archivoMp3,
         #foto=cancionVO.foto
     )

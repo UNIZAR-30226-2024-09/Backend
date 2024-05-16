@@ -110,6 +110,7 @@ urlpatterns = [
     path('agnadirGeneroPodcast/', views.AgnadirGeneroPodcastAPI.as_view(), name='agnadirGeneroPodcast'),
     path('crearPodcast/', views.CrearPodcastAPI.as_view(), name='crearPodcast'),
     path('actualizarPodcast/', views.ActualizarPodcastAPI.as_view(), name='actualizarPodcast'),
+    path('actualizarUsuario/', views.ActualizarUsuarioAPI.as_view(), name='actualizarUsuario'),
     path('listarCancionesPlaylist/', views.ListarCancionesPlaylistAPI.as_view(), name='listarCancionesPlaylist'),
     path('listarPlaylistsUsuario/', views.ListarPlaylistsUsuarioAPI.as_view(), name='listarPlaylistsUsuario'),
     path('listarCancionesAlbum/', views.ListarCancionesAlbumAPI.as_view(), name='listarCancionesAlbum'),

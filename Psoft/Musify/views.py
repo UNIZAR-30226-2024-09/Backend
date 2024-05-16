@@ -2779,7 +2779,7 @@ class CrearPodcastAPI(APIView): # funciona
         current_dir = os.path.dirname(__file__)
         directorio = os.path.join(current_dir, 'Musify/image_podcast/')
         #contenidoBinarioFoto = convertirBinario(nombreFoto)
-        podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0, foto=imagen_b64)
+        podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0)
         podcast2 = DAOs.crearPodcast(podcast)
         nombreFoto = podcast2.id + '.jpg'
         path = os.path.join(directorio, nombreFoto)

@@ -416,9 +416,27 @@ def crearCancion(cancionVO): #Se crea la cancion sin generos
         #foto=cancionVO.foto
     )
 
-def actualizarCancion(cancionVO, nombre, miAlbum): #Se actualiza la cancion
-    cancionVO.nombre = nombre
-    cancionVO.miAlbum = miAlbum
+def actualizarCancion(cancionVO, nombre, miAlbum,artista,genero): #Se actualiza la cancion
+    if nombre:
+        cancionVO.nombre = nombre
+    if miAlbum:
+        cancionVO.miAlbum = miAlbum
+    if artista:
+        artistas = artista.split(",")
+        Cantan.objects.filter(miCancion=cancionVO).delete()
+        for artista in artistas:
+            artistaVO = Artista.objects.get(nombre=artista)
+            Cantan.objects.create(
+                miCancion=cancionVO,
+                miArtista=artistaVO
+            )
+    if genero:
+        generoVO = Genero.objects.get(nombre=genero)
+        PertenecenCancion.objects.filter(miCancion=cancionVO).delete()
+        PertenecenCancion.objects.create(
+            miCancion=cancionVO,
+            miGenero=generoVO
+        )
     cancionVO.save()
 
 def eliminarCancion(cancionVO):

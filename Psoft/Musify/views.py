@@ -2034,7 +2034,9 @@ class ActualizarCancionAPI(APIView):
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la canción'),
                 'imagen_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Imagen de la canción'),
                 'miAlbum': openapi.Schema(type=openapi.TYPE_STRING, description='ID del álbum'),
-                'audio_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Audio de la canción')
+                'audio_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Audio de la canción'),
+                'generos': openapi.Schema(type=openapi.TYPE_STRING, description='Géneros de la canción'),
+                'artistas': openapi.Schema(type=openapi.TYPE_STRING, description='Artistas de la canción')
             },
         ),
         responses={
@@ -2051,18 +2053,20 @@ class ActualizarCancionAPI(APIView):
         audio_b64 = request.data.get('audio_b64')
         miAlbum = DAOs.conseguirAlbumPorId(miAlbum)
         cancion = DAOs.conseguirCancionPorId(cancionId)
+        artista = request.data.get('artistas')
+        genero = request.data.get('generos')
         if cancion is None:
             return Response({'error': 'La canción no existe'}, status=status.HTTP_400_BAD_REQUEST)
         elif miAlbum is None:
             return Response({'error': 'El álbum no existe'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            DAOs.actualizarCancion(cancion, nombre, miAlbum)
+            DAOs.actualizarCancion(cancion, nombre, miAlbum, artista, genero)
             current_dir = os.getcwd()
-            directorio = os.path.join(current_dir, 'Musify/image_cancion/')
-            directorioAudio = os.path.join(current_dir, 'Musify/audio_cancion/')
             if audio_b64 != '':
+                directorioAudio = os.path.join(current_dir, 'Musify/audio_cancion/')
                 save_base64_audio(audio_b64, directorioAudio)
             if imagen_b64 != '':
+                directorio = os.path.join(current_dir, 'Musify/image_cancion/')
                 save_base64_image(imagen_b64, directorio)
             return Response({'message': 'Canción actualizada con éxito'}, status=status.HTTP_200_OK)
 

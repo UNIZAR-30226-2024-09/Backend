@@ -2769,6 +2769,8 @@ class CrearPodcastAPI(APIView): # funciona
             properties={
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del podcast'),
                 'imagen_b64' : openapi.Schema(type=openapi.TYPE_STRING,format=openapi.FORMAT_BASE64, description='Imagen del podcast en base64'),
+                'presentadores': openapi.Schema(type=openapi.TYPE_STRING, description='Presentador del podcast'),
+                'generos': openapi.Schema(type=openapi.TYPE_STRING, description='Géneros del podcast')
             },
         ),
         responses={200: 'OK - Podcast creado con éxito'}
@@ -2776,11 +2778,19 @@ class CrearPodcastAPI(APIView): # funciona
     def post(self, request):
         nombre = request.data.get('nombre')
         imagen_b64 = request.data.get('imagen_b64')
+        presentadores = request.data.get('presentadores')
+        genero = request.data.get('generos')
         current_dir = os.path.dirname(__file__)
         directorio = os.path.join(current_dir, 'Musify/image_podcast/')
         #contenidoBinarioFoto = convertirBinario(nombreFoto)
         podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0)
+        generoVO = DAOs.conseguirGeneroPorNombre(genero)
         podcast2 = DAOs.crearPodcast(podcast)
+        DAOs.crearPertenecenPodcast(generoVO, podcast2)
+        presentadores2 = presentadores.split(',')
+        for presentador in presentadores2:
+            presentadorVO = DAOs.conseguirPresentadorPorNombre(presentador)
+            DAOs.crearInterpretan(podcast2, presentadorVO)
         nombreFoto = str(podcast2.id) + '.jpg'
         path = os.path.join(directorio, nombreFoto)
         save_base64_image(imagen_b64, path)

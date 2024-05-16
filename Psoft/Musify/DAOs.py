@@ -56,6 +56,11 @@ def conseguirPresentadorPorId(presentadorId): #Devuelve el presentador dado su i
         return Presentador.objects.get(pk=presentadorId)
     except ObjectDoesNotExist:
         return None
+def conseguirPresentadorPorNombre(nombre): #Devuelve el presentador dado su nombre
+    try:
+        return Presentador.objects.get(nombre=nombre)
+    except ObjectDoesNotExist:
+        return None
 
 #DAOs DE USUARIO
 

@@ -2010,12 +2010,15 @@ class CrearCapituloAPI(APIView): #funciona
         descripcion = request.data.get('descripcion')
         podcastId = request.data.get('podcastId')
         audio_b64 = request.data.get('audio_b64')
+
         if podcastId != '':
             miPodcast = DAOs.conseguirPodcastPorId(podcastId)
             if miPodcast is not None:
                 #contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
-                capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast)
+                capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast, archivoMp3=audio_b64)
                 DAOs.crearCapitulo(capitulo)
+                directorio = os.path.join(os.getcwd(), 'Musify/audio_capitulo/'+str(capitulo.id)+'.mp3')
+                save_base64_audio(audio_b64, directorio)
                 return Response({'message': 'Capítulo almacenado correctamente'}, status=status.HTTP_200_OK)
             else:
                 return Response({'error': 'El podcast no existe'}, status=status.HTTP_400_BAD_REQUEST)
@@ -2775,11 +2778,12 @@ class CrearPodcastAPI(APIView): # funciona
         imagen_b64 = request.data.get('imagen_b64')
         current_dir = os.path.dirname(__file__)
         directorio = os.path.join(current_dir, 'Musify/image_podcast/')
-
-        nombreFoto = nombre + '.jpg'
         #contenidoBinarioFoto = convertirBinario(nombreFoto)
-        podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0, foto=nombreFoto)
-        DAOs.crearPodcast(podcast)
+        podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0, foto=imagen_b64)
+        podcast2 = DAOs.crearPodcast(podcast)
+        nombreFoto = podcast2.id + '.jpg'
+        path = os.path.join(directorio, nombreFoto)
+        save_base64_image(imagen_b64, path)
         return Response({'message': 'Podcast creado con éxito'}, status=status.HTTP_200_OK)
 
 '''EJEMPLO DE FORMATO JSON PARA ACTUALIZAR PODCAST

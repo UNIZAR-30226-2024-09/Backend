@@ -1425,7 +1425,7 @@ class CrearCancionAPI(APIView): # funciona
         cancion2 = DAOs.crearCancion(cancion)
         for artista in artistas:
             artistaVO = DAOs.conseguirArtistaPorNombre(artista)
-            DAOs.crearCantan(artistaVO, cancion2)
+            DAOs.crearCantan(cancion2, artistaVO)
         DAOs.crearPertenecenCancion(generoVO, cancion2)
         path = directorio + str(cancion2.id) + ".jpg"
         pathAudio = directorioAudio + str(cancion2.id) + ".mp3"
@@ -1999,7 +1999,7 @@ class CrearCapituloAPI(APIView): #funciona
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del capítulo'),
                 'descripcion': openapi.Schema(type=openapi.TYPE_STRING, description='Descripción del capítulo'),
                 'podcastId': openapi.Schema(type=openapi.TYPE_STRING, description='ID del podcast'),
-                'nombreArchivoMp3': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del archivo mp3')
+                'audio_b64': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_BASE64, description='Audio del capítulo en formato mp3')
             },
         ),
         responses={200: 'OK - Capítulo almacenado correctamente',
@@ -2009,12 +2009,12 @@ class CrearCapituloAPI(APIView): #funciona
         nombre = request.data.get('nombre')
         descripcion = request.data.get('descripcion')
         podcastId = request.data.get('podcastId')
-        nombreArchivoMp3 = request.data.get('nombreArchivoMp3')
+        audio_b64 = request.data.get('audio_b64')
         if podcastId != '':
             miPodcast = DAOs.conseguirPodcastPorId(podcastId)
             if miPodcast is not None:
                 #contenidoBinarioMp3 = convertirBinario(nombreArchivoMp3)
-                capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast, archivoMp3=nombreArchivoMp3)
+                capitulo = Capitulo(nombre=nombre, descripcion=descripcion, miPodcast=miPodcast)
                 DAOs.crearCapitulo(capitulo)
                 return Response({'message': 'Capítulo almacenado correctamente'}, status=status.HTTP_200_OK)
             else:
@@ -2765,14 +2765,18 @@ class CrearPodcastAPI(APIView): # funciona
             required=['nombre', 'nombreFoto'],
             properties={
                 'nombre': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre del podcast'),
-                'nombreFoto': openapi.Schema(type=openapi.TYPE_STRING, description='Nombre de la foto del podcast')
+                'imagen_b64' : openapi.Schema(type=openapi.TYPE_STRING, description='Imagen del podcast en base64'),
             },
         ),
         responses={200: 'OK - Podcast creado con éxito'}
     )
     def post(self, request):
         nombre = request.data.get('nombre')
-        nombreFoto = request.data.get('nombreFoto')
+        imagen_b64 = request.data.get('imagen_b64')
+        current_dir = os.path.dirname(__file__)
+        directorio = os.path.join(current_dir, 'Musify/image_podcast/')
+
+        nombreFoto = nombre + '.jpg'
         #contenidoBinarioFoto = convertirBinario(nombreFoto)
         podcast = Podcast(nombre=nombre, puntuacion=0, numPuntuaciones=0, foto=nombreFoto)
         DAOs.crearPodcast(podcast)
